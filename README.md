@@ -41,7 +41,11 @@
 5. **악보** — 그 악보들이 파라라락 날아간다
 6. **입장** — 악보가 걷힌 자리에서 그대로 첫 화면으로 들어간다
 
-입장 초안에는 에셋이 없다. 악보는 오선 묶음만 그은 흰 종이 35장, 음표는 코드로 그린 그림, 악기 소리는 합성음 한 음씩이다. `index.html`의 `설정`에서 악기별 `파일` 칸에 소리 파일 경로를 넣으면 합성음 대신 재생된다. 소리는 누른 뒤에만 나고, 화면에 보이지 않는 건너뛰기 링크(키보드 초점에서만 나타남)가 있으며, 움직임 줄이기 설정에서는 일렁임과 날아가는 악보를 뺀다.
+입장 페이지는 2026-11-23에 새로 구현했다. 실제 클래식 곡을 조판한 악보 SVG 12쪽과 입체 금속 음표 PNG 4종을 사용한다. 큰 악보들이 크기·각도·방향을 달리하며 흩뿌려져 겹쳐 있고, 빛 궤적과 별 모양 입자가 음표 주변에서 반응한다. 소리는 사용자 입력 뒤에만 나는 악기별 합성음이다.
+
+종이는 WebGL 곡면으로 만들었다. 바람에 따른 굽힘·끝단의 비틀림·양면·종이결·그림자를 표현하며, 가만히 있을 때는 종이의 렌더 루프를 돌리지 않는다. `home.html`의 실제 내용을 미리 뒤에 불러오기 때문에 악보가 날아가는 사이로 첫 화면이 바로 드러난다. 전환 뒤 주소를 `home.html`로 바꾸고 공용 동작을 연결한다. 본문 HTML·문구·디자인은 그대로다.
+
+WebGL을 쓸 수 없으면 같은 악보를 CSS로 날려 보낸다. 키보드 초점에서 나타나는 무음 입장 링크와 Escape 건너뛰기를 제공한다. 움직임 줄이기 설정에서는 연출과 소리 없이 입장한다. JavaScript가 꺼져 있어도 첫 화면 링크가 표시된다. 모든 입장 에셋과 Three.js는 저장소에서 읽는다. 출처·라이선스는 [입장 에셋 설명](assets/entry/README.md)을 참고한다.
 
 ## 쪽별 틀
 
@@ -116,6 +120,16 @@ python _build/build.py
 - `_build/build.py` — 쪽의 틀. 실행하면 저장소 최상단의 html 17개를 다시 쓰고 검사한다(줄표, 없는 그림과 쪽, 인물 구성)
 - `assets/css/style.css` — 모양(임시), `assets/js/main.js` — 동작. 동작은 html의 `data-*` 표시를 보고 붙는다
 - html을 손으로 고치지 않는다. `index.html`(입장)만 손으로 쓴 파일이고 생성기가 건드리지 않는다
+
+### 입장 페이지 개발·검증
+
+- `index.html`, `assets/css/entry.css`, `assets/js/entry.js`가 입장 화면의 뼈대·모양·순서를 담당한다.
+- `assets/js/entry-scene.js`는 종이의 3D 움직임, `entry-particles.js`는 입자 효과다.
+- 로컬 실행: 저장소에서 `python -m http.server 4173 --bind 0.0.0.0`.
+- 브라우저 검사 도구를 별도 경로에 설치한다: `npm install --prefix /tmp/ma-tools --cache /tmp/ma-npm-cache playwright@1.58.2`.
+- `NODE_PATH=/tmp/ma-tools/node_modules node _build/test-entry.cjs`로 PC·모바일·키보드·동작 줄이기·WebGL/오디오 불가·건너뛰기·전환 후 본문 동작을 검사한다. Chromium 기본 경로는 `/usr/bin/chromium`; `CHROMIUM_PATH`, `ENTRY_TEST_URL`로 바꿀 수 있다.
+- 악보 재생성: `python -m pip install --target /tmp/ma-score-tools verovio==6.4.1` 후 `PYTHONPATH=/tmp/ma-score-tools python _build/entry-scores.py`.
+- 음표 재생성: 로컬 서버를 켠 상태에서 `NODE_PATH=/tmp/ma-tools/node_modules node _build/entry-notes.cjs`.
 
 ## 그림
 

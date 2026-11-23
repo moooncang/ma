@@ -3,191 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070707">
+<link rel="icon" href="data:,">
 <title>명문 음악 아카데미의 추첨 입학생</title>
-<!--
-  [초안] 입장 페이지.
-  연출의 순서(README.md의 「입장 연출 콘셉트」)는 확정이고, 그림·소리·움직임의 구현은 임시다.
-  구현은 GPT가 작업할 때 뜯어고친다. 화면에 글자를 넣지 않는다. 연출 콘셉트는 저장소의 README.md에 있다.
--->
-<style>
-  html, body { height: 100%; margin: 0; }
-  /* 바탕색은 그림자와 악보가 모두 걷힌 뒤에 드러난다(본문 페이지의 바탕과 같은 색) */
-  body { background: #f6f1e3; color: #ffd98a; overflow: hidden; }
-
-  /* 배경에는 처음부터 악보가 가득 깔려 있다. 마지막에 날아가는 것이 바로 이 악보다 */
-  #sheets { position: fixed; inset: 0; overflow: hidden; }
-  .sheet {
-    --ink: rgba(60, 45, 20, .55);
-    position: absolute; left: var(--x); top: var(--y);
-    width: 1em; aspect-ratio: 3 / 4; font-size: max(17vw, 23vh);
-    /* 임시 악보 그림: 종이에 오선 묶음만 반복 */
-    background: #fffdf6 repeating-linear-gradient(to bottom,
-      transparent 0 .06em,
-      var(--ink) .06em .064em, transparent .064em .078em,
-      var(--ink) .078em .082em, transparent .082em .096em,
-      var(--ink) .096em .1em, transparent .1em .114em,
-      var(--ink) .114em .118em, transparent .118em .132em,
-      var(--ink) .132em .136em, transparent .136em .19em);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, .35);
-    transform: translate(-50%, -50%) rotate(var(--r0));
-  }
-
-  /* 그 위에 검은 그림자가 드리워져 있다. .light 는 그림자를 한 자리만 걷어 내는 빛이다
-     (곱하기 혼합: 검정은 악보를 가리고, 흰 빛이 놓인 자리만 악보가 보인다) */
-  #shade { position: fixed; inset: 0; background: #000; mix-blend-mode: multiply; pointer-events: none; transition: opacity .25s; }
-  .light {
-    position: absolute; left: var(--x); top: var(--y); width: var(--size); aspect-ratio: 1;
-    translate: -50% -50%; border-radius: 50%; opacity: 0;
-    background: radial-gradient(circle, #fff 0, transparent 70%);
-  }
-  #glow   { --x: 50%; --y: 46%; --size: 46vmin; animation: breathe 3.4s ease-in-out infinite; transition: opacity .6s; }
-  #cursor { --x: -100vmin; --y: -100vmin; --size: 50vmin; transition: opacity .6s; }
-  #cursor.live { opacity: .3; }
-  .voice  { --size: 80vmin; --peak: .6; }
-  .voice.on { animation: flash var(--dur) ease-out; }
-
-  /* 음표(임시 그림) */
-  .note {
-    position: absolute; translate: -50% -50%; width: clamp(26px, 5vmin, 48px);
-    filter: drop-shadow(0 0 8px currentColor); transition: opacity .6s, color .25s;
-  }
-  .note svg { display: block; width: 100%; fill: currentColor; overflow: visible; }
-  #start {
-    left: 50%; top: 46%; box-sizing: content-box; padding: 18px;
-    background: none; border: 0; color: inherit; cursor: pointer;
-    animation: sway 5s ease-in-out infinite;
-  }
-  #start:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
-  .voice-note { opacity: 0; }
-  .voice-note.on { animation: flash var(--dur) ease-out; }
-
-  /* 누른 뒤: 가운데 빛과 마우스 빛이 꺼지고, 악기 자리만 하나씩 반짝였다 꺼진다 */
-  body.playing #start, body.playing #glow, body.playing #cursor { opacity: 0; animation: none; }
-
-  /* 합주: 그림자가 전부 걷혀 화면이 확 밝아지고, 깔려 있던 악보가 날아간다 */
-  body.tutti #shade { opacity: 0; }
-  body.tutti .voice-note { opacity: 1; color: #3a2f1c; filter: none; animation: flare .9s ease-out; }
-  body.tutti .sheet { animation: fly var(--d) ease-in var(--delay) both; }
-
-  /* 화면에는 글자를 두지 않는다. 건너뛰기는 키보드로 초점이 갔을 때만 보인다 */
-  #skip { position: fixed; left: 12px; bottom: 12px; color: inherit; font: 13px sans-serif; opacity: 0; pointer-events: none; }
-  #skip:focus-visible { opacity: 1; }
-
-  @keyframes sway    { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-4deg); } }
-  @keyframes breathe { 0%, 100% { opacity: .2; } 50% { opacity: .45; } }
-  @keyframes flash   { 0% { opacity: 0; } 22% { opacity: var(--peak, 1); } 100% { opacity: 0; } }
-  @keyframes flare   { 0% { transform: scale(1); } 40% { transform: scale(1.6); } 100% { transform: scale(1); } }
-  @keyframes fly     { to { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) rotate(var(--r1)); } }
-
-  @media (prefers-reduced-motion: reduce) {
-    #start { animation: none; }
-    body.tutti .sheet { animation: none; }
-  }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+KR:wght@400;600;900&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/entry.css">
+<link rel="preload" href="assets/entry/score-1.svg" as="image">
+<script src="assets/js/entry.js" defer></script>
 </head>
-<body>
-  <div id="sheets"></div>
-  <div id="shade"><i class="light" id="glow"></i><i class="light" id="cursor"></i></div>
-  <button id="start" class="note" aria-label="입장"></button>
-  <a id="skip" href="home.html">소리 없이 들어가기</a>
-
-<script>
-// ── 설정: 전부 임시 값이다 ───────────────────────────────────────
-const 설정 = {
-  다음페이지: 'home.html',
-  악기간격: 1300, // ms. 악기 하나가 반짝이고 꺼진 뒤 다음 악기가 울리기까지
-  합주길이: 2000, // ms. 네 악기가 함께 울리고 사이트로 넘어가기까지
-  악보: { 가로: 7, 세로: 5 }, // 배경에 깔리는 악보 장수(가로 × 세로)
-  // 위에서부터 순서대로 하나씩 울린다. x·y는 화면 위 자리(%).
-  // 파일에 소리 파일 경로를 넣으면 합성음 대신 그 소리를 튼다
-  악기: [
-    { 이름: '바이올린', x: 22, y: 28, 음: 440.00, 파형: 'sawtooth', 파일: '' },
-    { 이름: '피아노',   x: 76, y: 22, 음: 293.66, 파형: 'triangle', 파일: '' },
-    { 이름: '첼로',     x: 28, y: 76, 음: 146.83, 파형: 'sawtooth', 파일: '' },
-    { 이름: '플루트',   x: 78, y: 70, 음: 739.99, 파형: 'sine',     파일: '' },
-  ],
-};
-
-const r = (a, b) => a + Math.random() * (b - a);
-const 음표그림 = `<svg viewBox="0 0 24 40" aria-hidden="true"><ellipse cx="8" cy="33" rx="6" ry="4.4" transform="rotate(-20 8 33)"/><rect x="12.6" y="4" width="1.6" height="29"/><path d="M14.2 4q10 4 8 16q-1-8-8-10z"/></svg>`;
-
-const start = document.getElementById('start');
-start.innerHTML = 음표그림;
-document.body.style.setProperty('--dur', 설정.악기간격 + 'ms');
-
-// 배경 악보: 칸마다 한 장씩, 조금씩 어긋나고 기울어지게 깐다. 날아갈 방향도 미리 정해 둔다
-const sheets = document.getElementById('sheets');
-const { 가로, 세로 } = 설정.악보;
-for (let i = 0; i < 가로 * 세로; i++) {
-  const el = document.createElement('div');
-  el.className = 'sheet';
-  el.style.cssText =
-    `--x:${((i % 가로) + .5) / 가로 * 100 + r(-4, 4)}%;--y:${(Math.floor(i / 가로) + .5) / 세로 * 100 + r(-5, 5)}%;` +
-    `--r0:${r(-18, 18)}deg;--tx:${r(60, 150)}vw;--ty:${r(-150, -40)}vh;--r1:${r(-540, 540)}deg;` +
-    `--d:${r(.8, 1.2)}s;--delay:${r(.15, .7)}s`;
-  sheets.appendChild(el);
-}
-
-// 악기 자리마다 [그림자를 걷어 내는 빛, 음표] 한 쌍
-const shade = document.getElementById('shade');
-const 자리 = 설정.악기.map(v => {
-  const 빛 = document.createElement('i');
-  빛.className = 'light voice';
-  빛.style.setProperty('--x', v.x + '%');
-  빛.style.setProperty('--y', v.y + '%');
-  shade.appendChild(빛);
-  const 음표 = document.createElement('div');
-  음표.className = 'note voice-note';
-  음표.style.left = v.x + '%';
-  음표.style.top = v.y + '%';
-  음표.innerHTML = 음표그림;
-  document.body.appendChild(음표);
-  return [빛, 음표];
-});
-
-// 누르기 전: 마우스가 지나가는 자리의 그림자가 옅게 걷힌다
-const cursor = document.getElementById('cursor');
-addEventListener('pointermove', e => {
-  cursor.style.setProperty('--x', e.clientX + 'px');
-  cursor.style.setProperty('--y', e.clientY + 'px');
-  cursor.classList.add('live');
-});
-
-// ── 소리(임시): 파일이 없으면 Web Audio 합성음 한 음 ──────────────
-let ctx = null;
-function 소리(v, 초) {
-  if (v.파일) { new Audio(v.파일).play(); return; }
-  if (!ctx) return;
-  const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
-  o.type = v.파형;
-  o.frequency.value = v.음;
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(.16, t + .06);
-  g.gain.exponentialRampToValueAtTime(.001, t + 초);
-  o.connect(g).connect(ctx.destination);
-  o.start(t);
-  o.stop(t + 초);
-}
-
-// ── 순서: 누름 → 악기 넷이 하나씩 반짝이고 꺼짐 → 합주·밝아짐·악보 날아감 → 사이트 ──
-const 기다림 = ms => new Promise(res => setTimeout(res, ms));
-start.addEventListener('click', async () => {
-  start.disabled = true;
-  document.body.classList.add('playing');
-  if (window.AudioContext) ctx = new AudioContext();
-  for (const [i, v] of 설정.악기.entries()) {
-    자리[i].forEach(el => el.classList.add('on'));
-    소리(v, 설정.악기간격 / 1000);
-    await 기다림(설정.악기간격);
-  }
-  document.body.classList.add('tutti');
-  설정.악기.forEach(v => 소리(v, 설정.합주길이 / 1000));
-  await 기다림(설정.합주길이);
-  location.href = 설정.다음페이지;
-}, { once: true });
-
-// 뒤로 가기로 돌아오면 끝난 화면이 그대로 남으므로 처음부터 다시 연다
-addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
-</script>
+<body class="entry-active">
+<div id="site" inert aria-hidden="true"></div>
+<div id="entry" data-phase="idle">
+  <div id="paper-fallback" aria-hidden="true"></div>
+  <canvas id="paper-scene" aria-hidden="true"></canvas>
+  <div id="entry-shade" aria-hidden="true"><i id="entry-glow"></i><i id="entry-cursor"></i></div>
+  <div id="entry-atmosphere" aria-hidden="true"></div>
+  <div id="entry-notes" aria-hidden="true"></div>
+  <button id="entry-start" type="button" aria-label="음악과 함께 입장">
+    <span class="note-art" aria-hidden="true"></span>
+  </button>
+  <a id="entry-skip" href="home.html">소리 없이 들어가기</a>
+</div>
+<noscript><style>#entry-start { display:none } #entry-skip { opacity:1; pointer-events:auto; clip-path:none; width:auto; height:auto; }</style></noscript>
 </body>
 </html>
