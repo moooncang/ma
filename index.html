@@ -6,45 +6,58 @@
 <title>명문 음악 아카데미의 추첨 입학생</title>
 <!--
   [초안] 입장 페이지.
-  이 파일은 연출의 순서와 문구만 잡아 둔 초안이다. 문구를 제외한 레이아웃·그림·소리·움직임은
-  전부 임시이며, GPT가 작업할 때 뜯어고친다. 연출 콘셉트는 저장소의 README.md에 있다.
+  이 파일은 연출의 순서만 잡아 둔 초안이다. 레이아웃·그림·소리·움직임은 전부 임시이며,
+  GPT가 작업할 때 뜯어고친다. 화면에 글자를 넣지 않는다. 연출 콘셉트는 저장소의 README.md에 있다.
 -->
 <style>
-  html, body { height: 100%; margin: 0; }
-  body {
-    background: #000; color: #e9dfc4; overflow: hidden;
-    font-family: "Noto Serif KR", "Nanum Myeongjo", serif;
-    transition: background-color .5s;
+  :root {
+    /* 큰 오선지가 화면 가득 반복되는 배경(임시). 줄 색은 쓰는 쪽의 color를 따른다 */
+    --staff: repeating-linear-gradient(to bottom,
+      transparent 0 9vmin,
+      currentColor 9vmin 9.25vmin, transparent 9.25vmin 11.5vmin,
+      currentColor 11.5vmin 11.75vmin, transparent 11.75vmin 14vmin,
+      currentColor 14vmin 14.25vmin, transparent 14.25vmin 16.5vmin,
+      currentColor 16.5vmin 16.75vmin, transparent 16.75vmin 19vmin,
+      currentColor 19vmin 19.25vmin, transparent 19.25vmin 28vmin);
   }
+  html, body { height: 100%; margin: 0; }
+  body { background: #000; color: #e9dfc4; overflow: hidden; transition: background-color .25s; }
 
-  /* 오선지 + 음표 한 벌. 입장 버튼과 악기 네 자리가 같은 그림을 쓴다 */
-  .score { position: absolute; width: min(34vw, 200px); translate: -50% -50%; transition: color .5s, opacity .8s; }
-  .score svg { display: block; width: 100%; overflow: visible; }
-  .score .lines { fill: none; stroke: currentColor; stroke-width: .8; }
-  .score .note { fill: currentColor; transform-box: fill-box; transform-origin: center; }
+  /* 오선지는 처음부터 화면 전체에 깔려 있고 그림자에 덮여 있다.
+     .spot 은 그 그림자를 한 자리만 걷어 내는 빛이다(같은 오선지를 둥글게 오려 보여 준다) */
+  .staves { position: fixed; inset: 0; background: var(--staff); pointer-events: none; opacity: 0; }
+  .spot {
+    -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), #000 0, transparent var(--r));
+            mask-image: radial-gradient(circle at var(--x) var(--y), #000 0, transparent var(--r));
+  }
+  #glow   { --x: 50%; --y: 46%; --r: 20vmin; animation: breathe 3.4s ease-in-out infinite; transition: opacity .6s; }
+  #cursor { --x: -50vmin; --y: -50vmin; --r: 24vmin; transition: opacity .6s; }
+  #cursor.live { opacity: .4; }
+  .voice  { --r: 38vmin; }
+  .voice.on { animation: flash var(--dur) ease-out; }
 
-  /* 입장 버튼: 은은하게 빛나며 일렁인다 */
+  /* 음표(임시 그림) */
+  .note {
+    position: absolute; translate: -50% -50%; width: clamp(26px, 5vmin, 48px);
+    filter: drop-shadow(0 0 8px currentColor); transition: opacity .6s, color .25s;
+  }
+  .note svg { display: block; width: 100%; fill: currentColor; overflow: visible; }
   #start {
-    left: 50%; top: 46%; width: min(40vw, 150px);
-    background: none; border: 0; padding: 12px; color: inherit; cursor: pointer;
-    filter: drop-shadow(0 0 8px currentColor);
+    left: 50%; top: 46%; box-sizing: content-box; padding: 18px;
+    background: none; border: 0; color: inherit; cursor: pointer;
     animation: sway 5s ease-in-out infinite, breathe 3.4s ease-in-out infinite;
   }
-  #start:focus-visible { outline: 1px solid currentColor; outline-offset: 6px; }
-  #start:disabled { cursor: default; opacity: .25; animation: none; }
+  #start:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+  .voice-note { opacity: 0; }
+  .voice-note.on { animation: flash var(--dur) ease-out; }
 
-  /* 악기 자리: 어둠 속에 숨어 있다가 제 차례에 음표가 반짝이고 오선지가 비친다 */
-  .voice .lines { opacity: 0; transition: opacity 1.4s; }
-  .voice .note { opacity: 0; }
-  .voice.on { filter: drop-shadow(0 0 6px currentColor); }
-  .voice.on .lines { opacity: .32; }
-  .voice.on .note { opacity: .75; animation: twinkle 1.1s ease-out; }
+  /* 누른 뒤: 가운데 빛과 마우스 빛이 꺼지고, 악기 자리만 하나씩 반짝였다 꺼진다 */
+  body.playing #start, body.playing #glow, body.playing #cursor { opacity: 0; animation: none; }
 
-  /* 합주: 화면이 밝아지고 악보가 날아간다 */
+  /* 합주: 그림자가 전부 걷히고 화면이 확 밝아진다 */
   body.tutti { background: #f6f1e3; }
-  body.tutti .score { color: #3a2f1c; }
-  body.tutti .voice .note { animation: flare .9s ease-out; }
-  body.tutti .hint, body.tutti #skip { opacity: 0; }
+  body.tutti #all { opacity: .5; color: #3a2f1c; transition: opacity .25s; }
+  body.tutti .voice-note { opacity: 1; color: #3a2f1c; filter: none; animation: flare .9s ease-out; }
 
   .sheet {
     position: fixed; left: 0; top: 0; width: var(--w); aspect-ratio: 3 / 4;
@@ -53,31 +66,31 @@
     animation: fly var(--d) ease-in var(--delay) both;
   }
 
-  .hint, #skip { position: fixed; left: 0; right: 0; text-align: center; font-size: 13px; letter-spacing: .08em; transition: opacity .6s; }
-  .hint { top: calc(46% + 90px); margin: 0; opacity: .55; }
-  body.playing .hint { opacity: 0; }
-  #skip { bottom: 28px; color: inherit; opacity: .4; }
-  #skip:hover, #skip:focus-visible { opacity: .9; }
+  /* 화면에는 글자를 두지 않는다. 건너뛰기는 키보드로 초점이 갔을 때만 보인다 */
+  #skip { position: fixed; left: 12px; bottom: 12px; color: inherit; font: 13px sans-serif; opacity: 0; pointer-events: none; }
+  #skip:focus-visible { opacity: 1; }
 
-  @keyframes sway    { 0%, 100% { transform: translateY(0) skewX(0); } 50% { transform: translateY(-5px) skewX(-3deg); } }
-  @keyframes breathe { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
-  @keyframes twinkle { 0% { opacity: 0; transform: scale(.6); } 30% { opacity: 1; transform: scale(1.3); } 100% { opacity: .75; transform: scale(1); } }
-  @keyframes flare   { 0% { transform: scale(1); } 40% { transform: scale(1.5); } 100% { transform: scale(1); } }
+  @keyframes sway    { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-4deg); } }
+  @keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+  @keyframes flash   { 0% { opacity: 0; } 22% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes flare   { 0% { transform: scale(1); } 40% { transform: scale(1.6); } 100% { transform: scale(1); } }
   @keyframes fly     { from { transform: translate(var(--x0), 110vh) rotate(var(--r0)); } to { transform: translate(var(--x1), -50vh) rotate(var(--r1)); } }
 
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { #start { animation: breathe 3.4s ease-in-out infinite; } }
 </style>
 </head>
 <body>
-  <button id="start" class="score" aria-label="음표를 눌러 입장"></button>
-  <p class="hint">음표를 누르면 소리가 납니다</p>
+  <div class="staves spot" id="glow"></div>
+  <div class="staves spot" id="cursor"></div>
+  <div class="staves" id="all"></div>
+  <button id="start" class="note" aria-label="입장"></button>
   <a id="skip" href="home.html">소리 없이 들어가기</a>
 
 <script>
-// ── 설정: 문구를 뺀 값은 전부 임시다 ─────────────────────────────
+// ── 설정: 전부 임시 값이다 ───────────────────────────────────────
 const 설정 = {
   다음페이지: 'home.html',
-  악기간격: 1300, // ms. 악기 하나가 울리고 다음 악기가 울리기까지
+  악기간격: 1300, // ms. 악기 하나가 반짝이고 꺼진 뒤 다음 악기가 울리기까지
   합주길이: 1800, // ms. 네 악기가 함께 울리고 사이트로 넘어가기까지
   악보장수: 48,
   // 위에서부터 순서대로 하나씩 울린다. x·y는 화면 위 자리(%).
@@ -90,21 +103,33 @@ const 설정 = {
   ],
 };
 
-// ── 그림(임시): 물결진 오선지 다섯 줄과 음표 하나 ─────────────────
-const 악보그림 = `<svg viewBox="0 0 120 60" aria-hidden="true">
-  <g class="lines">${[14, 22, 30, 38, 46].map(y => `<path d="M0 ${y} Q30 ${y - 4} 60 ${y} T120 ${y}"/>`).join('')}</g>
-  <g class="note"><ellipse cx="56" cy="38" rx="6" ry="4.4" transform="rotate(-20 56 38)"/><rect x="60.6" y="8" width="1.6" height="29"/><path d="M62.2 8q10 4 8 16q-1-8-8-10z"/></g>
-</svg>`;
+const 음표그림 = `<svg viewBox="0 0 24 40" aria-hidden="true"><ellipse cx="8" cy="33" rx="6" ry="4.4" transform="rotate(-20 8 33)"/><rect x="12.6" y="4" width="1.6" height="29"/><path d="M14.2 4q10 4 8 16q-1-8-8-10z"/></svg>`;
 
 const start = document.getElementById('start');
-start.innerHTML = 악보그림;
+start.innerHTML = 음표그림;
+document.body.style.setProperty('--dur', 설정.악기간격 + 'ms');
+
+// 악기 자리마다 [그림자를 걷어 내는 빛, 음표] 한 쌍
 const 자리 = 설정.악기.map(v => {
-  const el = document.createElement('div');
-  el.className = 'score voice';
-  el.style.left = v.x + '%';
-  el.style.top = v.y + '%';
-  el.innerHTML = 악보그림;
-  return document.body.appendChild(el);
+  const 빛 = document.createElement('div');
+  빛.className = 'staves spot voice';
+  빛.style.setProperty('--x', v.x + '%');
+  빛.style.setProperty('--y', v.y + '%');
+  const 음표 = document.createElement('div');
+  음표.className = 'note voice-note';
+  음표.style.left = v.x + '%';
+  음표.style.top = v.y + '%';
+  음표.innerHTML = 음표그림;
+  document.body.append(빛, 음표);
+  return [빛, 음표];
+});
+
+// 누르기 전: 마우스가 지나가는 자리의 그림자가 옅게 걷힌다
+const cursor = document.getElementById('cursor');
+addEventListener('pointermove', e => {
+  cursor.style.setProperty('--x', e.clientX + 'px');
+  cursor.style.setProperty('--y', e.clientY + 'px');
+  cursor.classList.add('live');
 });
 
 // ── 소리(임시): 파일이 없으면 Web Audio 합성음 한 음 ──────────────
@@ -135,15 +160,15 @@ function 악보날리기() {
   }
 }
 
-// ── 순서: 누름 → 악기 넷이 하나씩 → 합주·밝아짐·악보 → 사이트 ────
+// ── 순서: 누름 → 악기 넷이 하나씩 반짝이고 꺼짐 → 합주·밝아짐·악보 → 사이트 ──
 const 기다림 = ms => new Promise(r => setTimeout(r, ms));
 start.addEventListener('click', async () => {
   start.disabled = true;
   document.body.classList.add('playing');
   if (window.AudioContext) ctx = new AudioContext();
   for (const [i, v] of 설정.악기.entries()) {
-    자리[i].classList.add('on');
-    소리(v, 설정.악기간격 / 1000 * 1.6);
+    자리[i].forEach(el => el.classList.add('on'));
+    소리(v, 설정.악기간격 / 1000);
     await 기다림(설정.악기간격);
   }
   document.body.classList.add('tutti');
