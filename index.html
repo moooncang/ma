@@ -10,18 +10,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+KR:wght@400;600;900&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="assets/css/entry.css?v=impact-5">
+<link rel="stylesheet" href="assets/css/entry.css?v=wave-6">
 <link rel="preload" href="assets/entry/cache/score-1.webp" as="image">
-<script type="module" src="assets/js/entry.js?v=impact-5"></script>
+<script type="module" src="assets/js/entry.js?v=wave-6"></script>
 </head>
 <body class="entry-active">
 <div id="site" inert aria-hidden="true"></div>
 <div id="entry" data-phase="idle">
-  <div id="paper-fallback" aria-hidden="true"></div>
-  <canvas id="paper-scene" aria-hidden="true"></canvas>
-  <div id="entry-shade" aria-hidden="true"><i id="entry-glow"></i><i id="entry-cursor"></i></div>
-  <div id="entry-atmosphere" aria-hidden="true"></div>
-  <div id="entry-notes" aria-hidden="true"></div>
+  <div id="entry-visual" aria-hidden="true">
+    <div id="paper-fallback"></div>
+    <canvas id="paper-scene"></canvas>
+    <div id="entry-shade"><i id="entry-glow"></i><i id="entry-cursor"></i></div>
+    <div id="entry-pressure"></div>
+    <div id="entry-atmosphere"></div>
+    <div id="entry-notes"></div>
+  </div>
   <button id="entry-start" type="button" aria-label="음악과 함께 입장">
     <span class="note-art" aria-hidden="true"></span>
   </button>

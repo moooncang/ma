@@ -78,7 +78,19 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       await page.evaluate(() => {
         window.entrancePhases = [];
         window.openingLight = [];
+        window.finaleFrames = [];
         const entry = document.querySelector('#entry');
+        const watchFinale = () => {
+          if(!entry.isConnected)return;
+          const gathering=entry.classList.contains('entry-gathering'),finale=entry.classList.contains('entry-finale');
+          if(gathering||finale)finaleFrames.push({
+            gathering,phase:entry.dataset.phase,
+            shadow:+getComputedStyle(document.getElementById('entry-pressure')).opacity,
+            scale:new DOMMatrixReadOnly(getComputedStyle(document.getElementById('entry-visual')).transform).a
+          });
+          requestAnimationFrame(watchFinale);
+        };
+        requestAnimationFrame(watchFinale);
         let openingAt;
         const watchLight = now => {
           if(entry.dataset.phase==='intro' && openingAt===undefined)openingAt=now;
@@ -100,6 +112,10 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       assert.ok(light.filter(s=>s.age<1000).every(s=>s.opacity>.45),'The opening light does not snap shut as the note breaks apart');
       assert.ok(light.some(s=>s.age>1450 && s.age<1700 && s.opacity>.2),'Opening afterglow overlaps the next note');
       assert.ok(light.at(-1).opacity<.01,'Opening illumination eventually fades away');
+      const finale=await page.evaluate(() => finaleFrames);
+      assert.ok(finale.some(f=>f.gathering && f.shadow>.7),'Shadows press inward before the chord');
+      assert.ok(finale.some(f=>f.phase==='tutti' && f.scale>1.04),'The chord drives a visible screen ripple');
+      assert.ok(finale.at(-1).shadow<.01 && Math.abs(finale.at(-1).scale-1)<.001,'The impact settles before the home is revealed');
       assert.deepEqual(await page.evaluate(() => entrancePhases), ['loading','intro','playing','tutti','flight','done']);
       const audio = await page.evaluate(() => ({starts:sampleStarts,oscillators:oscillatorStarts}));
       assert.equal(audio.oscillators, 0, 'Recorded instruments, no oscillator imitations');
@@ -107,8 +123,8 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       assert.deepEqual(audio.starts.map(s=>s.phase),['intro','playing','playing','playing','playing','tutti','tutti','tutti','tutti']);
       assert.deepEqual(audio.starts.slice(1,5).map(s => s.appearances), [1,2,3,4], 'One sound starts with each new solo appearance');
       const gaps = audio.starts.slice(1,6).map((s,i) => s.at-audio.starts[i].at);
-      assert.ok(gaps.every((gap,i) => Math.abs(gap-[1.5,1.2,.9,.6,.45][i])<.12),'The phrase follows its accelerating rhythm');
-      assert.ok(gaps.slice(1).every((gap,i) => gap<gaps[i]),'Every interval narrows toward the final chord');
+      assert.ok(gaps.every((gap,i) => Math.abs(gap-[1.2,1.2,.9,.6,.45][i])<.12),'The phrase follows its accelerating rhythm');
+      assert.ok(Math.abs(gaps[0]-gaps[1])<.12 && gaps.slice(2).every((gap,i) => gap<gaps[i+1]),'Two opening beats lead into progressively shorter intervals');
       console.log('Measured cue gaps (s):', gaps.map(gap=>gap.toFixed(3)).join(', '));
       assert.ok(audio.starts.slice(5).every(s=>s.at===audio.starts[5].at),'The final four voices start at exactly the same audio time');
       assert.equal(audio.starts[0].fingerprint,audio.starts[2].fingerprint,'The opening key uses the actual piano recording');

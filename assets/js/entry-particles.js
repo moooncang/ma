@@ -35,7 +35,7 @@ export async function createParticles(host,signal) {
     c.globalAlpha=1;c.fillStyle=color;c.beginPath();c.arc(32,32,6.4,0,Math.PI*2);c.fill();return sprite;
   });
   let width, height, frame, stopped = false, gust = false, hovered = false, last = -Infinity;
-  let focus = {x:.5,y:.48}, idle = true, dissolveAt = null;
+  let focus = {x:.5,y:.48}, idle = true, dissolveAt = null, gatheringAt = null;
   let left=0,top=0,paintWidth=0,paintHeight=0;
   const notes = [], sparks = [];
   function resize() {
@@ -56,9 +56,9 @@ export async function createParticles(host,signal) {
   const hover = () => { hovered = true; }, leave = () => { hovered = false; };
   start.addEventListener('pointerenter', hover); start.addEventListener('pointerleave', leave);
   start.addEventListener('focus', hover); start.addEventListener('blur', leave);
-  function burst(x,y,strength=1) {
+  function burst(x,y,strength=1,speed=1) {
     for (let i=0;i<26*strength;i++) {
-      const a=random()*Math.PI*2, velocity=20+random()*75;
+      const a=random()*Math.PI*2, velocity=(20+random()*75)*speed;
       sparks.push({x:x*width,y:y*height,vx:Math.cos(a)*velocity,vy:Math.sin(a)*velocity-16,life:0,max:.7+random()*1.2,size:.5+random(),tone:Math.floor(random()*5),trail:[]});
     }
   }
@@ -73,9 +73,9 @@ export async function createParticles(host,signal) {
   function drawNote(kind,cx,cy,scale,t,alpha,spread=0) {
     const breathe=1+Math.sin(t*1.25)*.018;
     const bob=Math.sin(t*1.1)*4;
-    const halo=ctx.createRadialGradient(cx,cy,0,cx,cy,105*scale);
+    const halo=ctx.createRadialGradient(cx,cy,0,cx,cy,72*scale);
     halo.addColorStop(0,'#b1e2ff0c');halo.addColorStop(.55,'#b8c3ff06');halo.addColorStop(1,'#adcfff00');
-    ctx.globalAlpha=alpha;ctx.fillStyle=halo;ctx.fillRect(cx-110*scale,cy-110*scale,220*scale,220*scale);
+    ctx.globalAlpha=alpha;ctx.fillStyle=halo;ctx.fillRect(cx-75*scale,cy-75*scale,150*scale,150*scale);
     for (const p of clouds[kind]) {
       const drift=Math.sin(t*(.65+p.drift*.35)+p.phase);
       const scatter=spread*(25+p.drift*85);
@@ -115,7 +115,8 @@ export async function createParticles(host,signal) {
       const fade=Math.min(1,age/n.attack)*Math.min(1,(1-p)*3.3);
       drawNote(n.kind,n.x*width,n.y*height,n.scale,t,fade,Math.max(0,n.attack-age)*3+Math.max(0,p-.65)*2.7);
     }
-    const cx=focus.x*width,cy=focus.y*height,r=Math.min(width,height)*(hovered?.16:.14);
+    const gather = gatheringAt===null ? 0 : Math.min(1,(t-gatheringAt)/.45);
+    const cx=focus.x*width,cy=focus.y*height,r=Math.min(width,height)*(hovered?.12:.105)*(1-gather*.7);
     if(!gust) {
       for(let k=0;k<2;k++) {
         const a=t*(k?-.38:.3)+k*2.2,tilt=k?.48:-.55;
@@ -135,6 +136,10 @@ export async function createParticles(host,signal) {
     for(let i=sparks.length-1;i>=0;i--) {
       const p=sparks[i];p.life+=dt;if(p.life>p.max){sparks.splice(i,1);continue;}
       p.trail.unshift([p.x,p.y]);p.trail.length=Math.min(6,p.trail.length);
+      if(gatheringAt!==null) {
+        p.vx+=(width*.5-p.x)*dt*16;
+        p.vy+=(height*.48-p.y)*dt*16;
+      }
       p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy-=10*dt;p.vx*=.985;
       const alpha=(1-p.life/p.max)**1.4;
       for(let j=0;j<p.trail.length-1;j++) {
@@ -154,10 +159,12 @@ export async function createParticles(host,signal) {
       // Resizing clears the canvas; repaint in the same task to preserve the note.
       cancelAnimationFrame(frame);last=-Infinity;draw(performance.now());
     },
+    gather(){gatheringAt=performance.now()/1000;focus={x:.5,y:.48};},
     reveal(instruments){
-      notes.length=0;
+      gatheringAt=null;notes.length=0;
       instruments.forEach(i=>pulse(i.x/100,i.y/100,.8,i.symbol,{duration:2.2,scale:1,attack:.045}));
-      focus={x:.5,y:.48};burst(.5,.48,2.4);
+      // The same number of sparks, with faster radial trails for the impact.
+      focus={x:.5,y:.48};burst(.5,.48,2.4,5);
     },
     wind(){gust=true;},
     dispose(){stopped=true;cancelAnimationFrame(frame);removeEventListener('resize',resize);start.removeEventListener('pointerenter',hover);start.removeEventListener('pointerleave',leave);start.removeEventListener('focus',hover);start.removeEventListener('blur',leave);canvas.remove();}

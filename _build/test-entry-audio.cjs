@@ -17,20 +17,20 @@ const fs = require('node:fs');
       ctx.createBufferSource=()=>{const source=originalSource(),start=source.start.bind(source);source.start=(...args)=>{attacks++;return start(...args);};return source;};
       const sampler = createSampler(ctx,samples); await sampler.ready;
       sampler.play('piano',{when:.2,cue:'intro'});
-      ['violin','piano','cello','flute'].forEach((type,i) => sampler.play(type,{when:[1.7,2.9,3.8,4.4][i]}));
-      sampler.ensemble(4.85);
+      ['violin','piano','cello','flute'].forEach((type,i) => sampler.play(type,{when:[1.4,2.6,3.5,4.1][i]}));
+      sampler.ensemble(4.55);
       // Repeated UI events do not replay any of the nine intended attacks.
       sampler.play('piano',{when:15,cue:'intro'});
       ['violin','piano','cello','flute'].forEach(type => sampler.play(type,{when:15}));
       sampler.ensemble(15);
-      sampler.fadeOut(1.6,9.05);
+      sampler.fadeOut(1.6,8.75);
       const rendered = await ctx.startRendering();
       const left = rendered.getChannelData(0), right = rendered.getChannelData(1);
       const rms = (a,from,to) => {
         const start=Math.floor(from*44100),end=Math.floor(to*44100);
         let sum=0;for(let i=start;i<end;i++)sum+=a[i]*a[i];return Math.sqrt(sum/(end-start));
       };
-      const levels=[.2,1.7,2.9,3.8,4.4,4.85].map(t => rms(left,t+.1,t+.4));
+      const levels=[.2,1.4,2.6,3.5,4.1,4.55].map(t => rms(left,t+.1,t+.4));
       let peak=0,difference=0;for(let i=0;i<left.length;i++){peak=Math.max(peak,Math.abs(left[i]),Math.abs(right[i]));difference+=Math.abs(left[i]-right[i]);}
       // Optional audition artifact, stereo PCM, generated from the actual graph.
       const wav=new ArrayBuffer(44+left.length*4), view=new DataView(wav);
@@ -39,7 +39,7 @@ const fs = require('node:fs');
       view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,2,true);view.setUint32(24,44100,true);view.setUint32(28,44100*4,true);view.setUint16(32,4,true);view.setUint16(34,16,true);word(36,'data');view.setUint32(40,left.length*4,true);
       for(let i=0;i<left.length;i++){view.setInt16(44+i*4,Math.max(-1,Math.min(1,left[i]))*32767,true);view.setInt16(46+i*4,Math.max(-1,Math.min(1,right[i]))*32767,true);}
       let binary='';const bytes=new Uint8Array(wav);for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
-      return {levels,attacks,peak,stereoDifference:difference/left.length,reverbTail:rms(left,8.85,9.35),tail:rms(left,11,15.8),wav:btoa(binary)};
+      return {levels,attacks,peak,stereoDifference:difference/left.length,reverbTail:rms(left,8.55,9.05),tail:rms(left,11,15.8),wav:btoa(binary)};
     });
     assert.ok(result.levels.every(rms => rms>.008), 'Opening piano, four solos and final chord are audible');
     assert.ok(result.levels[5]>Math.max(...result.levels.slice(0,5))*1.2,'The final chord has a clear dynamic accent above the solos');

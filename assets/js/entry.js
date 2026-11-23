@@ -15,7 +15,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
   const setPhase = value => { phase = value; entry.dataset.phase = value; };
   const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
   // Gradually tighten the phrase, from the opening key to the final chord.
-  const cueGaps = [1500, 1200, 900, 600, 450];
+  const cueGaps = [1200, 1200, 900, 600, 450];
   let samples = reduced.matches ? null : preloadSamples(lifetime.signal);
   start.querySelector('.note-art').innerHTML = noteMarkup('eighth');
 
@@ -63,13 +63,14 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
   }, {signal:lifetime.signal});
 
   let particles = null;
-  if (!reduced.matches) import('./entry-particles.js?v=impact-5').then(async ({createParticles}) => {
+  if (!reduced.matches) import('./entry-particles.js?v=wave-6').then(async ({createParticles}) => {
     if (!finished && !reduced.matches && phase !== 'flight') {
       particles = await createParticles(document.getElementById('entry-atmosphere'), lifetime.signal);
       if (finished || reduced.matches) { particles?.dispose(); particles=null; return; }
       if (particles) {
         entry.classList.add('has-particle-notes');
         if (phase === 'intro' || phase === 'playing' || phase === 'tutti') particles.begin();
+        if (entry.classList.contains('entry-gathering')) particles.gather();
       }
     }
   }).catch(() => {});
@@ -191,6 +192,10 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
       instrument.light.classList.add('on'); instrument.glyph.classList.add('on');
       particles?.pulse(instrument.x / 100, instrument.y / 100, 1, instrument.symbol);
       sound?.play(instrument.type);
+      if (i === instruments.length - 1) {
+        entry.classList.add('entry-gathering');
+        particles?.gather();
+      }
       await pause(cueGaps[i + 1]);
     }
     if (finished) return;
@@ -198,6 +203,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
     if (!await loadHome()) { await finish(); return; }
     if (finished) return;
     setPhase('tutti');
+    entry.classList.remove('entry-gathering');
     entry.classList.add('entry-finale');
     particles?.reveal(instruments);
     sound?.ensemble();
