@@ -10,8 +10,8 @@ body.entry-active { overflow: hidden; background: #070707; }
 .entry-paper { position: absolute; width: var(--w); height: var(--h); left: var(--x); top: var(--y); background: #f5efdf var(--score) center / 100% 100%; transform: translate(-50%, -50%) rotate(var(--r)); box-shadow: 2px 5px 15px #0006; }
 #entry-shade { background: #020304; mix-blend-mode: multiply; transition: opacity .48s cubic-bezier(.2,.65,.25,1); }
 #entry-shade i { display: block; position: absolute; left: var(--x,50%); top: var(--y,48%); width: var(--size,75vmin); aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(ellipse, #d3e5f0 0%, #a0afb9 12%, #515b65 28%, #22262c 46%, #070909 63%, transparent 74%); }
-#entry-glow { opacity: .66; animation: entry-breathe 5.5s ease-in-out infinite; }
-#entry-cursor { --size: 54vmin; --x: -100%; opacity: 0; transition: opacity .5s; }
+#entry-glow { will-change:transform,opacity; opacity: .66; animation: entry-breathe 5.5s ease-in-out infinite; }
+#entry-shade #entry-cursor { will-change:transform,opacity; left:0; top:0; transform:translate3d(-1000px,-1000px,0); --size: 54vmin; opacity: 0; transition: opacity .5s; }
 #entry-cursor.live { opacity: .4; }
 #entry-shade .voice-light { --size: 110vmin; opacity: 0; }
 #entry-shade .voice-light.on { animation: entry-light 1.45s ease-out both; }
@@ -33,7 +33,7 @@ body.entry-active { overflow: hidden; background: #070707; }
 #entry[data-phase="playing"] #entry-start, #entry[data-phase="playing"] #entry-glow, #entry[data-phase="playing"] #entry-cursor { opacity: 0; animation: none; pointer-events: none; }
 #entry[data-phase="tutti"] #entry-shade, #entry[data-phase="flight"] #entry-shade { opacity: 0; }
 #entry[data-phase="tutti"] #entry-start, #entry[data-phase="flight"] #entry-start { opacity:0; pointer-events:none; }
-#entry[data-phase="tutti"] .voice-note { animation: entry-tutti .8s ease-out both; }
+#entry[data-phase="tutti"] .voice-note { opacity:0; animation:none; }
 #entry[data-phase="flight"] .voice-note { opacity: 0; animation: none; }
 #entry[data-phase="flight"] #entry-atmosphere { opacity: 0; }
 #entry[data-phase="flight"] { background:transparent; }

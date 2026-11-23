@@ -1,5 +1,5 @@
 // Actual CC0 orchestral recordings; no oscillator imitations. See audio/README.md.
-const names = ['violin', 'piano-d', 'piano-fs', 'piano-a', 'cello', 'flute'];
+const names = ['violin', 'piano-d', 'cello', 'flute'];
 
 export function preloadSamples(signal) {
   const controller = new AbortController();
@@ -33,25 +33,25 @@ export function createEntranceSound(sampleData) {
 // Accepting an AudioContext also lets the actual mix be checked offline.
 export function createSampler(ctx, sampleData) {
   let closed = false;
-  const buffers = new Map(), playing = new Set();
+  const buffers = new Map(), playing = new Set(), played = new Set();
   const master = ctx.createGain(); master.gain.value = .72;
   const limiter = ctx.createDynamicsCompressor();
   limiter.threshold.value = -12; limiter.knee.value = 14; limiter.ratio.value = 4;
   limiter.attack.value = .008; limiter.release.value = .22;
   master.connect(limiter).connect(ctx.destination);
   const reverb = ctx.createConvolver(), predelay = ctx.createDelay(.2);
-  predelay.delayTime.value = .035;
+  predelay.delayTime.value = .025;
   const damp = ctx.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 5800;
-  const wet = ctx.createGain(); wet.gain.value = .26;
+  const wet = ctx.createGain(); wet.gain.value = .18;
   // A diffuse stereo hall, with a clear dry onset and no metallic feedback.
-  const impulse = ctx.createBuffer(2, Math.floor(ctx.sampleRate * 2.8), ctx.sampleRate);
+  const impulse = ctx.createBuffer(2, Math.floor(ctx.sampleRate * 1.2), ctx.sampleRate);
   let seed = 29;
   for (let c = 0; c < 2; c++) {
     const data = impulse.getChannelData(c); let smooth = 0;
     for (let i = 0; i < data.length; i++) {
       seed = seed * 16807 % 2147483647;
       smooth = smooth * .63 + (seed / 2147483647 * 2 - 1) * .37;
-      data[i] = smooth * Math.exp(-i / ctx.sampleRate * 2.5) * Math.min(1, i / (ctx.sampleRate * .025));
+      data[i] = smooth * Math.exp(-i / ctx.sampleRate * 6) * Math.min(1, i / (ctx.sampleRate * .025));
     }
   }
   reverb.buffer = impulse;
@@ -83,17 +83,14 @@ export function createSampler(ctx, sampleData) {
     source.onended = () => { playing.delete(source); source.disconnect(); envelope.disconnect(); stereo.disconnect(); };
     source.start(at); source.stop(end + .01);
   }
-  function play(type, ensemble = false, when = ctx.currentTime + .015) {
-    const gain = ensemble ? .57 : 1;
-    const duration = ensemble ? 2.5 : 1.25;
-    if (type === 'violin') voice('violin', when, duration, .56 * gain, -.4, .1);
-    if (type === 'cello') voice('cello', when, duration, .6 * gain, -.16, .1);
-    if (type === 'flute') voice('flute', when, duration, .3 * gain, .4, .07);
-    if (type === 'piano') {
-      ['piano-d', 'piano-fs', 'piano-a'].forEach((name, i) => {
-        voice(name, when + i * .135, ensemble ? 2.75 : 1.9, (.58 - i * .08) * gain, .08 + i * .12, .006);
-      });
-    }
+  function play(type, when = ctx.currentTime + .015) {
+    // One attack per instrument in this entrance; no arpeggio or final replay.
+    if (closed || played.has(type)) return;
+    played.add(type);
+    if (type === 'violin') voice('violin', when, .9, .56, -.4, .025);
+    if (type === 'cello') voice('cello', when, .9, .6, -.16, .025);
+    if (type === 'flute') voice('flute', when, .85, .3, .4, .025);
+    if (type === 'piano') voice('piano-d', when, 1, .58, .2, .006);
   }
   return {
     ready, play,

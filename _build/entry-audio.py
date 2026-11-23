@@ -1,4 +1,4 @@
-"""Prepare six CC0 VSCO 2 CE recordings. Requires Python 3 and ffmpeg."""
+"""Prepare four CC0 VSCO 2 CE recordings. Requires Python 3 and ffmpeg."""
 from pathlib import Path
 import hashlib
 import os
@@ -17,8 +17,6 @@ SOURCES = [
     ('cello', 'Strings/Cello Section/susvib/susvib_D2_v1_1.wav', 'e8640dec9febc6e39fcf06b19d2c95a85d5ff8c38f13c9879e69f551eaf38ab8', 0, .5),
     ('flute', 'Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav', 'b609d37fb577e2a0f64f20800fba4bed067151375349bf713c0d4e803f862580', 0, .45),
     ('piano-d', 'Keys/Upright Piano/Player_dyn2_rr1_026.wav', '4e668e75c3922c79ef06bd46806224dbf8dbfa0be1569847a1cd17e573a967ec', 1, .7),
-    ('piano-fs', 'Keys/Upright Piano/Player_dyn2_rr1_028.wav', '84fe87bd24dc93d354213f730517a29f485c40715d5959af97976b364110b70a', 1, .7),
-    ('piano-a', 'Keys/Upright Piano/Player_dyn2_rr1_030.wav', '4b558995c108f7f1dcede12c7e0444caa2658205fea34a314abf485dc6b7e710', 0, .7),
 ]
 
 OUT.mkdir(parents=True, exist_ok=True)

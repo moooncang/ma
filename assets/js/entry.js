@@ -1,5 +1,5 @@
-import {noteMarkup} from './entry-notes.js?v=light-2';
-import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
+import {noteMarkup} from './entry-notes.js?v=perf-3';
+import {preloadSamples, createEntranceSound} from './entry-audio.js?v=perf-3';
 
 /* Entrance controller. No external services, autoplay or duplicated home markup. */
 (() => {
@@ -35,11 +35,11 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
     el.className = 'entry-paper';
     el.style.cssText = `--x:${sheet.x*100}%;--y:${sheet.y*100}%;--r:${-sheet.angle}rad;--w:max(${(mobile?90:39)*sheet.scale}vw,${(mobile?43:63)*sheet.scale}vh);--h:max(${(mobile?90:39)*sheet.scale*1.414}vw,${(mobile?43:63)*sheet.scale*1.414}vh);--delay:${sheet.delay}s;--direction:${sheet.direction}`;
     // Absolute URLs also work under a GitHub Pages repository subpath.
-    el.style.setProperty('--score', `url('${new URL(`assets/entry/score-${i%12+1}.svg`, location.href)}')`);
+    el.style.setProperty('--score', `url('${new URL(`assets/entry/cache/score-${i%12+1}.webp`, location.href)}')`);
     document.getElementById('paper-fallback').append(el);
   }
   if (!reduced.matches) {
-    import('./entry-scene.js').then(module => module.createPaperScene(document.getElementById('paper-scene'), layout)).then(renderer => {
+    import('./entry-scene.js?v=perf-3').then(module => module.createPaperScene(document.getElementById('paper-scene'), layout, lifetime.signal)).then(renderer => {
       if (finished || reduced.matches || phase === 'flight') return renderer.dispose();
       scene = renderer;
       entry.classList.add('has-webgl');
@@ -52,9 +52,10 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
   }, {signal:lifetime.signal});
 
   let particles = null;
-  if (!reduced.matches) import('./entry-particles.js?v=light-2').then(({createParticles}) => {
+  if (!reduced.matches) import('./entry-particles.js?v=perf-3').then(async ({createParticles}) => {
     if (!finished && !reduced.matches && phase !== 'flight') {
-      particles = createParticles(document.getElementById('entry-atmosphere'));
+      particles = await createParticles(document.getElementById('entry-atmosphere'), lifetime.signal);
+      if (finished || reduced.matches) { particles?.dispose(); particles=null; return; }
       if (particles) {
         entry.classList.add('has-particle-notes');
         if (phase === 'playing' || phase === 'tutti') particles.begin();
@@ -78,29 +79,43 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
     return {...instrument,light,glyph};
   });
   const cursor = document.getElementById('entry-cursor');
+  let pointerFrame = 0, pointerX = 0, pointerY = 0;
   entry.addEventListener('pointermove', event => {
     if (phase !== 'idle' || event.pointerType === 'touch' || reduced.matches) return;
-    cursor.style.setProperty('--x', `${event.clientX}px`);
-    cursor.style.setProperty('--y', `${event.clientY}px`);
-    cursor.classList.add('live');
+    pointerX = event.clientX; pointerY = event.clientY;
+    if (!pointerFrame) pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = 0;
+      cursor.style.transform = 'translate3d(' + pointerX + 'px,' + pointerY + 'px,0) translate(-50%,-50%)';
+      cursor.classList.add('live');
+    });
   }, {signal:lifetime.signal});
-  entry.addEventListener('pointerleave', () => cursor.classList.remove('live'), {signal:lifetime.signal});
+  entry.addEventListener('pointerleave', () => {
+    cancelAnimationFrame(pointerFrame); pointerFrame = 0; cursor.classList.remove('live');
+  }, {signal:lifetime.signal});
 
-  // Fetch the actual home, rather than showing an imitation or an iframe.
-  // It is already painted beneath the papers when they lift away.
-  const homeController = new AbortController();
-  const homeTimeout = setTimeout(() => homeController.abort(), 15000);
-  const homeReady = fetch('home.html', {signal:homeController.signal}).then(async response => {
-    if (!response.ok) throw new Error(`Home: ${response.status}`);
-    const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
-    if (!doc.querySelector('main.home')) throw new Error('Home markup missing');
-    for (const child of doc.body.children) {
-      if (child.tagName !== 'SCRIPT') site.append(document.importNode(child, true));
-    }
-    const images = [...site.querySelectorAll('.hero img')];
-    await Promise.race([Promise.allSettled(images.map(img => img.decode())), pause(2500)]);
-    return true;
-  }).catch(() => false).finally(() => clearTimeout(homeTimeout));
+  // Prepare the real home on intent, not while the visitor is just watching
+  // the first note. The instrument sequence leaves time to decode it.
+  let homeReady;
+  function loadHome() {
+    if (homeReady) return homeReady;
+    const homeController = new AbortController();
+    const homeTimeout = setTimeout(() => homeController.abort(), 15000);
+    homeReady = fetch('home.html', {signal:homeController.signal}).then(async response => {
+      if (!response.ok) throw new Error(`Home: ${response.status}`);
+      const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+      if (!doc.querySelector('main.home')) throw new Error('Home markup missing');
+      for (const child of doc.body.children) {
+        if (child.tagName !== 'SCRIPT') site.append(document.importNode(child, true));
+      }
+      const images = [...site.querySelectorAll('.hero img')];
+      await Promise.race([Promise.allSettled(images.map(img => img.decode())), pause(2500)]);
+      return true;
+    }).catch(() => false).finally(() => clearTimeout(homeTimeout));
+
+    return homeReady;
+  }
+  start.addEventListener('pointerenter', loadHome, {signal:lifetime.signal,once:true});
+  start.addEventListener('focus', loadHome, {signal:lifetime.signal,once:true});
 
   async function finish() {
     if (finished) return;
@@ -109,8 +124,9 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
     scene?.dispose(); scene = null;
     sound?.close(); sound = null;
     lifetime.abort();
+    cancelAnimationFrame(pointerFrame);
     particles?.dispose(); particles = null;
-    if (!await homeReady) { location.replace('home.html'); return; }
+    if (!await loadHome()) { location.replace('home.html'); return; }
     document.body.classList.remove('entry-active');
     site.inert = false;
     site.removeAttribute('aria-hidden');
@@ -126,6 +142,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
   start.addEventListener('click', async () => {
     if (phase !== 'idle') return;
     start.disabled = true;
+    loadHome();
     setPhase('loading');
     start.setAttribute('aria-busy', 'true');
     // Reduced motion gets the content immediately, without a flashing sequence.
@@ -137,6 +154,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
     setPhase('playing');
     particles?.begin();
     for (const instrument of instruments) {
+      await new Promise(requestAnimationFrame);
       if (finished) return;
       instrument.light.classList.add('on'); instrument.glyph.classList.add('on');
       particles?.pulse(instrument.x / 100, instrument.y / 100, 1, instrument.symbol);
@@ -145,20 +163,20 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
     }
     if (finished) return;
     // A slow or failed document request must not expose an empty backdrop.
-    if (!await homeReady) { await finish(); return; }
+    if (!await loadHome()) { await finish(); return; }
     if (finished) return;
     setPhase('tutti');
-    particles?.tutti(instruments);
-    instruments.forEach(instrument => sound?.play(instrument.type, true));
+    particles?.reveal();
     await pause(550);
     if (finished) return;
     setPhase('flight');
     particles?.wind();
-    scene?.fly();
+    const flightDone = scene?.fly();
     await pause(2950);
     if (finished) return;
     sound?.fadeOut(.4);
     await pause(400);
+    if (flightDone) await Promise.race([flightDone, pause(2500)]);
     if (!finished) await finish();
   }, {signal:lifetime.signal});
   skip.addEventListener('click', event => { event.preventDefault(); finish(); }, {signal:lifetime.signal});

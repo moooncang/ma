@@ -1,14 +1,24 @@
-import {noteCloud} from './entry-notes.js?v=light-2';
+async function loadClouds(signal) {
+  const response=await fetch(new URL('../entry/cache/note-points.bin',import.meta.url),{signal});
+  if(!response.ok)throw new Error('Missing light points');
+  const data=new Float32Array(await response.arrayBuffer());
+  if(data.length!==4*630*6)throw new Error('Invalid light points');
+  return Object.fromEntries(['eighth','beamed','quarter','sixteenth'].map((kind,index)=>{
+    const points=[];
+    for(let i=0;i<630;i++){const n=(index*630+i)*6;points.push({x:data[n],y:data[n+1],phase:data[n+2],size:data[n+3],drift:data[n+4],tone:data[n+5]});}
+    return [kind,points];
+  }));
+}
 
 // A single additive canvas for the notes themselves and the drifting light.
-export function createParticles(host) {
+export async function createParticles(host,signal) {
+  const clouds = await loadClouds(signal);
   const canvas = document.createElement('canvas'); host.append(canvas);
   canvas.style.cssText = 'width:100%;height:100%;display:block';
   const ctx = canvas.getContext('2d');
   if (!ctx) { canvas.remove(); return null; }
   let seed = 83;
   const random = () => { seed = seed * 16807 % 2147483647; return (seed - 1) / 2147483646; };
-  const clouds = Object.fromEntries(['eighth','beamed','quarter','sixteenth'].map(kind => [kind, noteCloud(kind, random)]));
   const colors = ['#e8fcff','#c1e8ff','#e6d8ff','#fff6df','#ffffff'];
   const blooms = colors.map(color => {
     const sprite = document.createElement('canvas'); sprite.width = sprite.height = 32;
@@ -17,13 +27,29 @@ export function createParticles(host) {
     gradient.addColorStop(.4, color + '30'); gradient.addColorStop(1, color + '00');
     c.fillStyle = gradient; c.fillRect(0,0,32,32); return sprite;
   });
+  // Cache each glow + core together, preserving all 630 particles and DPR.
+  const dots=colors.map((color,tone)=>{
+    const sprite=document.createElement('canvas');sprite.width=sprite.height=64;
+    const c=sprite.getContext('2d');c.globalCompositeOperation='lighter';
+    c.globalAlpha=.52;c.drawImage(blooms[tone],0,0,64,64);
+    c.globalAlpha=1;c.fillStyle=color;c.beginPath();c.arc(32,32,6.4,0,Math.PI*2);c.fill();return sprite;
+  });
   let width, height, frame, stopped = false, gust = false, hovered = false, last = 0;
   let focus = {x:.5,y:.48}, idle = true, dissolveAt = null;
+  let left=0,top=0,paintWidth=0,paintHeight=0;
   const notes = [], sparks = [];
   function resize() {
     width = innerWidth; height = innerHeight;
-    const dpr = Math.min(devicePixelRatio, 2); canvas.width = width*dpr; canvas.height = height*dpr;
-    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const halfWidth=Math.max(170,Math.min(width,height)*.16*2.1+24);
+    const halfHeight=Math.max(200,halfWidth*.9);
+    left=idle?Math.max(0,width*.5-halfWidth):0;
+    top=idle?Math.max(0,height*.48-halfHeight):0;
+    paintWidth=idle?Math.min(width-left,halfWidth*2):width;
+    paintHeight=idle?Math.min(height-top,halfHeight*2):height;
+    const dpr = Math.min(devicePixelRatio, 2);
+    canvas.width=Math.ceil(paintWidth*dpr);canvas.height=Math.ceil(paintHeight*dpr);
+    Object.assign(canvas.style,{position:'absolute',left:left+'px',top:top+'px',width:paintWidth+'px',height:paintHeight+'px'});
+    ctx.setTransform(dpr,0,0,dpr,-left*dpr,-top*dpr);
   }
   resize(); addEventListener('resize', resize);
   const start = document.getElementById('entry-start');
@@ -57,11 +83,9 @@ export function createParticles(host) {
       const y=cy+(p.y*breathe+Math.cos(t*.8+p.phase)*1.5+bob-Math.sin(p.phase)*scatter-spread*30)*scale;
       const brightness=(.42+.58*Math.sin(t*1.6+p.phase)**2)*alpha;
       const radius=(p.size+(hovered&&idle?.18:0))*scale;
-      ctx.globalAlpha=brightness*.52;
+      ctx.globalAlpha=brightness;
       const glow=radius*10;
-      ctx.drawImage(blooms[p.tone],x-glow/2,y-glow/2,glow,glow);
-      ctx.globalAlpha=brightness;ctx.fillStyle=colors[p.tone];
-      ctx.beginPath();ctx.arc(x,y,Math.max(.3,radius),0,Math.PI*2);ctx.fill();
+      ctx.drawImage(dots[p.tone],x-glow/2,y-glow/2,glow,glow);
       if(p.drift>.982)glint(x,y,1.2*scale,brightness*.8,p.tone);
     }
     // Light continuously sheds from the silhouette into a loose ascending wake.
@@ -78,7 +102,7 @@ export function createParticles(host) {
     if(stopped)return;
     frame=requestAnimationFrame(draw);if(now-last<30)return;
     const dt=Math.min((now-last)/1000,.05);last=now;const t=now/1000;
-    ctx.clearRect(0,0,width,height);ctx.globalCompositeOperation='lighter';
+    ctx.clearRect(left,top,paintWidth,paintHeight);ctx.globalCompositeOperation='lighter';
     const mainScale=width<600?.9:1.08;
     if(idle)drawNote('eighth',width*.5,height*.48,mainScale,t,1);
     else if(dissolveAt!==null) {
@@ -124,8 +148,8 @@ export function createParticles(host) {
   frame=requestAnimationFrame(draw);
   return {
     pulse,
-    begin(){idle=false;dissolveAt=performance.now()/1000;burst(.5,.48,1.5);},
-    tutti(instruments){notes.length=0;instruments.forEach(i=>pulse(i.x/100,i.y/100,1,i.symbol));focus={x:.5,y:.48};burst(.5,.48,2);},
+    begin(){idle=false;resize();dissolveAt=performance.now()/1000;burst(.5,.48,1.5);},
+    reveal(){notes.length=0;focus={x:.5,y:.48};burst(.5,.48,2);},
     wind(){gust=true;},
     dispose(){stopped=true;cancelAnimationFrame(frame);removeEventListener('resize',resize);start.removeEventListener('pointerenter',hover);start.removeEventListener('pointerleave',leave);start.removeEventListener('focus',hover);start.removeEventListener('blur',leave);canvas.remove();}
   };

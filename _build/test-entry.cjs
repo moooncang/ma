@@ -24,7 +24,7 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
           createBufferSource() {
             const source = super.createBufferSource(), start = source.start.bind(source);
             source.start = (...args) => {
-              window.sampleStarts.push({duration:source.buffer?.duration, fingerprint:source.buffer?.getChannelData(0)[1000]});
+              window.sampleStarts.push({duration:source.buffer?.duration, fingerprint:source.buffer?.getChannelData(0)[1000], phase:document.querySelector('#entry')?.dataset.phase, appearances:document.querySelectorAll('.voice-note.on').length});
               return start(...args);
             };
             return source;
@@ -38,7 +38,7 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       if (response.url().startsWith(base) && response.status() >= 400 && !response.url().endsWith('favicon.ico')) problems.push(`${response.status()} ${response.url()}`);
     });
     await page.goto(base, {waitUntil:'domcontentloaded'});
-    await page.locator('#site .hero img').first().waitFor({state:'attached'});
+    await page.locator('#entry-start svg').waitFor({state:'attached'});
     assert.equal(await page.evaluate(() => window.audioStarts), 0, 'No sound before user gesture');
     return {context,page};
   }
@@ -59,6 +59,8 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
     {
       const {context,page} = await open({viewport:{width:1440,height:900}});
       await page.locator('#entry.has-webgl').waitFor();
+      assert.equal(await page.locator('#site .hero img').count(), 0, 'Home image decoding waits for entry intent');
+      assert.equal(await page.locator('#paper-scene').getAttribute('data-renderer'), 'worker', 'Paper renderer runs off the UI thread');
       await page.locator('#entry.has-particle-notes').waitFor();
       assert.equal(await page.locator('#entry-start img').count(), 0, 'Light particles replace the metal PNG');
       await page.evaluate(() => {
@@ -74,8 +76,10 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       assert.deepEqual(await page.evaluate(() => entrancePhases), ['loading','playing','tutti','flight','done']);
       const audio = await page.evaluate(() => ({starts:sampleStarts,oscillators:oscillatorStarts}));
       assert.equal(audio.oscillators, 0, 'Recorded instruments, no oscillator imitations');
-      assert.equal(audio.starts.length, 12, 'Six solo/arpeggio samples and six ensemble samples played');
-      assert.equal(new Set(audio.starts.map(s => s.fingerprint)).size, 6, 'Six distinct decoded recordings');
+      assert.equal(audio.starts.length, 4, 'Exactly one attack for each of four appearances');
+      assert.deepEqual(audio.starts.map(s => s.appearances), [1,2,3,4], 'One sound starts with each new visual appearance');
+      assert.ok(audio.starts.every(s => s.phase === 'playing'), 'No extra sound on the final reveal');
+      assert.equal(new Set(audio.starts.map(s => s.fingerprint)).size, 4, 'Four distinct recorded instruments');
       assert.ok(audio.starts.every(s => s.duration > 3.8), 'Full recordings decoded successfully');
       assert.equal(await page.evaluate(() => performance.getEntriesByType('navigation').length), 1, 'No second document navigation');
       await page.locator('header a[href="world.html"]').click();
@@ -107,6 +111,7 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
           return type.startsWith('webgl') ? null : getContext.call(this,type,...args);
         };
         window.AudioContext = undefined; window.webkitAudioContext = undefined;
+        window.Worker = undefined;
       });
       const url = await page.locator('.entry-paper').first().evaluate(el => getComputedStyle(el).backgroundImage.match(/url\("?([^"\)]+)/)[1]);
       const response = await page.request.get(url); assert.equal(response.status(), 200, 'Fallback has actual notation assets');
@@ -139,6 +144,14 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       await page.keyboard.press('Escape'); await checkHome(page);
       assert.equal(await page.evaluate(() => sampleStarts.length), 0);
       await context.close(); console.log('PASS pending audio: Escape cancels loading immediately');
+    }
+    {
+      const {context,page} = await open({}, () => { window.Worker = undefined; });
+      await page.locator('#entry.has-webgl').waitFor();
+      assert.equal(await page.locator('#paper-scene').getAttribute('data-renderer'), 'main');
+      await page.locator('#entry-start').click(); await checkHome(page);
+      assert.equal(await page.evaluate(() => sampleStarts.length), 4);
+      await context.close(); console.log('PASS no worker support: same-quality WebGL renderer and four single attacks');
     }
     assert.deepEqual(problems, [], 'No page exceptions or missing local assets');
   } finally { await browser.close(); }

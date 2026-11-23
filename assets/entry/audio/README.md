@@ -15,9 +15,7 @@ Recorded by **Sam Gossner & Simon Dalzell (Ivy Audio)**; sample cutting by **Ela
 | cello.mp3 | Strings/Cello Section/susvib/susvib_D2_v1_1.wav | D3, 첼로 섹션 |
 | flute.mp3 | Woodwinds/Flute/susNV/LDFlute_susNV_E4_v1_1.wav | E5, 비브라토 없는 지속음 |
 | piano-d.mp3 | Keys/Upright Piano/Player_dyn2_rr1_026.wav | C♯5 → D5 |
-| piano-fs.mp3 | Keys/Upright Piano/Player_dyn2_rr1_028.wav | F5 → F♯5 |
-| piano-a.mp3 | Keys/Upright Piano/Player_dyn2_rr1_030.wav | A5 |
 
 VSCO 파일명의 옥타브 표기는 악기마다 다르므로 위 표는 실제 녹음의 주파수와 피아노 원본 MappingChart를 기준으로 적었다.
 
-원본에서 첫 4초를 사용하고, 45 Hz 고역 통과·11 kHz 저역 통과·음량 정리·끝단 페이드를 적용해 44.1 kHz / 128 kbps MP3로 변환했다. 피아노 두 음은 원음에서 반음 올렸다. 악기 자체의 녹음 질감을 유지하며, 재생 시 원음과 별도의 스테레오 홀 잔향을 섞는다. 피아노는 세 음을 순서대로 연주하며 마지막에는 D–F♯–A–E 화음으로 네 악기가 겹친다.
+원본에서 첫 4초를 사용하고, 45 Hz 고역 통과·11 kHz 저역 통과·음량 정리·끝단 페이드를 적용해 44.1 kHz / 128 kbps MP3로 변환했다. 피아노 D5는 원음 C♯5에서 반음 올렸다. 악기 자체의 녹음 질감을 유지하며, 재생 시 원음과 별도의 스테레오 홀 잔향을 섞는다. 각 음표가 등장하는 순간 바이올린 A4·피아노 D5·첼로 D3·플루트 E5를 각각 한 번만 재생한다. 여러 음의 아르페지오와 마지막 합주는 제거했다.

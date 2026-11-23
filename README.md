@@ -37,13 +37,13 @@
 1. **어둠** — 검은 화면. 은은하게 빛나며 일렁이는 음표 하나가 떠 있고, 그 둘레만 그림자가 옅게 걷혀 깔린 악보가 비친다
 2. **누름** — 그 음표를 누르면 연출이 시작된다
 3. **악기 넷이 하나씩** — 바이올린 → 피아노 → 첼로 → 플루트 순서로 한 악기씩 소리가 난다. 소리마다 화면의 서로 다른 곳에서 음표가 반짝이며 그 자리의 그림자를 걷어 내 악보를 비추고, **곧 꺼져 다시 어둠으로 돌아간다**
-4. **합주** — 네 악기가 동시에 울리면서 그림자가 전부 걷히고 화면이 **확** 밝아진다. 깔려 있던 악보가 한꺼번에 드러난다
+4. **개방** — 네 악기가 각각 한 번씩 울린 뒤, 추가 소리 없이 그림자가 전부 걷히고 화면이 **확** 밝아진다. 깔려 있던 악보가 한꺼번에 드러난다
 5. **악보** — 그 악보들이 파라라락 날아간다
 6. **입장** — 악보가 걷힌 자리에서 그대로 첫 화면으로 들어간다
 
-입장 페이지는 2026-11-23에 새로 구현했다. 실제 클래식 곡을 조판한 악보 SVG 12쪽과 실시간 빛 입자로 이루어진 음표 4종을 사용한다. 큰 악보들이 크기·각도·방향을 달리하며 흩뿌려져 겹쳐 있고, 빛 궤적과 별 모양 입자가 음표 주변에서 반응한다. 소리는 VSCO 2 CE의 CC0 실제 악기 녹음으로, 바이올린·피아노·첼로·플루트가 순서대로 들린 뒤 맑은 Dmaj(add9) 화음으로 겹친다. 사용자 입력 뒤에만 재생하고 선행 지연·홀 잔향·부드러운 끝맺음을 적용한다.
+입장 페이지는 2026-11-23에 새로 구현했다. 실제 클래식 곡을 조판한 악보 SVG 12쪽과 실시간 빛 입자로 이루어진 음표 4종을 사용한다. 큰 악보들이 크기·각도·방향을 달리하며 흩뿌려져 겹쳐 있고, 빛 궤적과 별 모양 입자가 음표 주변에서 반응한다. 소리는 VSCO 2 CE의 CC0 실제 악기 녹음으로, 바이올린·피아노·첼로·플루트가 각 음표의 등장에 맞춰 한 음씩 한 번만 들린다. 피아노 아르페지오와 마지막 합주 재생은 없다. 사용자 입력 뒤에만 재생하고 짧은 잔향·부드러운 끝맺음을 적용한다.
 
-종이는 WebGL 곡면으로 만들었다. 바람에 따른 굽힘·끝단의 비틀림·양면·종이결·그림자를 표현하며, 가만히 있을 때는 종이의 렌더 루프를 돌리지 않는다. `home.html`의 실제 내용을 미리 뒤에 불러오기 때문에 악보가 날아가는 사이로 첫 화면이 바로 드러난다. 전환 뒤 주소를 `home.html`로 바꾸고 공용 동작을 연결한다. 본문 HTML·문구·디자인은 그대로다.
+종이는 WebGL 곡면으로 만들었다. 바람에 따른 굽힘·끝단의 비틀림·양면·종이결·그림자를 표현하며, 가만히 있을 때는 종이의 렌더 루프를 돌리지 않는다. 지원하는 브라우저에서는 Web Worker/OffscreenCanvas가 종이 질감·셰이더 준비·3D 렌더링을 맡아 화면 조작을 막지 않는다. 같은 840×1188 해상도의 무손실 악보 캐시를 사용하고, 입자 630개와 종이 분할 수·그림자 2048 해상도는 유지한다. 처음에는 본문 이미지 디코딩을 미루고, 음표에 마우스를 올리거나 키보드 초점을 주거나 클릭하면 `home.html`의 실제 내용을 미리 뒤에 불러오기 때문에 악보가 날아가는 사이로 첫 화면이 바로 드러난다. 전환 뒤 주소를 `home.html`로 바꾸고 공용 동작을 연결한다. 본문 HTML·문구·디자인은 그대로다.
 
 WebGL을 쓸 수 없으면 같은 악보를 CSS로 날려 보낸다. 키보드 초점에서 나타나는 무음 입장 링크와 Escape 건너뛰기를 제공한다. 움직임 줄이기 설정에서는 연출과 소리 없이 입장한다. JavaScript가 꺼져 있어도 첫 화면 링크가 표시된다. 모든 입장 에셋과 Three.js는 저장소에서 읽는다. 출처·라이선스는 [입장 에셋 설명](assets/entry/README.md)을 참고한다.
 
@@ -124,13 +124,17 @@ python _build/build.py
 ### 입장 페이지 개발·검증
 
 - `index.html`, `assets/css/entry.css`, `assets/js/entry.js`가 입장 화면의 뼈대·모양·순서를 담당한다.
-- `assets/js/entry-scene.js`는 종이의 3D 움직임, `entry-particles.js`와 `entry-notes.js`는 빛 입자 음표, `entry-audio.js`는 녹음 샘플과 잔향을 담당한다.
+- `assets/js/entry-scene.js`는 worker 연결, `entry-paper-renderer.js`와 `entry-paper-worker.js`는 종이의 3D 움직임, `entry-particles.js`와 `entry-notes.js`는 빛 입자 음표, `entry-audio.js`는 녹음 샘플과 잔향을 담당한다.
 - 로컬 실행: 저장소에서 `python -m http.server 4173 --bind 0.0.0.0`.
 - 브라우저 검사 도구를 별도 경로에 설치한다: `npm install --prefix /tmp/ma-tools --cache /tmp/ma-npm-cache playwright@1.58.2`.
 - `NODE_PATH=/tmp/ma-tools/node_modules node _build/test-entry.cjs`로 PC·모바일·키보드·동작 줄이기·WebGL/오디오 불가·건너뛰기·전환 후 본문 동작을 검사한다. Chromium 기본 경로는 `/usr/bin/chromium`; `CHROMIUM_PATH`, `ENTRY_TEST_URL`로 바꿀 수 있다.
 - 악보 재생성: `python -m pip install --target /tmp/ma-score-tools verovio==6.4.1` 후 `PYTHONPATH=/tmp/ma-score-tools python _build/entry-scores.py`.
-- 음원 재생성: Python 3와 ffmpeg가 있는 환경에서 `python _build/entry-audio.py`. 고정된 원본 커밋과 SHA-256을 검사하고 6개 녹음을 가공한다.
+- 음원 재생성: Python 3와 ffmpeg가 있는 환경에서 `python _build/entry-audio.py`. 고정된 원본 커밋과 SHA-256을 검사하고 4개 녹음을 가공한다.
+- 캐시 재생성: Playwright와 Python Pillow가 있는 환경에서 `NODE_PATH=/tmp/ma-tools/node_modules node _build/entry-assets.cjs`. 악보의 무손실 픽셀 일치를 검사하고 같은 630개 음표 좌표를 저장한다.
+- 성능 비교: 다른 브라우저 검사를 동시에 실행하지 않고 `NODE_PATH=/tmp/ma-tools/node_modules node _build/profile-entry.cjs 이름`. `/tmp/ma-entry-profile`에 UI 스레드의 긴 작업·프레임 간격·CPU 프로필을 남긴다. GPU 종류에 따라 프레임 간격은 달라진다.
 - 오디오 검사: `NODE_PATH=/tmp/ma-tools/node_modules node _build/test-entry-audio.cjs`. 실제 Web Audio 믹스를 렌더해 각 악기의 출력·클리핑·스테레오·끝 페이드를 확인한다. `ENTRY_AUDIO_REVIEW=/tmp/entrance.wav`를 지정하면 청취용 파일도 저장한다.
+
+성능 비교 기록(2026-11-23): 같은 Linux / headless Chromium / SwiftShader에서 390×844, DPR 2로 측정했다. 초기 구간의 최대 프레임 간격은 1,833 ms → 67 ms, 초기 UI 스레드의 가장 긴 작업은 1,287 ms → 56 ms였다. 실제 기기 측정과는 구분한다. 악보 파일 합계는 SVG 3,169,333바이트 → 무손실 캐시 790,424바이트(75.1% 감소). 입자 수·렌더 해상도·종이 곡면·그림자는 유지했다.
 
 ## 그림
 
