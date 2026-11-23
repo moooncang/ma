@@ -30,4 +30,29 @@
 - [K 안토넬라](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EA%B2%80%EC%88%98%20%EC%8B%9C%ED%8A%B8/K%20%EC%95%88%ED%86%A0%EB%84%AC%EB%9D%BC.jpg)
 - [L 로완](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EA%B2%80%EC%88%98%20%EC%8B%9C%ED%8A%B8/L%20%EB%A1%9C%EC%99%84.jpg)
 
-올리지 않은 것: H씬 태그 문서 2종, 이미지 라벨 대응표, 검수 시트를 뺀 그림 파일 전부. 문서 안에서 이 파일들과 `CS\`, `H씬\` 같은 로컬 폴더를 가리키는 대목은 이 저장소에 없다.
+## 첫등장 카드
+
+인물 이름과 별명이 들어간 공연 포스터형 카드 12장이다.
+
+- [A 루이제 브란트](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/A_1.webp)
+- [B 니콜 페이건](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/B_1.webp)
+- [C 호세피나 에레디아](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/C_1.webp)
+- [D 테아 모저](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/D_1.webp)
+- [E 에밀리아 볼스카](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/E_1.webp)
+- [F 서송이](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/F_1.webp)
+- [G 마테이 칼리나](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/G_1.webp)
+- [H 바질 소렐](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/H_1.webp)
+- [I 쿠라모토 사야카](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/I_1.webp)
+- [J 얀 판 베이크](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/J_1.webp)
+- [K 안토넬라 사르티](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/K_1.webp)
+- [L 로완 셔먼](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/L_1.webp)
+
+## 인물 그림 (CS)
+
+인물 12인 × 20컷, 240장이다. 주소는 `https://raw.githubusercontent.com/moooncang/ma/main/docs/CS/{인물코드}_{번호}.webp` 꼴이다. 예: https://raw.githubusercontent.com/moooncang/ma/main/docs/CS/A_1.webp
+
+- 인물코드: A 루이제 브란트 / B 니콜 페이건 / C 호세피나 에레디아 / D 테아 모저 / E 에밀리아 볼스카 / F 서송이 / G 마테이 칼리나 / H 바질 소렐 / I 쿠라모토 사야카 / J 얀 판 베이크 / K 안토넬라 사르티 / L 로완 셔먼
+- 번호: 1 첫등장 / 2·3 평소 / 4·5 연주 / 6·7 기쁨 / 8·9 슬픔 / 10·11 눈물 / 12·13 당황 / 14·15 놀람 / 16·17 부끄러움 / 18·19 분노 / 20 무대 연주
+- 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/docs/CS
+
+올리지 않은 것: H씬 태그 문서 2종, 이미지 라벨 대응표, H씬 그림, 배경 배너. 문서에서 `CS\`로 적힌 폴더는 이 저장소의 `docs/CS/`다.
