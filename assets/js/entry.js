@@ -151,7 +151,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
     cancelAnimationFrame(pointerFrame);
     particles?.dispose(); particles = null;
     const script = document.createElement('script');
-    script.src = 'assets/js/main.js?v=site-1'; document.body.append(script);
+    script.src = 'assets/js/main.js?v=art-2'; document.body.append(script);
     document.querySelector('meta[name="theme-color"]').content = '#f6f1e3';
     const main = site.querySelector('main');
     main.tabIndex = -1; main.focus({preventScroll:true});

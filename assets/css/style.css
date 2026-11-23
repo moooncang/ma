@@ -380,3 +380,52 @@ main.home { max-width:none; padding:0; }
   html { scroll-behavior:auto; }
   *,*::before,*::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; }
 }
+
+/* Original artwork enriches the approved theatre-and-paper composition. */
+.home .say { grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); align-items:center; gap:clamp(30px,5.4vw,78px); }
+.home .intro-art { position:relative; min-width:0; overflow:hidden; padding:9px; margin:0; background:var(--night); border:1px solid #b798607a; }
+.home .intro-art::after { content:''; position:absolute; z-index:2; inset:17px; border:1px solid #f6f1e32c; pointer-events:none; }
+.home .intro-art picture { display:block; overflow:hidden; }
+.home .intro-art img { width:100%; height:auto; aspect-ratio:4/3; object-fit:cover; object-position:57% 50%; }
+.home .intro-copy { min-width:0; }
+.home .intro-copy p:first-child { grid-row:auto; font-size:clamp(23px,2.05vw,30px); padding-left:24px; line-height:1.9; }
+.home .intro-copy p + p { margin-top:24px; font-size:15px; line-height:2; }
+.home .salonrows li { padding:0 22px 27px; gap:10px; }
+.home .salonrows li::before { z-index:2; }
+.salon-art { display:block; overflow:hidden; }
+.home .salon-art { width:calc(100% + 44px); margin:0 -22px 14px; aspect-ratio:1.35; background:var(--night); }
+.salon-art img { display:block; width:100%; height:100%; object-fit:cover; object-position:79% 50%; }
+.home .salonrows em { margin-top:12px; }
+.academy .react .salonrows li { grid-template-columns:64px minmax(0,1fr) auto; gap:10px; padding:14px 12px; }
+.academy .react .salon-art { width:64px; height:62px; border:1px solid #b7986052; }
+.academy .react .salonrows li b { font-size:14px; }
+.academy .react .salonrows em { padding:5px 9px; font-size:11px; }
+.home .mode { min-height:0; padding:0 28px 30px; }
+.home .mode-art { display:block; width:calc(100% + 56px); height:190px; margin:0 -28px 28px; overflow:hidden; background:var(--night); }
+.home .mode-art img { width:100%; height:100%; object-fit:cover; object-position:78% 50%; transition:transform .8s var(--ease),filter .8s; filter:brightness(.84); }
+.home .mode .mark { position:absolute; top:146px; right:20px; left:auto; font-size:64px; color:#f7e6bd; text-shadow:0 3px 15px #101b22; margin:0; }
+.home .mode:hover .mode-art img,.home .mode:focus-visible .mode-art img { transform:scale(1.055); filter:brightness(1); }
+.home .mode h3 { font-size:24px; }
+@media (max-width:1000px) {
+  .home .intro-copy p:first-child { font-size:23px; padding-left:20px; }
+  .home .intro-copy p + p { font-size:14px; }
+  .home .salonrows li { padding-inline:17px; }
+  .home .salon-art { width:calc(100% + 34px); margin-inline:-17px; }
+  .home .mode h3 { font-size:21px; }
+}
+@media (max-width:700px) {
+  .home .say { display:grid; grid-template-columns:1fr; gap:34px; }
+  .home .intro-art { padding:6px; }
+  .home .intro-art::after { inset:12px; }
+  .home .intro-art img { aspect-ratio:1.3; }
+  .home .intro-copy p:first-child { font-size:24px; margin-bottom:0; }
+  .home .intro-copy p + p { margin-top:21px; font-size:15px; }
+  .home .salon-art { aspect-ratio:1.05; margin-bottom:10px; }
+  .home .salonrows li b { font-size:18px; }
+  .home .mode { padding:0 24px 26px; }
+  .home .mode-art { width:calc(100% + 48px); height:165px; margin:0 -24px 25px; }
+  .home .mode .mark { top:121px; }
+  .academy .react .salonrows li { grid-template-columns:54px minmax(0,1fr) auto; gap:9px; padding:14px 9px; }
+  .academy .react .salon-art { width:54px; height:60px; }
+  .academy .react .salonrows li b { font-size:13px; }
+}

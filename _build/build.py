@@ -21,6 +21,14 @@ def place(c): return f"images/B/{c}.webp"
 def charpage(c): return f"char/{c.lower()}.html"
 
 
+def editorial(name, sizes="(max-width: 760px) 90vw, 45vw"):
+    """Decorative, responsive artwork; no additional interface copy."""
+    base = f"images/editorial/{name}"
+    return (f'<picture><img data-editorial src="{base}.webp" '
+            f'srcset="{base}-768.webp 768w, {base}.webp 1536w" sizes="{sizes}" '
+            f'alt="" loading="lazy" decoding="async" width="1536" height="1024"></picture>')
+
+
 def hd(ko, en):
     """섹션 제목 줄: 한글 제목, 선, 영문 라벨."""
     return f'<h2 class="hd"><span>{E(ko)}</span><i></i><em>{E(en)}</em></h2>'
@@ -50,11 +58,12 @@ def page(file, title, body, cls=""):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{E(full)}</title>
-<link rel="stylesheet" href="{root}assets/css/fonts.css?v=site-1">
-<link rel="stylesheet" href="{root}assets/css/style.css?v=site-1">
-<link rel="stylesheet" href="{root}assets/css/pages.css?v=site-1">
-<link rel="stylesheet" href="{root}assets/css/motion.css?v=site-1">
-<script src="{root}assets/js/main.js?v=site-1" defer></script>
+<link rel="stylesheet" href="{root}assets/css/fonts.css?v=art-2">
+<link rel="stylesheet" href="{root}assets/css/style.css?v=art-2">
+<link rel="stylesheet" href="{root}assets/css/pages.css?v=art-2">
+<link rel="stylesheet" href="{root}assets/css/illustrations.css?v=art-2">
+<link rel="stylesheet" href="{root}assets/css/motion.css?v=art-2">
+<script src="{root}assets/js/main.js?v=art-2" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">본문으로</a>
@@ -118,7 +127,8 @@ def calendar():
 
 def salon_demo():
     """연주를 고르면 네 살롱이 따로 반응한다."""
-    rows = "".join(f'<li><b>{E(s["이름"])}</b><span class="en">{E(s["영문"])}</span><em data-state="0">{D.반응_이름[0]}</em></li>' for s in D.살롱)
+    rows = "".join(f'<li><picture class="salon-art" aria-hidden="true"><img src="{place(s["코드"])}" alt="" loading="lazy" decoding="async" width="3200" height="640"></picture>'
+                   f'<b>{E(s["이름"])}</b><span class="en">{E(s["영문"])}</span><em data-state="0">{D.반응_이름[0]}</em></li>' for s in D.살롱)
     btns = "".join(f'<button type="button" data-r="{",".join(map(str, c["반응"]))}" data-note="{E(c["글"])}" aria-pressed="false">{E(c["이름"])}</button>' for c in D.연주)
     names = E(json.dumps({str(k): v for k, v in D.반응_이름.items()}, ensure_ascii=False))
     return (f'<div class="react" data-react data-names="{names}"><ul class="salonrows">{rows}</ul>'
@@ -128,7 +138,8 @@ def salon_demo():
 
 def mode_cards(root=""):
     return '<div class="modes">' + "".join(
-        f'<a class="mode" href="{root}start.html#mode-{i}"><span class="mark">{m["기호"]}</span><h3>{E(m["이름"])}</h3>'
+        f'<a class="mode" href="{root}start.html#mode-{i}"><picture class="mode-art" aria-hidden="true"><img src="{root}{place(["C1", "T4", "L1"][i])}" alt="" loading="lazy" decoding="async" width="3200" height="640"></picture>'
+        f'<span class="mark">{m["기호"]}</span><h3>{E(m["이름"])}</h3>'
         f'<p class="en">{E(m["영문"])}</p><p>{E(m["한줄"])}</p></a>' for i, m in enumerate(D.모드)) + "</div>"
 
 
@@ -147,7 +158,7 @@ def home():
   <p class="genre">{E(D.장르)}</p>
   <div class="figs">{figs}</div>
 </section>
-<section class="say">{ps(D.소개)}</section>
+<section class="say"><figure class="intro-art art-frame" data-art aria-hidden="true">{editorial("conservatory-dusk")}</figure><div class="intro-copy">{ps(D.소개)}</div></section>
 <section class="section-stages">{hd("무대", "THE STAGES")}{stages()}</section>
 <section class="section-salons">{hd("살롱 넷", "FOUR SALONS")}<p>{E(D.살롱_머리)}</p>{salon_demo()}</section>
 <section class="section-cast">{hd("사람들", "THE CAST")}<div class="slides">{cast}</div><p class="note"><a href="characters.html">열두 사람 모두 보기</a></p></section>
@@ -165,7 +176,16 @@ def world():
             f'<button type="button" data-pick data-set-img="{place(c)}" data-set-cap="{E(g["묶음"])} · {E(n)}" '
             f'aria-pressed="{str((c, n) == first).lower()}">{E(n)}</button>' for c, n in g["곳"])
         groups += f'<div class="placegroup"><p class="en">{E(g["영문"])}</p><h3>{E(g["묶음"])}</h3><div class="chips">{btns}</div></div>'
-    prose = "".join(f'<section>{hd(s["이름"], s["영문"])}{ps(s["글"])}</section>' for s in D.세계_글)
+    prose = ""
+    for i, s in enumerate(D.세계_글):
+        if i in (1, 2):
+            art = editorial("conservatory-dusk" if i == 1 else "conservatory-still-life",
+                            "(max-width: 760px) 90vw, 65vw" if i == 2 else "(max-width: 760px) 90vw, 45vw")
+        else:
+            art = f'<img src="{place("L1" if i == 0 else "U6")}" alt="" loading="lazy" decoding="async" width="3200" height="640">'
+        cls = "world-chapter" + (" chapter-scene" if i in (1, 2) else "") + (" chapter-reverse" if i == 2 else "")
+        prose += (f'<section class="{cls}">{hd(s["이름"], s["영문"])}<div class="chapter-layout">'
+                  f'<figure class="chapter-art art-frame" data-art aria-hidden="true">{art}</figure><div class="chapter-copy">{ps(s["글"])}</div></div></section>')
     body = f"""<section class="head">{hd("세계", "THE WORLD")}<p>{E(D.세계_머리)}</p></section>
 <section class="atlas" data-picker data-arrows>
   <figure><img data-out="img" src="{place(first[0])}" alt="" width="3200" height="640">
@@ -189,12 +209,13 @@ def academy():
 
     def eye_col(title, codes):
         btns = "".join(
-            f'<button type="button" data-pick aria-pressed="{str(c == D.시선_따가움[0]).lower()}" data-set-name="{E(사람[c]["이름"])}" '
+            f'<button type="button" data-pick aria-pressed="{str(c == D.시선_따가움[0]).lower()}" data-set-name="{E(사람[c]["이름"])}" data-set-portrait="{face(c, 1)}" '
             f'data-set-eye="{E(사람[c]["눈"])}" data-set-turn="{E(사람[c]["풀리면"] or "")}" data-set-link="{charpage(c)}">{E(사람[c]["이름"])}</button>' for c in codes)
         return f'<div><h3>{E(title)}</h3><div class="chips">{btns}</div></div>'
     p0 = 사람[D.시선_따가움[0]]
     eyes = (f'<div class="eyes" data-picker><div class="eyecols">{eye_col("따갑게 보는 여섯", D.시선_따가움)}{eye_col("그렇지 않은 여섯", D.시선_아님)}</div>'
-            f'<div class="eyeout"><h3 data-out="name">{E(p0["이름"])}</h3><p data-out="eye">{E(p0["눈"])}</p>'
+            f'<div class="eyeout"><figure class="eye-portrait" aria-hidden="true"><img data-out="portrait" src="{face(p0["코드"], 1)}" alt="" loading="lazy" decoding="async" width="1856" height="1280"></figure>'
+            f'<h3 data-out="name">{E(p0["이름"])}</h3><p data-out="eye">{E(p0["눈"])}</p>'
             f'<p class="turn" data-out="turn">{E(p0["풀리면"] or "")}</p><a data-out="link" href="{charpage(p0["코드"])}">프로필 보기</a></div></div>')
 
     steps = " → ".join(E(s) for s in D.관계_단계)
@@ -293,7 +314,8 @@ def start():
     how = "".join(f"<dt>{E(k)}</dt><dd>{E(v)}</dd>" for k, v in D.플레이)
     go = f'<a class="play" href="{E(D.크랙_주소)}">PLAY</a>' if D.크랙_주소 else ""
     body = f"""<section class="head">{hd("시작", "THE BEGINNING")}<p>{E(D.시작_머리)}</p></section>
-<section>{hd("세 가지 시작", "BEGINNINGS")}<p>{E(D.모드_머리)}</p>
+<section class="beginning-section">{hd("세 가지 시작", "BEGINNINGS")}<p>{E(D.모드_머리)}</p>
+  <figure class="beginning-art art-frame" data-art aria-hidden="true">{editorial("conservatory-still-life")}</figure>
   <div class="slots" data-tabs data-hash><div class="slotbtns" role="group" aria-label="시작 모드">{tabs}</div>{panels}</div>
 </section>
 <section>{hd("시작 전에", "BEFORE YOU BEGIN")}<p>{E(D.노트_글)}</p>
@@ -337,7 +359,9 @@ def check(files):
     for f in files:
         text = (ROOT / f).read_text(encoding="utf-8")
         base = (ROOT / f).parent
-        refs = re.findall(r'(?:src|href|data-set-img|data-set-link)="([^"#]+)(?:#[^"]*)?"', text)
+        refs = re.findall(r'(?:src|href|data-set-img|data-set-link|data-set-portrait)="([^"#]+)(?:#[^"]*)?"', text)
+        for candidates in re.findall(r'srcset="([^"]+)"', text):
+            refs.extend(candidate.strip().split()[0] for candidate in candidates.split(","))
         for r in set(refs):
             if r.startswith(("http", "mailto:")):
                 continue

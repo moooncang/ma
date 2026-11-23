@@ -1,0 +1,185 @@
+/* Illustrated interior chapters. The original prose and its reading order remain intact. */
+.world > section.world-chapter:not(.atlas) {
+  max-width: none;
+  margin-inline: 0;
+}
+.world .chapter-layout { display: grid; gap: 30px; margin-top: 0; }
+.world .chapter-art {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  margin: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(183, 152, 96, .48);
+  background: var(--night, #101b22);
+}
+.world .chapter-art::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 17px;
+  border: 1px solid rgba(246, 241, 227, .15);
+  pointer-events: none;
+}
+.world .chapter-art picture { display: block; overflow: hidden; }
+.world .chapter-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 1;
+  object-fit: cover;
+}
+.world .chapter-copy {
+  min-width: 0;
+  max-width: 850px;
+  margin: 0 4% 0 auto;
+  padding: 5px 0 5px 28px;
+  border-left: 1px solid var(--gold, #b79860);
+}
+.world .chapter-copy p { max-width: 63em; font-size: 15px; line-height: 2.05; }
+.world .chapter-copy p + p { margin-top: 18px; }
+.world .chapter-scene .chapter-layout {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  align-items: center;
+  gap: clamp(30px, 4.8vw, 72px);
+}
+.world .chapter-scene .chapter-art { align-self: start; }
+.world .chapter-scene .chapter-art img { aspect-ratio: 4 / 3; object-position: 50% 50%; }
+.world .chapter-scene .chapter-copy { margin: 0; padding-left: 0; border-left: 0; }
+.world .chapter-scene .chapter-copy p:first-child { font-size: 17px; line-height: 2; }
+.world .chapter-scene .chapter-copy p + p { margin-top: 22px; }
+.world .chapter-scene.chapter-reverse .chapter-art { grid-column: 2; grid-row: 1; }
+.world .chapter-scene.chapter-reverse .chapter-copy { grid-column: 1; grid-row: 1; }
+.world .chapter-scene.chapter-reverse .chapter-art img { aspect-ratio: 1 / 1.06; object-position: 58% 50%; }
+
+/* A face accompanies each existing character's perspective. */
+.academy .eyeout:has(.eye-portrait) {
+  --eye-pad: clamp(25px, 3.3vw, 44px);
+  padding: var(--eye-pad);
+}
+.academy .eye-portrait {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 1.8 / 1;
+  overflow: hidden;
+  max-width: none;
+  margin: calc(-1 * var(--eye-pad)) calc(-1 * var(--eye-pad)) 28px;
+  border-bottom: 1px solid rgba(183, 152, 96, .5);
+  background: #0b1217;
+}
+.academy .eye-portrait::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 9px;
+  border: 1px solid rgba(246, 241, 227, .2);
+  pointer-events: none;
+}
+.academy .eye-portrait img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+  object-position: 82% 34%;
+}
+.academy .eye-portrait + h3 { margin-top: 0; }
+
+/* The admission desk introduces the existing choices with a quiet still life. */
+.start .beginning-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  column-gap: clamp(30px, 4.5vw, 62px);
+  align-items: start;
+}
+.start .beginning-section > .hd {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 0;
+  font-size: clamp(27px, 3.3vw, 38px);
+}
+.start .beginning-section > .hd em { flex-basis: 100%; font-size: 11px; }
+.start .beginning-section > p {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: 23px;
+  font-size: 15px;
+  line-height: 2;
+}
+.start .beginning-art {
+  position: relative;
+  isolation: isolate;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 9px;
+  border: 1px solid rgba(183, 152, 96, .5);
+  background: var(--night, #101b22);
+}
+.start .beginning-art::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 17px;
+  border: 1px solid rgba(246, 241, 227, .17);
+  pointer-events: none;
+}
+.start .beginning-art picture { display: block; overflow: hidden; }
+.start .beginning-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1.23 / 1;
+  object-fit: cover;
+  object-position: 57% 50%;
+}
+.start .beginning-section > .slots {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  min-width: 0;
+  width: 100%;
+  margin-top: 45px;
+}
+
+@media (max-width: 1050px) {
+  .world .chapter-scene .chapter-layout { gap: 30px; }
+  .world .chapter-copy p { font-size: 14px; }
+  .world .chapter-scene .chapter-copy p:first-child { font-size: 15px; }
+  .world .chapter-scene.chapter-reverse .chapter-art { position: sticky; top: 110px; }
+  .start .beginning-section { column-gap: 30px; }
+  .start .beginning-section > .hd { font-size: 28px; }
+  .start .beginning-section > p { font-size: 14px; margin-top: 20px; }
+}
+@media (max-width: 760px) {
+  .world .chapter-layout, .world .chapter-scene .chapter-layout { grid-template-columns: minmax(0, 1fr); gap: 25px; }
+  .world .chapter-art { padding: 6px; }
+  .world .chapter-art::after { inset: 12px; }
+  .world .chapter-art img { aspect-ratio: 5 / 1; }
+  .world .chapter-copy { margin: 0; padding: 0 0 0 19px; }
+  .world .chapter-copy p { font-size: 14px; line-height: 2; }
+  .world .chapter-scene .chapter-art img { aspect-ratio: 1.3 / 1; }
+  .world .chapter-scene .chapter-copy { padding: 0; }
+  .world .chapter-scene.chapter-reverse .chapter-art { position: relative; top: auto; grid-column: 1; grid-row: 1; }
+  .world .chapter-scene.chapter-reverse .chapter-copy { grid-column: 1; grid-row: 2; }
+  .world .chapter-scene.chapter-reverse .chapter-art img { aspect-ratio: 1.3 / 1; object-position: 58% 50%; }
+  .world .chapter-scene .chapter-copy p:first-child { font-size: 16px; }
+  .world .chapter-scene .chapter-copy p + p { margin-top: 18px; }
+  .academy .eye-portrait { aspect-ratio: 1.6 / 1; margin-bottom: 25px; }
+  .start .beginning-section { display: block; }
+  .start .beginning-section > .hd { display: flex; gap: 14px; margin-bottom: 25px; font-size: 27px; }
+  .start .beginning-section > .hd em { flex-basis: auto; font-size: 10px; }
+  .start .beginning-section > p { margin-top: 0; font-size: 15px; }
+  .start .beginning-art { margin-top: 26px; padding: 6px; }
+  .start .beginning-art::after { inset: 12px; }
+  .start .beginning-art img { aspect-ratio: 1.3 / 1; object-position: 57% 50%; }
+  .start .beginning-section > .slots { margin-top: 26px; }
+}

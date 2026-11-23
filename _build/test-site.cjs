@@ -1,5 +1,5 @@
 // Main-site regression checks. Run against the static server documented in README.
-// SITE_TEST_GROUP=copy|pages|desktop|mobile|motion|nojs selects a focused check.
+// SITE_TEST_GROUP=copy|assets|pages|desktop|mobile|motion|nojs selects a focused check.
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -48,8 +48,8 @@ function containsAll(actual,expected,message){
     const sizes=await page.evaluate(()=>({width:innerWidth,document:document.documentElement.scrollWidth,body:document.body.scrollWidth}));
     assert.ok(sizes.document<=sizes.width+1&&sizes.body<=sizes.width+1,`${label} has no horizontal overflow: ${JSON.stringify(sizes)}`);
   }
-  async function chooseImage(page,button,image){
-    const expected=await button.getAttribute('data-set-img');
+  async function chooseImage(page,button,image,attribute='data-set-img'){
+    const expected=await button.getAttribute(attribute);
     await button.click();
     await page.waitForFunction(({selector,expected})=>document.querySelector(selector)?.getAttribute('src')===expected,{selector:image,expected});
     assert.equal(await button.getAttribute('aria-pressed'),'true');
@@ -98,6 +98,78 @@ function containsAll(actual,expected,message){
         containsAll(content.links,expected.links,`${file}: preserved link and label`);
       }
       await ctx.close();console.log('PASS unchanged source data, wording, accessible labels and links across all 17 pages');
+    }
+    if(run('assets')){
+      const {ctx,page}=await context();
+      await visit(page,'home.html');
+      const editorialFiles=new Set(),resources=new Map();
+      let editorialCount=0,salonCount=0,modeCount=0;
+      for(const file of Object.keys(baseline.pages)){
+        const response=await page.request.get(new URL(file,base).href);assert.equal(response.status(),200,file);
+        const panels=await page.evaluate(source=>{
+          const doc=new DOMParser().parseFromString(source,'text/html');
+          return {
+            editorial:[...doc.querySelectorAll('img[data-editorial]')].map(img=>({src:img.getAttribute('src'),srcset:img.getAttribute('srcset'),sizes:img.getAttribute('sizes'),width:img.width,height:img.height,loading:img.loading,decoding:img.decoding,framed:!!img.closest('.art-frame[data-art]')})),
+            salon:[...doc.querySelectorAll('.salon-art img')].map(img=>({src:img.getAttribute('src'),loading:img.loading,width:img.width,height:img.height})),
+            mode:[...doc.querySelectorAll('.mode-art img')].map(img=>({src:img.getAttribute('src'),loading:img.loading,width:img.width,height:img.height}))
+          };
+        },await response.text());
+        for(const img of panels.editorial){
+          editorialFiles.add(file);editorialCount++;
+          assert.ok(img.width>0&&img.height>0,`${file}: editorial image reserves its aspect ratio`);
+          assert.equal(img.loading,'lazy',`${file}: editorial images load near the viewport`);
+          assert.equal(img.decoding,'async',`${file}: editorial decoding is asynchronous`);
+          assert.ok(img.sizes&&img.srcset,`${file}: editorial image declares responsive candidates and sizes`);
+          assert.ok(img.framed,`${file}: editorial art retains its frame`);
+          const candidates=img.srcset.split(',').map(part=>part.trim().split(/\s+/));
+          assert.ok(candidates.length>=2,`${file}: editorial image has a smaller responsive candidate`);
+          const add=(source,width)=>{
+            const url=new URL(source,new URL(file,base)).href;
+            resources.set(url,{width,heightRatio:img.height/img.width});
+          };
+          add(img.src,img.width);
+          for(const [source,width] of candidates){assert.match(width,/^\d+w$/,`${file}: responsive width descriptor`);add(source,parseInt(width,10));}
+        }
+        for(const [kind,images] of [['salon',panels.salon],['mode',panels.mode]])for(const img of images){
+          if(kind==='salon')salonCount++;else modeCount++;
+          assert.ok(img.width>0&&img.height>0,`${file}: ${kind} image reserves space`);
+          assert.equal(img.loading,'lazy',`${file}: ${kind} art is deferred`);
+          const url=new URL(img.src,new URL(file,base)).href;
+          if(!resources.has(url))resources.set(url,{heightRatio:img.height/img.width});
+        }
+      }
+      assert.ok(editorialCount>=2,'The new editorial panels are present');
+      assert.ok(salonCount>=4,'All four salons have visual panels');
+      assert.ok(modeCount>=3,'All three starting modes have visual panels');
+      for(const [url,expected] of resources){
+        const decoded=await page.evaluate(async url=>{
+          const response=await fetch(url);if(!response.ok)return{status:response.status};
+          const bitmap=await createImageBitmap(await response.blob());
+          const size={status:response.status,width:bitmap.width,height:bitmap.height};bitmap.close();return size;
+        },url);
+        assert.equal(decoded.status,200,`New art resolves: ${url}`);
+        assert.ok(decoded.width>0&&decoded.height>0,`New art decodes: ${url}`);
+        if(expected.width)assert.equal(decoded.width,expected.width,`Responsive width matches the actual image: ${url}`);
+        assert.ok(Math.abs(decoded.height/decoded.width-expected.heightRatio)<.02,`Image metadata matches the actual aspect ratio: ${url}`);
+      }
+      await ctx.close();
+      for(const options of [{viewport:{width:1440,height:900},deviceScaleFactor:1},{viewport:{width:375,height:812},deviceScaleFactor:2,isMobile:true,hasTouch:true}]){
+        const {ctx,page}=await context(options);
+        for(const file of editorialFiles){
+          await visit(page,file);
+          for(const img of await page.locator('img[data-editorial]').all()){
+            await img.scrollIntoViewIfNeeded();
+            await img.evaluate(async img=>{await img.decode();});
+            const selected=await img.evaluate(img=>({current:img.currentSrc,width:img.getBoundingClientRect().width,dpr:devicePixelRatio,candidates:img.srcset.split(',').map(part=>{const [src,width]=part.trim().split(/\s+/);return{src:new URL(src,document.baseURI).href,width:parseInt(width,10)};})}));
+            const candidate=selected.candidates.find(candidate=>candidate.src===selected.current);
+            assert.ok(candidate,`${file}: browser selects a declared responsive image`);
+            assert.ok(candidate.width>=Math.min(Math.max(...selected.candidates.map(candidate=>candidate.width)),selected.width*selected.dpr*.8),`${file}: chosen artwork is sharp at the rendered size`);
+          }
+          await noOverflow(page,`${file} after editorial images decode at ${options.viewport.width}px`);
+        }
+        await ctx.close();
+      }
+      console.log('PASS new art dimensions, responsive candidates, deferred loading and decoded desktop/mobile layout');
     }
     if(run('pages')){
       for(const viewport of [{width:1440,height:900},{width:375,height:812}]){
@@ -160,6 +232,9 @@ function containsAll(actual,expected,message){
       await page.locator('.slots [data-tab="2"]').click();assert.equal(await page.locator('select[name="모드"]').inputValue(),'자유');
       await page.evaluate(()=>{location.hash='mode-0';});await page.waitForFunction(()=>document.querySelector('select[name="모드"]').value==='추첨 입학');
       await visit(page,'academy.html');assert.equal(await page.locator('[data-major]').textContent(),'첼로','Stored major appears in the status example');
+      const eye=page.locator('.eyes [data-pick][data-set-portrait]').nth(2);
+      await chooseImage(page,eye,'.eye-portrait [data-out="portrait"]','data-set-portrait');
+      assert.equal(await page.locator('.eyes [data-out="name"]').textContent(),await eye.getAttribute('data-set-name'),'Portrait selection keeps the existing prose synchronized');
       await ctx.close();console.log('PASS desktop controls, nested pickers, drag/click, keyboard, filters/hashes, note copy and stored major');
     }
     if(run('mobile')){

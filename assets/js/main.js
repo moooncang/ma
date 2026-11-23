@@ -129,7 +129,10 @@
       press($$('[data-r]', box), reaction);
       $$('[data-state]', box).forEach((el, index) => {
         el.dataset.state = states[index]; el.textContent = names[states[index]];
-        animate(el.closest('li') || el, [{ opacity: .35, transform: 'translateY(14px) scale(.97)' }, { opacity: 1, transform: 'none' }], { delay: index * 75, duration: 650 });
+        const row = el.closest('li'), art = row?.querySelector('.salon-art img');
+        if (row) row.dataset.reaction = states[index];
+        animate(row || el, [{ opacity: .35, transform: 'translateY(14px) scale(.97)' }, { opacity: 1, transform: 'none' }], { delay: index * 75, duration: 650 });
+        if (states[index] !== '0') animate(art, [{ opacity: .65, scale: '1.045' }, { opacity: 1, scale: '1' }], { delay: index * 75, duration: 1000 }, 'salon-art');
       });
       const note = box.querySelector('[data-react-note]');
       note.textContent = reaction.dataset.note;
@@ -208,6 +211,7 @@
   }
   const major = store.get('mu-major');
   if (major) $$('[data-major]').forEach(el => { el.textContent = major; });
+  $$('.salonrows [data-state]').forEach(el => { el.closest('li').dataset.reaction = el.dataset.state; });
   resolveHash(false);
 
   // Pointer work, scroll progress, and mouse dragging share one event-driven frame.
@@ -215,6 +219,7 @@
     if (activeCard) {
       activeCard.classList.remove('is-pointer-active');
       activeCard.style.removeProperty('--tilt-x'); activeCard.style.removeProperty('--tilt-y');
+      activeCard.style.removeProperty('--art-shift-x'); activeCard.style.removeProperty('--art-shift-y');
     }
     activeCard = null; pointer = null;
   }
@@ -233,8 +238,13 @@
       const rect = activeCard.getBoundingClientRect(), x = (pointer.x - rect.left) / rect.width, y = (pointer.y - rect.top) / rect.height;
       if (x < 0 || x > 1 || y < 0 || y > 1) resetCard();
       else {
-        activeCard.style.setProperty('--tilt-x', `${(y - .5) * -5}deg`);
-        activeCard.style.setProperty('--tilt-y', `${(x - .5) * 7}deg`);
+        const isArt = activeCard.matches('.art-frame[data-art]'), depth = isArt ? .35 : 1;
+        activeCard.style.setProperty('--tilt-x', `${(y - .5) * -5 * depth}deg`);
+        activeCard.style.setProperty('--tilt-y', `${(x - .5) * 7 * depth}deg`);
+        if (isArt) {
+          activeCard.style.setProperty('--art-shift-x', `${(x - .5) * -8}px`);
+          activeCard.style.setProperty('--art-shift-y', `${(y - .5) * -6}px`);
+        }
         activeCard.style.setProperty('--spot-x', `${x * 100}%`); activeCard.style.setProperty('--spot-y', `${y * 100}%`);
       }
     }
@@ -245,11 +255,12 @@
   main.addEventListener('load', scroll, true);
   if ('ResizeObserver' in window) new ResizeObserver(scroll).observe(main);
 
-  $$('.fig, .slide, .mode, .salon, .stagebox > article').forEach(card => {
+  $$('.fig, .slide, .mode, .salon, .stagebox > article, .art-frame[data-art]').forEach(card => {
     card.classList.add('motion-card');
     const spotlight = document.createElement('i'); spotlight.className = 'motion-spotlight'; spotlight.setAttribute('aria-hidden', 'true'); card.append(spotlight);
     card.addEventListener('pointermove', event => {
       if (reduced.matches || !finePointer.matches || event.pointerType === 'touch' || drag?.active) return;
+      if (event.target.closest('.motion-card') !== card) return;
       if (activeCard !== card) { resetCard(); activeCard = card; card.classList.add('is-pointer-active'); }
       pointer = { x: event.clientX, y: event.clientY }; queueFrame();
     }, { passive: true });
@@ -293,6 +304,20 @@
 
   // Sections remain fully readable without JavaScript, at entry, and under reduced motion.
   const sections = $$('main > section:not(.hero), main > nav');
+  const artFrames = $$('.art-frame[data-art]'), revealedArt = new WeakSet();
+  function revealArt(art, motion = true) {
+    if (revealedArt.has(art)) return;
+    revealedArt.add(art); art.classList.add('is-art-revealed');
+    const img = art.querySelector(':scope > img, :scope > picture > img');
+    if (!motion || !img) return;
+    const enter = () => {
+      const rect = art.getBoundingClientRect();
+      if (!img.naturalWidth || rect.bottom <= 0 || rect.top >= innerHeight) return;
+      animate(img, [{ opacity: .45, clipPath: 'inset(0 0 28% 0)' }, { opacity: 1, clipPath: 'inset(0)' }], { duration: 1200 }, 'art-reveal');
+    };
+    if (img.complete) enter();
+    else img.addEventListener('load', enter, { once: true });
+  }
   function reveal(section, stagger = true) {
     if (section.classList.contains('is-revealed')) return;
     section.classList.add('is-revealed');
@@ -301,12 +326,20 @@
     });
   }
   const observer = 'IntersectionObserver' in window ? new IntersectionObserver(entries => entries.forEach(entry => {
-    if (entry.isIntersecting) { reveal(entry.target); observer.unobserve(entry.target); }
+    if (entry.isIntersecting) {
+      if (entry.target.matches('.art-frame[data-art]')) revealArt(entry.target);
+      if (entry.target.hasAttribute('data-reveal')) reveal(entry.target);
+      observer.unobserve(entry.target);
+    }
   }), { threshold: .04, rootMargin: '0px 0px -4% 0px' }) : null;
   sections.forEach((section, index) => {
     section.dataset.reveal = ''; section.style.setProperty('--reveal-delay', `${index % 3 * 35}ms`);
     if (!observer || reduced.matches || section.getBoundingClientRect().top < innerHeight) reveal(section, false);
     else observer.observe(section);
+  });
+  artFrames.forEach(art => {
+    if (!observer || reduced.matches || art.getBoundingClientRect().top < innerHeight) revealArt(art, !!observer && !reduced.matches && !document.getElementById('site'));
+    else observer.observe(art);
   });
   main.addEventListener('focusin', event => { const section = event.target.closest('[data-reveal]'); if (section) reveal(section, false); });
   document.documentElement.classList.add('site-motion');
@@ -323,7 +356,7 @@
   }
   function motionPreference() {
     document.documentElement.classList.toggle('motion-reduced', reduced.matches);
-    if (reduced.matches) { settle(); sections.forEach(section => reveal(section, false)); }
+    if (reduced.matches) { settle(); sections.forEach(section => reveal(section, false)); artFrames.forEach(art => revealArt(art, false)); }
     scroll();
   }
   reduced.addEventListener('change', motionPreference); finePointer.addEventListener('change', resetCard);

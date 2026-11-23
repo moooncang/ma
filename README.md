@@ -118,7 +118,7 @@ python _build/build.py
 
 - `_build/data.py` — 화면에 나오는 모든 문구와 데이터. 고칠 곳은 여기다
 - `_build/build.py` — 쪽의 틀. 실행하면 저장소 최상단의 html 17개를 다시 쓰고 검사한다(줄표, 없는 그림과 쪽, 인물 구성)
-- `assets/css/style.css` — 공통·첫 화면, `pages.css` — 내부 쪽, `motion.css` — 움직임, `fonts.css` — 자체 호스팅 글꼴. `assets/js/main.js`는 html의 `data-*` 표시를 보고 동작을 붙인다
+- `assets/css/style.css` — 공통·첫 화면, `pages.css` — 내부 쪽, `illustrations.css` — 이미지가 있는 장면, `motion.css` — 움직임, `fonts.css` — 자체 호스팅 글꼴. `assets/js/main.js`는 html의 `data-*` 표시를 보고 동작을 붙인다
 - html을 손으로 고치지 않는다. `index.html`(입장)만 손으로 쓴 파일이고 생성기가 건드리지 않는다
 
 ### 본문 디자인·동작·검증 (2026-11-24)
@@ -129,6 +129,7 @@ python _build/build.py
 - 한글·영문 글꼴은 총 316KB의 WOFF2로 자체 제공한다. 외부 Google Fonts 연결이 필요 없다. 라이선스와 재생성 방법은 [글꼴 설명](assets/fonts/README.md)을 참고한다.
 - `NODE_PATH=/tmp/ma-tools/node_modules node _build/test-site.cjs`로 17쪽의 원문·링크·접근성 문구 보존, PC·모바일 넘침, 선택·드래그·키보드·해시·입력·복사·전공 저장, 동작 줄이기와 JavaScript 없는 환경을 검사한다.
 - 원문 기준은 `_build/site-content-baseline.json`에 저장했다. `SITE_TEST_GROUP=copy|pages|desktop|mobile|motion|nojs`로 검사 범위를 고를 수 있다. 정식 문구를 바꿀 때는 이 기준도 승인된 문구와 함께 갱신한다.
+- 같은 날 메인 첫 화면을 유지하면서 음악원 풍경·악기 정물 에셋 두 장을 제작해 소개·세계·시작 안내에 추가했다. 살롱 반응에는 네 공간 이미지, 세 가지 시작에는 각기 다른 기존 배경을 넣었고 학사의 시선 선택은 인물 이미지도 함께 바뀐다. 이미지 프레임은 커서에 약하게 반응하고 처음 나타날 때만 펼쳐진다. 출처·크기·재생성은 [이미지 설명](images/editorial/README.md)에 적었다. `SITE_TEST_GROUP=assets`는 반응형 이미지 후보·크기·디코딩·화면 넘침을 검사한다.
 
 ### 입장 페이지 개발·검증
 

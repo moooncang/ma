@@ -8,11 +8,11 @@
 .site-motion [data-reveal] .hd > i { transform: scaleX(.12); transform-origin: left; transition: transform 1.25s var(--ease, ease) .15s; }
 .site-motion [data-reveal].is-revealed .hd > i { transform: scaleX(1); }
 .motion-card { position: relative; isolation: isolate; }
-.motion-card > img {
+.motion-card > img, .motion-card > picture > img {
   transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1);
   transition: transform .7s var(--ease, ease);
 }
-.motion-card.is-pointer-active > img {
+.motion-card.is-pointer-active > img, .motion-card.is-pointer-active > picture > img {
   transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.025);
   transition-duration: .22s;
 }
@@ -25,6 +25,23 @@
 }
 .motion-card.is-pointer-active > .motion-spotlight,
 .motion-card.is-focused > .motion-spotlight { opacity: 1; }
+.art-frame.motion-card > img, .art-frame.motion-card > picture > img {
+  transform: perspective(1400px) translate3d(var(--art-shift-x, 0px), var(--art-shift-y, 0px), 0) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.035);
+  transition: transform .85s var(--ease, ease);
+}
+.art-frame.motion-card.is-pointer-active > img, .art-frame.motion-card.is-pointer-active > picture > img { transition-duration: .4s; }
+.art-frame > .motion-spotlight {
+  background: radial-gradient(ellipse 460px 360px at var(--spot-x, 50%) var(--spot-y, 40%), #d9e9f229, transparent 76%);
+  mix-blend-mode: soft-light;
+}
+.salonrows .salon-art img {
+  filter: saturate(.88) brightness(.94);
+  transition: filter .9s var(--ease, ease);
+}
+.salonrows li[data-reaction="1"] .salon-art img { filter: saturate(1.1) brightness(1.05); }
+.salonrows li[data-reaction="-1"] .salon-art img { filter: saturate(.38) brightness(.74); }
+.salonrows li[data-reaction="1"]::before { opacity: 1; box-shadow: 0 0 18px color-mix(in srgb, var(--salon-color, var(--gold)) 45%, transparent); }
+.salonrows li[data-reaction="-1"]::before { opacity: .35; }
 .motion-image-copy { position: absolute !important; z-index: 2; max-width: none !important; margin: 0 !important; pointer-events: none; }
 .slides { cursor: grab; }
 .slides:focus-visible { outline: 2px solid var(--gold, #b79860); outline-offset: 8px; }
@@ -36,16 +53,18 @@
 @keyframes site-leave { to { opacity: 0; } }
 @keyframes site-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .motion-reduced [data-reveal], .motion-reduced [data-reveal] .hd > i { opacity: 1; transform: none; transition: none; }
-.motion-reduced .motion-card > img { transform: none; transition: none; }
+.motion-reduced .motion-card > img, .motion-reduced .motion-card > picture > img { transform: none !important; transition: none; }
+.motion-reduced .salonrows .salon-art img { transition: none; }
 .motion-reduced .motion-spotlight { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .site-motion [data-reveal], .site-motion [data-reveal] .hd > i { opacity: 1; transform: none; transition: none; }
-  .motion-card > img { transform: none !important; transition: none; }
+  .motion-card > img, .motion-card > picture > img { transform: none !important; transition: none; }
+  .salonrows .salon-art img { transition: none; }
   .motion-spotlight { display: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 @media (hover: none), (pointer: coarse) {
-  .motion-card > img { transform: none; }
+  .motion-card > img, .motion-card > picture > img { transform: none !important; }
   .motion-spotlight { display: none; }
   .slides { cursor: auto; }
 }
