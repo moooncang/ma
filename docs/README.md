@@ -55,4 +55,15 @@
 - 번호: 1 첫등장 / 2·3 평소 / 4·5 연주 / 6·7 기쁨 / 8·9 슬픔 / 10·11 눈물 / 12·13 당황 / 14·15 놀람 / 16·17 부끄러움 / 18·19 분노 / 20 무대 연주
 - 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/docs/CS
 
-올리지 않은 것: H씬 태그 문서 2종, 이미지 라벨 대응표, H씬 그림, 배경 배너. 문서에서 `CS\`로 적힌 폴더는 이 저장소의 `docs/CS/`다.
+## 배경 배너 (B)
+
+장소 36곳의 3200×640 도트 배경 배너다. 주소는 `https://raw.githubusercontent.com/moooncang/ma/main/docs/B/{배경코드}.webp` 꼴이다. 예: https://raw.githubusercontent.com/moooncang/ma/main/docs/B/C1.webp
+
+- 학내: C1 정문·중정 / C2 복도 / C3 연습실 / C4 레슨실 / C5 강의실 / C6 악보고 / C7 악기 공방 / C8 식당·카페 / C9 기숙사
+- 살롱: S1 우르텍스트 / S2 브라부라 / S3 아리오소 / S4 누오바
+- 무대: T1 리사이틀홀 리허설 / T2 리사이틀홀 본공연 / T3 대극장 리허설 / T4 대극장 본공연 / T5 무대 뒤·대기실 / T6 객석 / T7 오케스트라 연습실
+- 도시: L1 호숫가 / L2 광장 / L3 오페라극장 / L4 카페 / L5 주점 / L6 성당 / L7 역 / L8 셋방 / L9 저택
+- 범용: U1 길 / U2 밤거리 / U3 공항 / U4 열차 / U5 호텔 / U6 타국 홀 / U7 녹음실
+- 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/docs/B
+
+올리지 않은 것: H씬 태그 문서 2종, 이미지 라벨 대응표, H씬 그림. 문서에서 `CS\`로 적힌 폴더는 이 저장소의 `docs/CS/`다.
