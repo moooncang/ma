@@ -140,6 +140,12 @@ function containsAll(actual,expected,message){
     if(run('copy')){
       const {ctx,page}=await context();
       await visit(page,'home.html');
+      const castPage=await page.request.get(new URL('characters.html',base).href);
+      assert.equal(castPage.status(),200);
+      const originalCastFilters=await page.evaluate(source=>{
+        const doc=new DOMParser().parseFromString(source,'text/html');
+        return [...doc.querySelectorAll('[data-filter]')].map(button=>({value:button.getAttribute('data-filter'),text:button.textContent.replace(/\s+/gu,'')}));
+      },await castPage.text());
       for(const [file,expected] of Object.entries(baseline.pages)){
         const response=await page.request.get(new URL(file,base).href);assert.equal(response.status(),200,file);
         const content=await page.evaluate(source=>{
@@ -149,6 +155,22 @@ function containsAll(actual,expected,message){
           const hero=[...doc.querySelectorAll('.hero a.fig')].map(el=>({href:el.getAttribute('href'),text:compact(el.textContent)}));
           const additions=[...doc.querySelectorAll('[data-cast-addition]')].map(el=>({href:el.getAttribute('href'),text:compact(el.textContent),isHero:el.matches('.hero a.fig')}));
           const castOverview=[...doc.querySelectorAll('[data-hero-cast-link]')].map(el=>({href:el.getAttribute('href'),text:compact(el.textContent),isHero:el.matches('.hero a')}));
+          const reuse=[...doc.querySelectorAll('[data-copy-reuse]')].map(el=>el.getAttribute('data-copy-reuse'));
+          const feature=[...doc.querySelectorAll('[data-copy-reuse="hero-feature"]')].map(el=>({
+            text:compact(el.textContent),role:compact(el.querySelector('.hero-feature-role')?.textContent||''),name:compact(el.querySelector('.hero-feature-name')?.textContent||''),
+            href:el.querySelector('.hero-feature-link')?.getAttribute('href'),isHero:el.matches('.hero .hero-feature-info')
+          }));
+          const index=[...doc.querySelectorAll('[data-copy-reuse="home-index"]')].map(el=>({
+            text:compact(el.textContent),isIndex:el.matches('.home-index'),items:[...el.querySelectorAll('[data-home-jump]')].map(link=>{
+              const target=doc.getElementById((link.getAttribute('href')||'').slice(1));
+              return {href:link.getAttribute('href'),jump:link.getAttribute('data-home-jump'),text:compact(link.textContent),heading:compact(target?.querySelector('.hd > span')?.textContent||'')};
+            })
+          }));
+          const castFilters=[...doc.querySelectorAll('[data-copy-reuse="cast-filters"]')].map(el=>({
+            text:compact(el.textContent),isCast:!!el.closest('.section-cast'),items:[...el.querySelectorAll('button')].map(button=>({value:button.getAttribute('data-cast-filter')??button.getAttribute('data-filter'),text:compact(button.textContent)}))
+          }));
+          // Validate these exact reused labels below before excluding their duplicate occurrences.
+          doc.querySelectorAll('[data-copy-reuse="hero-feature"],[data-copy-reuse="home-index"],[data-copy-reuse="cast-filters"]').forEach(el=>el.remove());
           // Only the six expressly requested additional hero portraits are excluded.
           doc.querySelectorAll('.hero a.fig[data-cast-addition]').forEach(el=>el.remove());
           // The approved hero shortcut reuses the existing cast-overview link verbatim.
@@ -157,7 +179,7 @@ function containsAll(actual,expected,message){
           for(const el of doc.body.querySelectorAll('*'))for(const a of el.attributes){
             if(a.value&&(['alt','title','aria-label','placeholder','data-note','data-names','data-label','data-done'].includes(a.name)||(a.name.startsWith('data-set-')&&!['data-set-img','data-set-link','data-set-srcset'].includes(a.name))))attrs.push([a.name,a.value]);
           }
-          return {text:compact(doc.body.textContent),attrs,links:[...doc.body.querySelectorAll('a[href]')].map(a=>[a.getAttribute('href'),compact(a.textContent)]),hero,additions,castOverview};
+          return {text:compact(doc.body.textContent),attrs,links:[...doc.body.querySelectorAll('a[href]')].map(a=>[a.getAttribute('href'),compact(a.textContent)]),hero,additions,castOverview,reuse,feature,index,castFilters};
         },await response.text());
         if(file==='home.html'){
           assert.equal(content.hero.length,12,'The hero contains all twelve people');
@@ -168,7 +190,19 @@ function containsAll(actual,expected,message){
           assert.equal(content.castOverview.length,1,'The hero has one approved cast-overview shortcut');
           assert.deepEqual([content.castOverview[0].href,content.castOverview[0].text],originalAllCastLink,'The new hero shortcut reuses the existing destination and label');
           assert.equal(content.castOverview[0].isHero,true,'The shortcut exception applies only inside the hero');
-        }else assert.equal(content.additions.length+content.castOverview.length,0,`${file}: hero exceptions never hide other page content`);
+          assert.deepEqual(content.reuse.sort(),['cast-filters','hero-feature','home-index'],'Only three narrowly scoped groups reuse existing labels');
+          assert.equal(content.feature.length,1);assert.equal(content.feature[0].isHero,true);
+          assert.equal(content.feature[0].href,content.hero[0].href,'Initial hero feature links to the first original identity');
+          assert.equal(content.feature[0].role+content.feature[0].name,content.hero[0].text,'Hero feature only repeats its original name and role');
+          assert.equal(content.feature[0].text,content.feature[0].role+content.feature[0].name,'Hero feature adds no extra prose');
+          assert.equal(content.index.length,1);assert.equal(content.index[0].isIndex,true);
+          assert.deepEqual(content.index[0].items.map(item=>item.href),['#stages','#salons','#cast','#calendar','#beginnings'],'The section index targets the five existing chapters');
+          for(const item of content.index[0].items){assert.equal(item.jump,item.href);assert.equal(item.text,item.heading,'Index labels repeat their existing section heading');assert.ok(item.text);}
+          assert.equal(content.index[0].text,content.index[0].items.map(item=>item.text).join(''),'The index adds no extra prose');
+          assert.equal(content.castFilters.length,1);assert.equal(content.castFilters[0].isCast,true);
+          assert.deepEqual(content.castFilters[0].items,originalCastFilters,'Home filters reuse the original character-page categories');
+          assert.equal(content.castFilters[0].text,originalCastFilters.map(item=>item.text).join(''),'Cast filters add no extra prose');
+        }else assert.equal(content.additions.length+content.castOverview.length+content.reuse.length,0,`${file}: home exceptions never hide other page content`);
         assert.equal(hash(content.text),expected.text_sha256,`${file}: original wording and order are preserved (${expected.characters} → ${content.text.length} characters)`);
         containsAll(content.attrs,expected.copy_attributes,`${file}: preserved copy attribute`);
         containsAll(content.links,expected.links,`${file}: preserved link and label`);

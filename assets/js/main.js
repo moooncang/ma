@@ -78,7 +78,7 @@
 
   function stepGallery(control) {
     const gallery = control.closest('[data-gallery]')?.querySelector('.slides'); if (!gallery) return;
-    const cards = $$('.slide', gallery), distance = cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : cards[0]?.offsetWidth || gallery.clientWidth;
+    const cards = $$('.slide', gallery).filter(card => !card.hidden), distance = cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : cards[0]?.offsetWidth || gallery.clientWidth;
     gallery.scrollBy({ left: distance * +control.dataset.galleryStep, behavior: reduced.matches ? 'instant' : 'smooth' });
   }
 
@@ -256,7 +256,7 @@
     if (!step) return;
     const gallery = event.target.closest('.slides');
     if (gallery) {
-      const cards = $$('.slide', gallery), current = cards.indexOf(event.target.closest('.slide'));
+      const cards = $$('.slide', gallery).filter(card => !card.hidden), current = cards.indexOf(event.target.closest('.slide'));
       const next = cards[Math.max(0, Math.min(cards.length - 1, current < 0 ? 0 : current + step))];
       next?.focus({ preventScroll: true });
       next?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: reduced.matches ? 'instant' : 'smooth' });
@@ -617,4 +617,10 @@
     else scroll();
   });
   motionPreference();
+  if (document.querySelector('main.home') && !document.querySelector('script[data-home-runtime]')) {
+    const runtime = document.createElement('script');
+    runtime.dataset.homeRuntime = '';
+    runtime.src = new URL('home.js?v=concert-4', document.currentScript.src).href;
+    document.body.append(runtime);
+  }
 })();

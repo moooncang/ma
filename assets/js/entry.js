@@ -112,7 +112,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
     if (homeReady) return homeReady;
     const homeController = new AbortController();
     const homeTimeout = setTimeout(() => homeController.abort(), 15000);
-    homeReady = fetch('home.html', {signal:homeController.signal}).then(async response => {
+    homeReady = fetch('home.html?v=concert-4', {signal:homeController.signal}).then(async response => {
       if (!response.ok) throw new Error(`Home: ${response.status}`);
       const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
       if (!doc.querySelector('main.home')) throw new Error('Home markup missing');
@@ -151,7 +151,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
     cancelAnimationFrame(pointerFrame);
     particles?.dispose(); particles = null;
     const script = document.createElement('script');
-    script.src = 'assets/js/main.js?v=ensemble-3'; document.body.append(script);
+    script.src = 'assets/js/main.js?v=concert-4'; document.body.append(script);
     document.querySelector('meta[name="theme-color"]').content = '#f6f1e3';
     const main = site.querySelector('main');
     main.tabIndex = -1; main.focus({preventScroll:true});

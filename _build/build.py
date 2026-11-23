@@ -14,6 +14,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 E = html.escape
 사람 = {p["코드"]: p for p in D.인물}
 THUMBNAILS = {item["file"]: item for item in json.loads((ROOT / "images/thumbs/manifest.json").read_text())["images"]}
+# Faces occupy different parts of the original compositions; keep them in the portrait window.
+PORTRAIT_FOCAL = dict(zip("ABCDEFGHIJKL", [71, 38, 31, 73, 78, 85, 72, 49, 74, 72, 90, 24]))
 
 
 def card(c): return f"images/card/{c}_1.webp"
@@ -64,20 +66,21 @@ def page(file, title, body, cls=""):
         f'<a href="{root}{href}" data-key="{i}"{" aria-current=\"page\"" if href == file else ""}><b>{i}</b>{E(name)}</a>'
         for i, (href, name) in enumerate(menu(), 1))
     foot = "".join(f'<a href="{root}{href}">{E(name)}</a>' for href, name in menu())
+    home_styles = ''.join(f'<link rel="stylesheet" href="assets/css/{name}.css?v=concert-4">\n' for name in ['home','home-sections','home-motion']) if cls == 'home' else ''
     out = f"""<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{E(full)}</title>
-<link rel="stylesheet" href="{root}assets/css/fonts.css?v=ensemble-3">
-<link rel="stylesheet" href="{root}assets/css/style.css?v=ensemble-3">
-<link rel="stylesheet" href="{root}assets/css/pages.css?v=ensemble-3">
-<link rel="stylesheet" href="{root}assets/css/illustrations.css?v=ensemble-3">
-<link rel="stylesheet" href="{root}assets/css/atlas.css?v=ensemble-3">
-<link rel="stylesheet" href="{root}assets/css/rich.css?v=ensemble-3">
-<link rel="stylesheet" href="{root}assets/css/motion.css?v=ensemble-3">
-<script src="{root}assets/js/main.js?v=ensemble-3" defer></script>
+<link rel="stylesheet" href="{root}assets/css/fonts.css?v=concert-4">
+<link rel="stylesheet" href="{root}assets/css/style.css?v=concert-4">
+<link rel="stylesheet" href="{root}assets/css/pages.css?v=concert-4">
+<link rel="stylesheet" href="{root}assets/css/illustrations.css?v=concert-4">
+<link rel="stylesheet" href="{root}assets/css/atlas.css?v=concert-4">
+<link rel="stylesheet" href="{root}assets/css/rich.css?v=concert-4">
+<link rel="stylesheet" href="{root}assets/css/motion.css?v=concert-4">
+{home_styles}<script src="{root}assets/js/main.js?v=concert-4" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">본문으로</a>
@@ -101,23 +104,27 @@ def page(file, title, body, cls=""):
 
 
 # ── 여러 쪽에서 쓰는 조각 ─────────────────────────────────────────
-def stages(root=""):
+def stages(root="", immersive=False):
     """무대 급을 고르면 그 무대가 보인다. 홀은 리허설과 본공연을 바꿔 본다."""
     tabs, panels = [], []
     for i, s in enumerate(D.무대):
-        tabs.append(f'<button type="button" data-tab="{i}" aria-pressed="{str(i == 0).lower()}">{E(s["이름"])}</button>')
+        label = (f'<img class="stage-tab-image" src="{root}images/thumbs/places/{s["그림"][0]}-640.webp" alt="" loading="lazy" decoding="async" width="640" height="128"><i aria-hidden="true">0{i+1}</i><span>{E(s["이름"])}</span>' if immersive else E(s["이름"]))
+        tabs.append(f'<button type="button" data-tab="{i}" aria-pressed="{str(i == 0).lower()}">{label}</button>')
         imgs = s["그림"]
         if len(imgs) == 2:
-            fig = (f'<figure data-picker data-zoom><img data-out="img" src="{root}{place(imgs[0])}" alt="{E(s["이름"])}" loading="lazy" width="3200" height="640">'
+            comparison = f' data-stage-compare-frame data-compare-before="{root}{place(imgs[0])}" data-compare-after="{root}{place(imgs[1])}"' if immersive else ''
+            compare_controls = ('<div class="stage-compare-layer" hidden></div><button type="button" data-stage-compare-toggle aria-label="리허설과 본공연 비교" aria-pressed="false"></button><input data-stage-compare type="range" min="0" max="100" value="50" aria-label="본공연 비교 비율" hidden>' if immersive else '')
+            fig = (f'<figure data-picker data-zoom{comparison}><img data-out="img" src="{root}{place(imgs[0])}" alt="{E(s["이름"])}" loading="lazy" width="3200" height="640">'
                    f'<figcaption class="seg">'
                    f'<button type="button" data-pick data-set-img="{root}{place(imgs[0])}" aria-pressed="true">리허설</button>'
                    f'<button type="button" data-pick data-set-img="{root}{place(imgs[1])}" aria-pressed="false">본공연</button>'
-                   f'</figcaption></figure>')
+                   f'</figcaption>{compare_controls}</figure>')
         else:
             fig = f'<figure data-zoom><img src="{root}{place(imgs[0])}" alt="{E(s["이름"])}" loading="lazy" width="3200" height="640"></figure>'
         panels.append(f'<div data-panel="{i}"{"" if i == 0 else " hidden"}>{fig}'
                       f'<p class="en">{E(s["영문"])}</p><h3>{E(s["이름"])}</h3><p>{E(s["글"])}</p></div>')
-    return (f'<div class="stages" data-tabs><div class="steps" role="group" aria-label="무대">{"".join(tabs)}</div>'
+    transport = f'<div class="stage-transport"><button type="button" data-stage-step="-1" aria-label="이전 무대">{arrow(-1)}</button><button type="button" data-stage-step="1" aria-label="다음 무대">{arrow(1)}</button></div>' if immersive else ''
+    return (f'<div class="stages" data-tabs><div class="steps" role="group" aria-label="무대">{"".join(tabs)}</div>{transport}'
             f'{"".join(panels)}</div><p class="note">{E(D.무대_맺음)}</p>')
 
 
@@ -171,27 +178,44 @@ def home():
     ensemble = list(D.첫화면_인물) + [p["코드"] for p in D.인물 if p["코드"] not in D.첫화면_인물]
     figs = "".join(
         f'<a class="fig" href="{charpage(c)}"{" data-cast-addition" if c not in D.첫화면_인물 else ""} '
+        f'data-portrait-feature="{face(c,1)}" data-portrait-position="{PORTRAIT_FOCAL[c]}% 38%" style="--portrait-x:{PORTRAIT_FOCAL[c]}%" '
         f'data-portrait-active="images/thumbs/people/{c}-active-960.webp" data-portrait-active-small="images/thumbs/people/{c}-active-480.webp">'
         f'<img src="images/thumbs/people/{c}-960.webp" srcset="images/thumbs/people/{c}-480.webp 480w, images/thumbs/people/{c}-960.webp 960w" '
-        f'sizes="(max-width:600px) 52vw, (max-width:1000px) 30vw, 22vw" alt="" decoding="async" width="960" height="662">'
+        f'sizes="(max-width:600px) 34vw, (max-width:1000px) 22vw, 15vw" alt="" decoding="async" width="960" height="662">'
         f'<i class="fig-index" aria-hidden="true">{i+1:02d}</i><span>{E(사람[c]["줄"])}</span><b>{E(사람[c]["이름"])}</b></a>' for i,c in enumerate(ensemble))
     cast = "".join(
-        f'<a class="slide" href="{charpage(p["코드"])}"><img src="{card(p["코드"])}" alt="" loading="lazy" width="1856" height="1280">'
+        f'<a class="slide" href="{charpage(p["코드"])}" data-cast-group="{E(p["묶음"])}" style="--portrait-x:{PORTRAIT_FOCAL[p["코드"]]}%"><img src="images/thumbs/people/{p["코드"]}-960.webp" srcset="images/thumbs/people/{p["코드"]}-480.webp 480w, images/thumbs/people/{p["코드"]}-960.webp 960w" sizes="(max-width:760px) 90vw, 35vw" alt="" loading="lazy" decoding="async" width="960" height="662">'
         f'<span>{E(p["줄"])}</span><b>{E(p["이름"])}</b></a>' for p in D.인물)
     go = (f'<a class="play" href="{E(D.크랙_주소)}">PLAY</a>' if D.크랙_주소 else '') + '<a class="more" href="start.html">시작 안내</a>'
-    body = f"""<section class="hero">
+    filters = '<div class="cast-filters" data-copy-reuse="cast-filters" role="group" aria-label="인물 묶음"><button type="button" data-cast-filter="" aria-pressed="true">전체</button>' + ''.join(f'<button type="button" data-cast-filter="{E(k)}" aria-pressed="false">{E(k)}</button>' for k,_ in D.묶음) + '</div>'
+    section_index = '<nav class="home-index" data-copy-reuse="home-index" aria-label="메인 섹션 이동">' + ''.join(f'<a href="#{key}" data-home-jump="#{key}"><i aria-hidden="true">0{i}</i><span>{label}</span></a>' for i,(key,label) in enumerate([('stages','무대'),('salons','살롱 넷'),('cast','사람들'),('calendar','학사력'),('beginnings','세 가지 시작')],1)) + '</nav>'
+    feature = 사람[ensemble[0]]
+    words = D.제목.split()
+    title = ' '.join(f'<span>{E(part)}</span>' for part in [' '.join(words[:2]), words[2], ' '.join(words[3:])])
+    body = f"""<section class="hero" id="ensemble">
+  <div class="hero-stage" data-hero-scene>
+  <div class="hero-copy">
   <p class="en">{E(D.영문)}</p>
-  <h1>{E(D.제목)}</h1>
+  <h1>{title}</h1>
   <p class="genre">{E(D.장르)}</p>
   <a class="hero-cast-link" data-hero-cast-link href="characters.html">열두 사람 모두 보기</a>
+  <div class="hero-scenes"><button type="button" data-stage-jump="1" aria-label="살롱 무대 보기"><img src="images/thumbs/places/S3-640.webp" alt="" width="640" height="128" decoding="async"><i aria-hidden="true">↗</i></button><button type="button" data-stage-jump="3" aria-label="대극장 보기"><img src="images/thumbs/places/T4-640.webp" alt="" width="640" height="128" decoding="async"><i aria-hidden="true">↗</i></button></div>
+  </div>
+  <div class="hero-score" data-hero-score aria-hidden="true"><svg viewBox="0 0 500 180" fill="none"><path d="M0 106C130 160 260 4 500 46M0 119C130 173 260 17 500 59M0 132C130 186 260 30 500 72M0 145C130 199 260 43 500 85M0 158C130 212 260 56 500 98" stroke="currentColor" stroke-width=".65"/></svg>{''.join(f'<i style="--score-n:{i}"></i>' for i in range(9))}</div>
+  <div class="hero-feature">
+    <div class="hero-portrait-frame" data-hero-swipe><div class="hero-portrait-orbit" aria-hidden="true"></div><div class="hero-portrait-inner"><img class="hero-portrait" data-hero-portrait src="{face(ensemble[0],1)}" alt="" width="1856" height="1280" decoding="async" fetchpriority="high"></div><span class="hero-portrait-counter" aria-hidden="true"><b data-hero-index>01</b><i>/ 12</i></span></div>
+    <div class="hero-feature-bottom"><div class="hero-feature-info" data-copy-reuse="hero-feature"><p class="hero-feature-role">{E(feature["줄"])}</p><a class="hero-feature-link" href="{charpage(ensemble[0])}" aria-label="인물 프로필 보기"><b class="hero-feature-name">{E(feature["이름"])}</b><i aria-hidden="true">↗</i></a></div><div class="hero-controls"><button type="button" data-hero-step="-1" aria-label="이전 인물">{arrow(-1)}</button><button type="button" data-hero-step="1" aria-label="다음 인물">{arrow(1)}</button></div></div>
+  </div>
+  </div>
   <div class="figs">{figs}</div>
 </section>
+{section_index}
 <section class="say"><figure class="intro-art art-frame" data-art data-zoom>{editorial("conservatory-dusk")}</figure><div class="intro-copy">{ps(D.소개)}</div></section>
-<section class="section-stages">{hd("무대", "THE STAGES")}{stages()}</section>
-<section class="section-salons">{hd("살롱 넷", "FOUR SALONS")}<p>{E(D.살롱_머리)}</p>{salon_demo()}</section>
-<section class="section-cast">{hd("사람들", "THE CAST")}<div class="cast-gallery" data-gallery><div class="gallery-controls"><button type="button" data-gallery-step="-1" aria-label="이전 인물 카드">{arrow(-1)}</button><div class="gallery-meter" aria-hidden="true"><i></i></div><button type="button" data-gallery-step="1" aria-label="다음 인물 카드">{arrow(1)}</button></div><div class="slides">{cast}</div></div><p class="note"><a href="characters.html">열두 사람 모두 보기</a></p></section>
-<section class="section-calendar">{hd("학사력", "THE CALENDAR")}{calendar()}</section>
-<section class="section-beginnings">{hd("세 가지 시작", "BEGINNINGS")}<p>{E(D.모드_머리)}</p>{mode_cards()}</section>
+<section class="section-stages" id="stages">{hd("무대", "THE STAGES")}{stages(immersive=True)}</section>
+<section class="section-salons" id="salons">{hd("살롱 넷", "FOUR SALONS")}<p>{E(D.살롱_머리)}</p>{salon_demo()}</section>
+<section class="section-cast" id="cast">{hd("사람들", "THE CAST")}<div class="cast-gallery" data-gallery>{filters}<div class="gallery-controls"><button type="button" data-gallery-step="-1" aria-label="이전 인물 카드">{arrow(-1)}</button><div class="gallery-meter" aria-hidden="true"><i></i></div><button type="button" data-gallery-step="1" aria-label="다음 인물 카드">{arrow(1)}</button></div><div class="slides">{cast}</div></div><p class="note"><a href="characters.html">열두 사람 모두 보기</a></p></section>
+<section class="section-calendar" id="calendar">{hd("학사력", "THE CALENDAR")}{calendar()}</section>
+<section class="section-beginnings" id="beginnings">{hd("세 가지 시작", "BEGINNINGS")}<p>{E(D.모드_머리)}</p>{mode_cards()}</section>
 <section class="end">{go}</section>"""
     return page("home.html", "", body, "home")
 
