@@ -1,0 +1,4 @@
+Thumbs.db
+.DS_Store
+*.zip
+.claude/settings.local.json
