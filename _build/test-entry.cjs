@@ -46,6 +46,7 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
     await page.waitForURL('**/home.html');
     await page.locator('#entry').waitFor({state:'detached'});
     assert.equal(await page.locator('h1').textContent(), '명문 음악 아카데미의 추첨 입학생');
+    assert.equal(await page.locator('.hero .fig').count(), 12, 'Entry reveals the full twelve-person ensemble');
     assert.equal(await page.locator('#site').getAttribute('inert'), null);
     assert.equal(await page.evaluate(() => getComputedStyle(document.body).overflow), 'visible');
     await page.waitForFunction(() => [...document.scripts].some(s => s.src && new URL(s.src).pathname.endsWith('/assets/js/main.js')));

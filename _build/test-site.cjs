@@ -12,6 +12,10 @@ const group=process.env.SITE_TEST_GROUP;
 const run=name=>!group||group===name;
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
 const compact=value=>value.replace(/\s+/gu,'');
+const originalCastLinks=baseline.pages['home.html'].links.filter(([href])=>/^char\/[a-l]\.html$/.test(href));
+const castLabels=new Map(originalCastLinks);
+const addedHeroLinks=[...castLabels.keys()].filter(href=>originalCastLinks.filter(([original])=>original===href).length===1);
+const originalAllCastLink=baseline.pages['home.html'].links.find(([href,label])=>href==='characters.html'&&label.includes('열두'));
 
 function containsAll(actual,expected,message){
   const counts=new Map();
@@ -50,6 +54,8 @@ function containsAll(actual,expected,message){
   }
   async function chooseImage(page,button,image,attribute='data-set-img'){
     const expected=await button.getAttribute(attribute);
+    const group=button.locator('xpath=ancestor::details[1]');
+    if(await group.count()&&(await group.getAttribute('open'))===null)await group.locator('summary').first().click();
     await button.click();
     await page.waitForFunction(({selector,expected})=>document.querySelector(selector)?.getAttribute('src')===expected,{selector:image,expected});
     assert.equal(await button.getAttribute('aria-pressed'),'true');
@@ -70,12 +76,65 @@ function containsAll(actual,expected,message){
       assert.deepEqual(await react.locator('[data-state]').allTextContents(),states.map(s=>names[s]));
       assert.equal(await react.locator('[data-react-note]').textContent(),note,'Salon feedback uses the existing copy');
     }
+    const salonButtons=await react.locator('[data-salon-select]').all();
+    assert.equal(salonButtons.length,4,'All four salon artworks are interactive');
+    for(const salon of salonButtons){
+      const index=Number(await salon.getAttribute('data-salon-select'));
+      const choices=await react.locator('[data-r]').all();
+      let expected;
+      for(const choice of choices)if((await choice.getAttribute('data-r')).split(',')[index]==='1'){expected=choice;break;}
+      assert.ok(expected,'Each salon artwork maps to an existing positive performance');
+      await salon.click();assert.equal(await expected.getAttribute('aria-pressed'),'true','Selecting salon artwork activates its matching performance');
+    }
+    await page.mouse.move(0,0);
+    for(const salon of salonButtons)assert.equal(await salon.evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)','Salon controls keep the artwork visible after selection and pointer leave');
     await page.locator('.cal > .seg [data-tab="1"]').click();
     const week=page.locator('.cal [data-panel="1"] [data-set-week="14주차"]');
     const expected=await week.getAttribute('data-set-name');
     await week.click();
     assert.equal(await page.locator('.cal [data-panel="1"] [data-out="name"]').textContent(),expected);
     assert.equal(await page.evaluate(()=>siteAudioStarts),0,'Main-site interaction does not unexpectedly start audio');
+  }
+  async function calendarSelection(panel,number){
+    const button=panel.locator(`[data-week-number="${number}"]`);
+    assert.equal(await button.getAttribute('aria-pressed'),'true',`Calendar week ${number} is selected`);
+    for(const key of ['week','name','text','scene']){
+      const expected=await button.getAttribute(`data-set-${key}`),output=panel.locator(`[data-out="${key}"]`);
+      assert.equal(key==='scene'?await output.getAttribute('src'):await output.textContent(),expected,`Week ${number} keeps ${key} synchronized`);
+    }
+  }
+  async function detailedCalendar(page){
+    const panel=page.locator('.cal [data-panel="1"]');
+    await calendarSelection(panel,14);
+    await panel.locator('[data-week-step="-1"]').click();await calendarSelection(panel,13);
+    await panel.locator('[data-week-step="1"]').click();await calendarSelection(panel,14);
+    await panel.locator('[data-week-number="14"]').focus();
+    await page.keyboard.press('ArrowRight');await calendarSelection(panel,15);
+    await page.keyboard.press('ArrowRight');await calendarSelection(panel,15);
+    await page.keyboard.press('Home');await calendarSelection(panel,1);
+    await page.keyboard.press('End');await calendarSelection(panel,15);
+    await panel.locator('.weeks').scrollIntoViewIfNeeded();
+    const first=await panel.locator('[data-week-number="2"]').boundingBox(),last=await panel.locator('[data-week-number="6"]').boundingBox();
+    await page.mouse.move(first.x+first.width/2,first.y+first.height/2);await page.mouse.down();
+    await page.mouse.move(last.x+last.width/2,last.y+last.height/2,{steps:14});await page.mouse.up();
+    await calendarSelection(panel,6);
+    await panel.locator('[data-out="scene"]').evaluate(img=>img.decode());
+    const opener=panel.locator('.calendar-scene [data-zoom-open]'),scene=await panel.locator('[data-out="scene"]').getAttribute('src');
+    await opener.click();
+    const dialog=page.locator('dialog[data-image-viewer]');
+    assert.equal(await dialog.isVisible(),true,'Calendar artwork opens in the image viewer');
+    assert.equal(new URL(await dialog.locator('img').getAttribute('src'),page.url()).href,new URL(scene,page.url()).href,'Viewer displays the currently selected event image');
+    const before=page.url();await page.keyboard.press('1');assert.equal(page.url(),before,'Open image viewer takes precedence over navigation shortcuts');
+    await page.keyboard.press('Tab');
+    const focus=await dialog.evaluate(el=>({inside:el.contains(document.activeElement),browserChrome:document.activeElement===document.body&&!document.hasFocus()}));
+    assert.ok(focus.inside||focus.browserChrome,'Tab cannot focus the underlying page while the modal is open');
+    // Native dialogs allow browser chrome after their last control; the next Tab returns to the modal.
+    if(focus.browserChrome)await page.keyboard.press('Tab');
+    assert.equal(await dialog.evaluate(el=>el.contains(document.activeElement)),true,'Tab returns to a modal control');
+    await page.locator('.top a').first().evaluate(el=>el.focus());
+    assert.equal(await dialog.evaluate(el=>el.contains(document.activeElement)),true,'The underlying page remains inert to focus');
+    await page.keyboard.press('Escape');assert.equal(await dialog.isVisible(),false,'Escape closes the viewer');
+    assert.equal(await opener.evaluate(el=>document.activeElement===el),true,'Closing the viewer returns focus to its opener');
   }
   try{
     if(run('copy')){
@@ -87,17 +146,34 @@ function containsAll(actual,expected,message){
           const doc=new DOMParser().parseFromString(source,'text/html');
           doc.querySelectorAll('script,style,template,[aria-hidden="true"]').forEach(el=>el.remove());
           const compact=value=>value.replace(/\s+/gu,'');
+          const hero=[...doc.querySelectorAll('.hero a.fig')].map(el=>({href:el.getAttribute('href'),text:compact(el.textContent)}));
+          const additions=[...doc.querySelectorAll('[data-cast-addition]')].map(el=>({href:el.getAttribute('href'),text:compact(el.textContent),isHero:el.matches('.hero a.fig')}));
+          const castOverview=[...doc.querySelectorAll('[data-hero-cast-link]')].map(el=>({href:el.getAttribute('href'),text:compact(el.textContent),isHero:el.matches('.hero a')}));
+          // Only the six expressly requested additional hero portraits are excluded.
+          doc.querySelectorAll('.hero a.fig[data-cast-addition]').forEach(el=>el.remove());
+          // The approved hero shortcut reuses the existing cast-overview link verbatim.
+          doc.querySelectorAll('.hero a[data-hero-cast-link]').forEach(el=>el.remove());
           const attrs=[];
           for(const el of doc.body.querySelectorAll('*'))for(const a of el.attributes){
             if(a.value&&(['alt','title','aria-label','placeholder','data-note','data-names','data-label','data-done'].includes(a.name)||(a.name.startsWith('data-set-')&&!['data-set-img','data-set-link','data-set-srcset'].includes(a.name))))attrs.push([a.name,a.value]);
           }
-          return {text:compact(doc.body.textContent),attrs,links:[...doc.body.querySelectorAll('a[href]')].map(a=>[a.getAttribute('href'),compact(a.textContent)])};
+          return {text:compact(doc.body.textContent),attrs,links:[...doc.body.querySelectorAll('a[href]')].map(a=>[a.getAttribute('href'),compact(a.textContent)]),hero,additions,castOverview};
         },await response.text());
+        if(file==='home.html'){
+          assert.equal(content.hero.length,12,'The hero contains all twelve people');
+          assert.deepEqual(content.hero.map(({href})=>href).sort(),[...castLabels.keys()].sort(),'Every original cast identity appears exactly once in the hero');
+          for(const person of content.hero)assert.equal(person.text,castLabels.get(person.href),`Hero name and role reuse original copy: ${person.href}`);
+          assert.deepEqual(content.additions.map(({href})=>href).sort(),[...addedHeroLinks].sort(),'Only the six newly requested hero identities are marked as additions');
+          assert.ok(content.additions.every(person=>person.isHero),'No other content is excluded through a hero-addition marker');
+          assert.equal(content.castOverview.length,1,'The hero has one approved cast-overview shortcut');
+          assert.deepEqual([content.castOverview[0].href,content.castOverview[0].text],originalAllCastLink,'The new hero shortcut reuses the existing destination and label');
+          assert.equal(content.castOverview[0].isHero,true,'The shortcut exception applies only inside the hero');
+        }else assert.equal(content.additions.length+content.castOverview.length,0,`${file}: hero exceptions never hide other page content`);
         assert.equal(hash(content.text),expected.text_sha256,`${file}: original wording and order are preserved (${expected.characters} → ${content.text.length} characters)`);
         containsAll(content.attrs,expected.copy_attributes,`${file}: preserved copy attribute`);
         containsAll(content.links,expected.links,`${file}: preserved link and label`);
       }
-      await ctx.close();console.log('PASS unchanged source data, wording, accessible labels and links across all 17 pages');
+      await ctx.close();console.log('PASS original data, wording, labels and links across 17 pages; approved twelve-person hero expansion');
     }
     if(run('assets')){
       const {ctx,page}=await context();
@@ -188,8 +264,12 @@ function containsAll(actual,expected,message){
     }
     if(run('desktop')){
       const {ctx,page}=await context({viewport:{width:1440,height:900}});
-      await visit(page,'home.html');await homeControls(page);
+      await visit(page,'home.html');await homeControls(page);await detailedCalendar(page);
       const gallery=page.locator('.slides');await gallery.scrollIntoViewIfNeeded();
+      await page.locator('[data-gallery-step="1"]').click();
+      await page.waitForFunction(()=>document.querySelector('.slides').scrollLeft>50);
+      await page.locator('[data-gallery-step="-1"]').click();
+      await page.waitForFunction(()=>document.querySelector('.slides').scrollLeft<5);
       await gallery.evaluate(el=>{el.scrollLeft=0;});
       const box=await gallery.boundingBox();
       const before=await gallery.evaluate(el=>el.scrollLeft);
@@ -212,6 +292,15 @@ function containsAll(actual,expected,message){
       await chooseImage(page,place,'.atlas [data-out="img"]');
       assert.equal(await page.locator('.atlas [data-out="cap"]').textContent(),await place.getAttribute('data-set-cap'));
       await page.keyboard.press('ArrowRight');assert.equal(await page.locator('.atlas [data-pick]').nth(16).getAttribute('aria-pressed'),'true');
+      const firstPlaceGroup=page.locator('.atlas details.placegroup').first();
+      await chooseImage(page,firstPlaceGroup.locator('[data-pick]').last(),'.atlas [data-out="img"]');
+      await page.keyboard.press('ArrowRight');
+      const nextPlaceGroup=page.locator('.atlas details.placegroup').nth(1),firstPlace=nextPlaceGroup.locator('[data-pick]').first();
+      assert.notEqual(await nextPlaceGroup.getAttribute('open'),null,'Keyboard navigation opens the selected place group');
+      assert.equal(await firstPlace.getAttribute('aria-pressed'),'true');
+      const thumbPlace=nextPlaceGroup.locator('[data-pick]').nth(1);
+      await thumbPlace.locator('img.place-thumb').click();
+      assert.equal(await page.locator('.atlas [data-out="img"]').getAttribute('src'),await thumbPlace.getAttribute('data-set-img'),'World thumbnails select their full-size scene');
       await visit(page,'characters.html#b');
       assert.equal(await page.locator('.stagebox [data-panel="B"]').isVisible(),true,'Character hash selects the matching panel');
       await page.locator('[data-filter="교수"]').click();
@@ -235,11 +324,14 @@ function containsAll(actual,expected,message){
       const eye=page.locator('.eyes [data-pick][data-set-portrait]').nth(2);
       await chooseImage(page,eye,'.eye-portrait [data-out="portrait"]','data-set-portrait');
       assert.equal(await page.locator('.eyes [data-out="name"]').textContent(),await eye.getAttribute('data-set-name'),'Portrait selection keeps the existing prose synchronized');
-      await ctx.close();console.log('PASS desktop controls, nested pickers, drag/click, keyboard, filters/hashes, note copy and stored major');
+      await ctx.close();console.log('PASS desktop controls, calendar scrub/keys, viewer focus, gallery arrows/drag, world thumbnails, filters/hashes and form copy/storage');
     }
     if(run('mobile')){
       const {ctx,page}=await context({viewport:{width:375,height:812},isMobile:true,hasTouch:true,deviceScaleFactor:2});
       await visit(page,'home.html');await homeControls(page);await noOverflow(page,'Mobile home with active panels');
+      await page.locator('.cal [data-panel="1"] .calendar-scene [data-zoom-open]').tap();
+      const viewer=page.locator('dialog[data-image-viewer]');assert.equal(await viewer.isVisible(),true);
+      await viewer.locator('[data-zoom-close]').tap();assert.equal(await viewer.isVisible(),false,'Touch can close the image viewer');
       await page.locator('.top [data-key="3"]').tap();await page.waitForURL('**/characters.html');
       await page.locator('.roster [data-tab="K"]').tap();assert.equal(await page.locator('.stagebox [data-panel="K"]').isVisible(),true);
       await page.locator('.stagebox [data-panel="K"] .more').tap();await page.waitForURL('**/char/k.html');

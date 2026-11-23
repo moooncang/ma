@@ -1,0 +1,147 @@
+/* A complete ensemble, a playable programme and detailed control surfaces. */
+.home > section:not(.hero):not(.say) { padding-top:92px; }
+.home .section-stages { padding-block:68px; }
+.home .say { padding-block:84px; }
+.home .hero { padding:35px var(--gutter) 34px; }
+.hero h1 { font-size:clamp(34px,4.3vw,62px); margin-top:18px; }
+.hero .genre { margin-top:16px; }
+.hero-cast-link { display:inline-flex; align-items:center; gap:15px; margin-top:17px; padding:6px 0; font-size:12px; color:#e1cb9f; text-decoration:none; border-bottom:1px solid #b7986060; }
+.hero-cast-link::after { content:'↗'; font-size:17px; transition:transform .3s var(--ease); }
+.hero-cast-link:hover::after { transform:translate(3px,-3px); }
+.hero .figs { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:15px; margin-top:27px; padding:0; max-width:1240px; }
+.hero .fig:nth-child(n) { --lift:0px; height:clamp(175px,15.3vw,220px); transform:none; transition:transform .4s var(--ease),border-color .35s,box-shadow .35s; }
+.hero .fig:hover,.hero .fig:focus-visible { transform:translateY(-5px); box-shadow:0 15px 30px #0007; z-index:3; }
+.hero .fig img { object-position:73% 38%; opacity:1; }
+.hero .fig::after { background:linear-gradient(180deg,#101b2205 30%,#101b222b 48%,#101b22e8 100%); z-index:2; }
+.hero .fig .fig-index { position:absolute; z-index:4; top:9px; left:10px; min-width:24px; height:24px; display:grid; place-items:center; margin:0; border:1px solid #f6e6c942; background:#101b226e; color:#ecd6a9; font:500 11px var(--latin); font-style:normal; }
+.hero .fig span,.hero .fig b { z-index:3; left:13px; right:10px; }
+.hero .fig span { bottom:43px; font-size:9px; color:#e7ddc8; }
+.hero .fig b { bottom:12px; font-size:14px; line-height:1.5; }
+.hero .fig > .motion-spotlight { z-index:4; }
+
+/* The academic year is housed in an instrument-like concert programme. */
+.cal { --calendar-accent:#c8a56a; position:relative; padding:22px; border:1px solid #b7986080; background:#14242c; box-shadow:0 18px 40px -30px #101b2290; }
+.cal::before { content:''; position:absolute; inset:7px; border:1px solid #b798602c; pointer-events:none; }
+.cal:has([data-season="spring"]:not([hidden])) { --calendar-accent:#b6ccbd; }
+.cal > .seg { position:relative; display:flex; gap:8px; margin:0 0 21px; padding-bottom:17px; border-bottom:1px solid #b7986040; }
+.cal > .seg button { display:inline-flex; align-items:center; justify-content:center; gap:13px; min-width:158px; padding:13px 22px; border:1px solid #f6f1e322; color:#d2cbbd; background:transparent; box-shadow:none; }
+.cal > .seg button[aria-pressed="true"] { color:#f9f0dc; background:#b798601c; border-color:var(--calendar-accent); box-shadow:inset 0 -2px var(--calendar-accent); }
+.season-symbol { position:relative; display:block; width:16px; height:16px; border:1px solid currentColor; opacity:.7; }
+.season-0 { border-radius:0 65%; transform:rotate(-20deg); }
+.season-0::after { content:''; position:absolute; left:7px; top:1px; height:17px; width:1px; background:currentColor; transform:rotate(-42deg); }
+.season-1 { border-radius:50%; box-shadow:0 -4px 0 -2px currentColor,4px 0 0 -2px currentColor,0 4px 0 -2px currentColor,-4px 0 0 -2px currentColor; transform:scale(.74); }
+.cal [data-panel] { min-width:0; }
+.cal .weeks { position:relative; grid-template-columns:repeat(15,minmax(38px,1fr)); padding:0 0 7px; margin:0; border:0; background:#081117; scrollbar-color:#a58c62 #081117; touch-action:pan-y; overscroll-behavior-x:contain; }
+.cal .weeks button { position:relative; min-height:109px; align-items:flex-end; padding:0 1px 15px; border-right:1px solid #c7bda8; background:linear-gradient(90deg,#f4eedf,#fffbf0 38%,#f4eddf); color:#342b1c; font:500 14px var(--serif); box-shadow:inset 0 -5px 0 #d2c6b0; transition:transform .2s,background .3s,box-shadow .3s; }
+.cal .weeks button::before { content:''; position:absolute; z-index:2; top:0; right:-16%; width:32%; height:42%; border:1px solid #080d10; border-radius:0 0 2px 2px; background:linear-gradient(90deg,#121c21,#34434b 50%,#111b21); box-shadow:0 4px 3px #0005,inset 0 -6px 0 #071015; pointer-events:none; }
+.cal .weeks button:nth-child(7n+3)::before,.cal .weeks button:nth-child(7n)::before,.cal .weeks button:last-child::before { display:none; }
+.cal .weeks button.ev::after { content:''; position:absolute; left:calc(50% - 2px); bottom:38px; width:4px; height:4px; background:#a77542; transform:rotate(45deg); }
+.cal .weeks button.ev { color:#9a4c37; }
+.cal .weeks button:hover { background:#e7d6b5; transform:translateY(2px); }
+.cal .weeks button[aria-pressed="true"] { background:linear-gradient(90deg,#b38c50,#e0c38f,#b69661); color:#172028; transform:translateY(5px); box-shadow:inset 0 -3px 0 #9c793f,inset 0 3px 5px #33271444; }
+.cal .weeks button:focus-visible { outline:2px solid #628d98; outline-offset:-5px; z-index:3; }
+.cal .calendar-performance { position:relative; display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); margin-top:20px; border:1px solid #b798604f; }
+.calendar-scene { position:relative; isolation:isolate; min-width:0; min-height:350px; overflow:hidden; margin:0; background:#0d181e; }
+.calendar-scene > img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:79% 50%; }
+.calendar-scene::after { content:''; position:absolute; z-index:2; inset:0; pointer-events:none; background:linear-gradient(0deg,#101b2299,transparent 52%),linear-gradient(90deg,transparent 65%,#101b2240); }
+.calendar-scene::before { content:''; position:absolute; z-index:3; inset:12px; border:1px solid #f9e7bc35; pointer-events:none; }
+.calendar-dial { position:absolute; z-index:3; left:25px; bottom:24px; width:78px; height:78px; fill:none; stroke:var(--calendar-accent); stroke-width:.7; pointer-events:none; }
+.calendar-dial .dial-track { stroke:#fff5d92b; stroke-width:1; }
+.calendar-dial .dial-progress { stroke-width:2; stroke-dasharray:calc(5 + var(--week-progress,0) * 95) 100; transform:rotate(-90deg); transform-origin:center; transition:stroke-dasharray .6s var(--ease); }
+.cal .weekout { position:relative; display:flex; flex-direction:column; min-width:0; min-height:350px; margin:0; padding:33px 34px 25px; border:0; color:#f4ecdc; background:radial-gradient(ellipse at 100% 0,#39505d4f,transparent 65%),repeating-linear-gradient(0deg,transparent 0 45px,#c0aa7d08 45px 46px),#101d25; }
+.weekcopy { position:relative; z-index:1; }
+.cal .weekout .en { color:var(--calendar-accent); font-size:14px; letter-spacing:.16em; }
+.cal .weekout h3 { font-size:clamp(25px,2.8vw,37px); font-weight:500; line-height:1.6; letter-spacing:-.035em; margin-top:20px; }
+.cal .weekout p:last-child { color:#d5d4ca; font-size:14px; line-height:2; margin-top:20px; }
+.weeknav { display:flex; justify-content:flex-end; gap:9px; margin-top:auto; padding-top:25px; }
+.weeknav button,.gallery-controls button { display:grid; place-items:center; width:44px; height:44px; padding:9px; border:1px solid #b7986070; background:transparent; color:#e2c998; box-shadow:none; transition:background .3s,transform .3s; }
+.weeknav button:hover { background:#b7986026; transform:translateY(-2px); }
+.weeknav button:disabled,.gallery-controls button:disabled { opacity:.25; cursor:default; transform:none; }
+.weeknav svg,.gallery-controls svg { display:block; width:22px; height:22px; }
+.weekmeter { position:absolute; bottom:41px; left:34px; width:calc(100% - 182px); height:12px; margin:0; background:repeating-linear-gradient(90deg,#f6f1e31a 0 2px,transparent 2px calc(100% / 15)); }
+.weekmeter i { display:block; width:calc(6.666% + var(--week-progress,0) * 93.334%); height:100%; background:repeating-linear-gradient(90deg,var(--calendar-accent) 0 2px,transparent 2px calc((100% + 1px) / (1 + var(--week-index,0)))); transition:width .5s var(--ease); }
+
+/* A visible navigation rail for the already draggable portrait gallery. */
+.cast-gallery { position:relative; margin-top:0; }
+.gallery-controls { display:flex; align-items:center; gap:17px; justify-content:flex-end; margin:-4px 0 15px; }
+.gallery-controls button { color:#806231; border-color:var(--line); }
+.gallery-controls button:hover { background:#e8ddc8; border-color:var(--gold); }
+.gallery-meter { position:relative; width:140px; height:2px; background:var(--line); }
+.gallery-meter i { position:absolute; left:0; top:0; height:2px; width:calc(8.33% + var(--gallery-progress,0) * 91.67%); background:var(--gold); transition:width .25s; }
+.home .slides { padding-top:0; gap:20px; grid-auto-columns:min(78vw,435px); }
+.home .slide { padding:7px 7px 18px; background:#fffdf640; border:1px solid var(--line); }
+.home .slide span,.home .slide b { margin-left:14px; margin-right:10px; }
+.home .slide:hover { border-color:var(--gold); background:#fffdf6; }
+
+/* Salon art itself is an alternative way to try its preferred performance. */
+.salonrows li { isolation:isolate; }
+.salon-focus { position:absolute; z-index:5; inset:0; display:block; width:100%; height:100%; min-height:0; margin:0; padding:0; border:0; background:transparent; color:#f5e9cb; box-shadow:none; }
+.salon-focus::after { content:'↗'; position:absolute; top:14px; right:14px; display:grid; place-items:center; width:29px; height:29px; border:1px solid #f6e9cc70; background:#101b225c; font-size:17px; transition:transform .3s; }
+.salon-focus[aria-pressed],.salon-focus:hover { background:transparent; border:0; box-shadow:none; }
+.salon-focus:hover::after { transform:translate(2px,-2px); }
+.salon-focus:focus-visible { outline:2px solid var(--gold); outline-offset:-5px; }
+.salonrows li:has(.salon-focus:hover) { box-shadow:inset 0 0 0 1px var(--gold); }
+.academy .salon-focus::after { display:none; }
+
+/* The expression controls become a small, usable contact sheet. */
+.char .looks > .chips { display:grid; grid-template-columns:repeat(10,minmax(0,1fr)); gap:10px; justify-content:initial; }
+.char .looks > .chips button { position:relative; display:block; overflow:hidden; min-width:0; padding:0; background:#fffdf6; border:1px solid var(--line); box-shadow:none; }
+.char .looks .expression-thumb { display:block; width:100%; height:75px; object-fit:cover; object-position:72% 42%; transition:filter .35s,transform .5s; }
+.char .looks > .chips button > span { display:block; padding:10px 3px; font-size:11px; }
+.char .looks > .chips button[aria-pressed="true"] { background:var(--night); color:#ecddbe; border-color:var(--gold); box-shadow:inset 0 -2px var(--gold); }
+.char .looks > .chips button:hover .expression-thumb { transform:scale(1.05); }
+.char .looks figure { overflow:hidden; }
+
+@media (max-width:1000px) {
+  .home .hero { padding-top:30px; padding-bottom:32px; }
+  .hero .figs { gap:12px; margin-top:24px; }
+  .hero .fig:nth-child(n) { height:180px; }
+  .hero .fig b { font-size:11px; left:9px; right:6px; bottom:10px; }
+  .hero .fig span { font-size:8px; left:9px; right:6px; bottom:40px; }
+  .cal { padding:18px; }
+  .cal .weekout { padding:27px 25px 23px; }
+  .weekmeter { left:25px; width:calc(100% - 165px); bottom:39px; }
+  .cal .weekout h3 { font-size:28px; }
+  .char .looks > .chips { grid-template-columns:repeat(5,minmax(0,1fr)); }
+}
+@media (max-width:700px) {
+  .home > section:not(.hero):not(.say) { padding-top:62px; }
+  .home .say { padding-block:62px; }
+  .home .section-stages { padding-bottom:50px; }
+  .cal { padding:16px; margin-top:24px; }
+  .cal > .seg { gap:7px; margin-bottom:18px; padding-bottom:15px; }
+  .cal > .seg button { flex:1; min-width:0; padding:11px 9px; gap:10px; font-size:12px; }
+  .cal .weeks { grid-template-columns:repeat(15,minmax(37px,1fr)); }
+  .cal .weeks button { min-height:90px; padding-bottom:13px; font-size:12px; }
+  .cal .weeks button.ev::after { bottom:33px; }
+  .cal .calendar-performance { grid-template-columns:1fr; margin-top:16px; }
+  .calendar-scene { min-height:200px; }
+  .calendar-dial { width:59px; height:59px; left:18px; bottom:17px; }
+  .cal .weekout { min-height:255px; padding:23px 24px 21px; }
+  .cal .weekout h3 { font-size:28px; margin-top:12px; }
+  .cal .weekout p:last-child { font-size:13px; margin-top:15px; }
+  .weekmeter { left:24px; width:calc(100% - 162px); bottom:36px; }
+  .weeknav { padding-top:22px; }
+  .gallery-controls { gap:12px; margin-bottom:17px; }
+  .gallery-meter { width:100px; }
+  .home .slides { gap:14px; }
+  .home .slide span,.home .slide b { margin-left:8px; }
+  .char .looks > .chips { gap:7px; }
+  .char .looks .expression-thumb { height:59px; }
+  .char .looks > .chips button > span { font-size:10px; padding:8px 1px; }
+}
+@media (max-width:600px) {
+  .home .hero { padding:27px 16px 28px; }
+  .hero > .en { font-size:10px; }
+  .hero h1 { font-size:30px; line-height:1.4; margin-top:15px; max-width:350px; }
+  .hero .genre { font-size:9px; margin-top:13px; }
+  .hero-cast-link { margin-top:11px; font-size:11px; gap:12px; }
+  .hero .figs { grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:19px; }
+  .hero .fig:nth-child(n) { height:126px; }
+  .hero .fig b { font-size:10px; bottom:7px; left:6px; right:5px; line-height:1.45; }
+  .hero .fig span { bottom:38px; font-size:7px; left:6px; right:5px; line-height:1.4; }
+  .hero .fig .fig-index { top:6px; left:6px; height:19px; min-width:19px; font-size:9px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .calendar-dial .dial-progress,.weekmeter i,.gallery-meter i { transition:none; }
+}
