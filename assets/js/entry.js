@@ -1,5 +1,5 @@
 import {noteMarkup} from './entry-notes.js?v=perf-3';
-import {preloadSamples, createEntranceSound} from './entry-audio.js?v=timing-4';
+import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
 
 /* Entrance controller. No external services, autoplay or duplicated home markup. */
 (() => {
@@ -63,7 +63,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=timing-4';
   }, {signal:lifetime.signal});
 
   let particles = null;
-  if (!reduced.matches) import('./entry-particles.js?v=timing-4').then(async ({createParticles}) => {
+  if (!reduced.matches) import('./entry-particles.js?v=impact-5').then(async ({createParticles}) => {
     if (!finished && !reduced.matches && phase !== 'flight') {
       particles = await createParticles(document.getElementById('entry-atmosphere'), lifetime.signal);
       if (finished || reduced.matches) { particles?.dispose(); particles=null; return; }
@@ -168,6 +168,17 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=timing-4';
     if (sound) await Promise.race([sound.readyFor('piano'), pause(1500)]);
     if (finished) return;
     start.removeAttribute('aria-busy');
+    // Continue from the breathing light's actual frame; do not snap to darkness.
+    const glow = document.getElementById('entry-glow');
+    const glowStyle = getComputedStyle(glow);
+    const glowFrame = {opacity:glowStyle.opacity,transform:glowStyle.transform};
+    glow.style.animation = 'none';
+    glow.animate([
+      {...glowFrame,offset:0},
+      {opacity:.86,transform:'translate(-50%,-50%) scale(1.12)',offset:.12},
+      {opacity:.48,transform:'translate(-50%,-50%) scale(1.4)',offset:.55},
+      {opacity:0,transform:'translate(-50%,-50%) scale(1.65)',offset:1}
+    ], {duration:2400,easing:'ease-in-out',fill:'forwards'});
     setPhase('intro');
     sound?.play('piano', {cue:'intro'});
     particles?.begin();
@@ -187,9 +198,10 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=timing-4';
     if (!await loadHome()) { await finish(); return; }
     if (finished) return;
     setPhase('tutti');
+    entry.classList.add('entry-finale');
     particles?.reveal(instruments);
     sound?.ensemble();
-    await pause(550);
+    await pause(850);
     if (finished) return;
     setPhase('flight');
     particles?.wind();

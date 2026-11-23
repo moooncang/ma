@@ -62,9 +62,9 @@ export async function createParticles(host,signal) {
       sparks.push({x:x*width,y:y*height,vx:Math.cos(a)*velocity,vy:Math.sin(a)*velocity-16,life:0,max:.7+random()*1.2,size:.5+random(),tone:Math.floor(random()*5),trail:[]});
     }
   }
-  function pulse(x,y,strength=1,kind='eighth') {
+  function pulse(x,y,strength=1,kind='eighth',{duration=1.6,scale=.68,attack=.16}={}) {
     focus={x,y}; burst(x,y,strength);
-    notes.push({x,y,kind,born:performance.now()/1000,duration:1.6,scale:.68});
+    notes.push({x,y,kind,born:performance.now()/1000,duration,scale,attack});
   }
   function glint(x,y,r,alpha,tone=0) {
     ctx.globalAlpha=alpha;ctx.fillStyle=colors[tone];
@@ -106,14 +106,14 @@ export async function createParticles(host,signal) {
     const mainScale=width<600?.9:1.08;
     if(idle)drawNote('eighth',width*.5,height*.48,mainScale,t,1);
     else if(dissolveAt!==null) {
-      const p=Math.min(1,(t-dissolveAt)/.7);
-      if(p<1)drawNote('eighth',width*.5,height*.48,mainScale,t,1-p,p*1.5);
+      const p=Math.min(1,(t-dissolveAt)/2.4), fade=p*p*(3-2*p);
+      if(p<1)drawNote('eighth',width*.5,height*.48,mainScale,t,1-fade,p*1.9);
     }
     for(let i=notes.length-1;i>=0;i--) {
       const n=notes[i],age=t-n.born,p=age/n.duration;
       if(p>=1){notes.splice(i,1);continue;}
-      const fade=Math.min(1,age/.16)*Math.min(1,(1-p)*3.3);
-      drawNote(n.kind,n.x*width,n.y*height,n.scale,t,fade,Math.max(0,.16-age)*3+Math.max(0,p-.65)*2.7);
+      const fade=Math.min(1,age/n.attack)*Math.min(1,(1-p)*3.3);
+      drawNote(n.kind,n.x*width,n.y*height,n.scale,t,fade,Math.max(0,n.attack-age)*3+Math.max(0,p-.65)*2.7);
     }
     const cx=focus.x*width,cy=focus.y*height,r=Math.min(width,height)*(hovered?.16:.14);
     if(!gust) {
@@ -149,8 +149,16 @@ export async function createParticles(host,signal) {
   draw(performance.now());
   return {
     pulse,
-    begin(){idle=false;resize();dissolveAt=performance.now()/1000;burst(.5,.48,1.5);},
-    reveal(instruments){notes.length=0;instruments.forEach(i=>pulse(i.x/100,i.y/100,1,i.symbol));focus={x:.5,y:.48};burst(.5,.48,2);},
+    begin(){
+      idle=false;resize();dissolveAt=performance.now()/1000;burst(.5,.48,1.5);
+      // Resizing clears the canvas; repaint in the same task to preserve the note.
+      cancelAnimationFrame(frame);last=-Infinity;draw(performance.now());
+    },
+    reveal(instruments){
+      notes.length=0;
+      instruments.forEach(i=>pulse(i.x/100,i.y/100,.8,i.symbol,{duration:2.2,scale:1,attack:.045}));
+      focus={x:.5,y:.48};burst(.5,.48,2.4);
+    },
     wind(){gust=true;},
     dispose(){stopped=true;cancelAnimationFrame(frame);removeEventListener('resize',resize);start.removeEventListener('pointerenter',hover);start.removeEventListener('pointerleave',leave);start.removeEventListener('focus',hover);start.removeEventListener('blur',leave);canvas.remove();}
   };

@@ -77,15 +77,29 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       assert.equal(await page.locator('#entry-start img').count(), 0, 'Light particles replace the metal PNG');
       await page.evaluate(() => {
         window.entrancePhases = [];
+        window.openingLight = [];
         const entry = document.querySelector('#entry');
+        let openingAt;
+        const watchLight = now => {
+          if(entry.dataset.phase==='intro' && openingAt===undefined)openingAt=now;
+          if(openingAt!==undefined)openingLight.push({age:now-openingAt,opacity:+getComputedStyle(document.getElementById('entry-glow')).opacity});
+          if(openingAt===undefined || now-openingAt<2600)requestAnimationFrame(watchLight);
+        };
+        requestAnimationFrame(watchLight);
         new MutationObserver(() => entrancePhases.push(entry.dataset.phase))
           .observe(entry, {attributes:true,attributeFilter:['data-phase']});
       });
       await page.locator('#entry-start').click();
+      await page.waitForFunction(() => document.querySelector('#entry')?.dataset.phase === 'tutti');
+      assert.equal(await page.locator('#entry').evaluate(el => el.classList.contains('entry-finale')), true, 'The final chord triggers its light bloom');
       await page.waitForFunction(() => document.querySelector('#entry')?.dataset.phase === 'flight');
       assert.equal(await page.locator('#site .hero img').evaluateAll(images => images.every(i => i.complete && i.naturalWidth > 0)), true, 'Hero images ready before paper reveal');
       assert.equal(await page.locator('#site').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(246, 241, 227)', 'Actual home background under flying sheets');
       await checkHome(page);
+      const light=await page.evaluate(() => openingLight);
+      assert.ok(light.filter(s=>s.age<1000).every(s=>s.opacity>.45),'The opening light does not snap shut as the note breaks apart');
+      assert.ok(light.some(s=>s.age>1450 && s.age<1700 && s.opacity>.2),'Opening afterglow overlaps the next note');
+      assert.ok(light.at(-1).opacity<.01,'Opening illumination eventually fades away');
       assert.deepEqual(await page.evaluate(() => entrancePhases), ['loading','intro','playing','tutti','flight','done']);
       const audio = await page.evaluate(() => ({starts:sampleStarts,oscillators:oscillatorStarts}));
       assert.equal(audio.oscillators, 0, 'Recorded instruments, no oscillator imitations');

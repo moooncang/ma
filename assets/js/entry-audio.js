@@ -100,13 +100,14 @@ export function createSampler(ctx, sampleData) {
     // Distinct cues allow the opening key and final chord without duplicate attacks.
     if (closed || played.has(cue) || !buffers.has(type === 'piano' ? 'piano-d' : type)) return;
     played.add(cue);
-    const level = ensemble ? .52 : 1;
-    const duration = ensemble ? 2.5 : type === 'piano' ? 2.2 : 1.8;
-    const release = ensemble ? 1.65 : type === 'piano' ? 1.45 : 1.25;
-    if (type === 'violin') voice('violin', when, duration, .56 * level, -.4, .035, release);
-    if (type === 'cello') voice('cello', when, duration, .6 * level, -.16, .04, release);
-    if (type === 'flute') voice('flute', when, duration, .3 * level, .4, .035, release);
-    if (type === 'piano') voice('piano-d', when, duration, .58 * level, cue === 'intro' ? 0 : .2, .006, release);
+    // The final chord has its own accent and wider stage, followed by a long release.
+    const level = ensemble ? 1.05 : 1;
+    const duration = ensemble ? 3.2 : type === 'piano' ? 2.2 : 1.8;
+    const release = ensemble ? 2.2 : type === 'piano' ? 1.45 : 1.25;
+    if (type === 'violin') voice('violin', when, duration, .56 * level, ensemble ? -.62 : -.4, .035, release);
+    if (type === 'cello') voice('cello', when, duration, (ensemble ? .67 : .6) * level, ensemble ? -.26 : -.16, .04, release);
+    if (type === 'flute') voice('flute', when, duration, .3 * level, ensemble ? .62 : .4, .035, release);
+    if (type === 'piano') voice('piano-d', when, duration, (ensemble ? .67 : .58) * level, cue === 'intro' ? 0 : ensemble ? .12 : .2, .006, release);
   }
   function close() {
     if (closed) return;
