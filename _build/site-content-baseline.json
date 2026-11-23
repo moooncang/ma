@@ -1,0 +1,3135 @@
+{
+  "reference": "d591cb0e9c1bd6698bbf6f2e5d79a70346828428",
+  "description": "Original main-site copy before the visual redesign. Whitespace and purely decorative aria-hidden content are excluded.",
+  "pages": {
+    "home.html": {
+      "text_sha256": "d60bef6325400c19d0ab2f021a463feeb07c7771dea64e13bcea8230e5592348",
+      "characters": 1265,
+      "copy_attributes": [
+        [
+          "alt",
+          "대극장"
+        ],
+        [
+          "alt",
+          "리사이틀홀"
+        ],
+        [
+          "alt",
+          "바깥"
+        ],
+        [
+          "alt",
+          "살롱"
+        ],
+        [
+          "alt",
+          "연습실"
+        ],
+        [
+          "aria-label",
+          "가을 학기 주차"
+        ],
+        [
+          "aria-label",
+          "무대"
+        ],
+        [
+          "aria-label",
+          "봄 학기 주차"
+        ],
+        [
+          "aria-label",
+          "연주"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "학기"
+        ],
+        [
+          "data-names",
+          "{\"1\": \"반김\", \"0\": \"그대로\", \"-1\": \"식음\"}"
+        ],
+        [
+          "data-note",
+          "누오바가 반깁니다. 우르텍스트에게는 악보에 없는 음입니다."
+        ],
+        [
+          "data-note",
+          "누오바는 아직 아무도 듣지 못한 소리를 찾습니다."
+        ],
+        [
+          "data-note",
+          "브라부라가 반깁니다. 아리오소의 수장은 쇼를 위한 연주를 경멸합니다."
+        ],
+        [
+          "data-note",
+          "아리오소는 악기가 노래하는지를 듣습니다."
+        ],
+        [
+          "data-note",
+          "우르텍스트는 악보에 적힌 것을 기준으로 듣습니다."
+        ],
+        [
+          "data-set-name",
+          "공개 마스터클래스"
+        ],
+        [
+          "data-set-name",
+          "공개 마스터클래스"
+        ],
+        [
+          "data-set-name",
+          "그랑 갈라"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "실기 심사"
+        ],
+        [
+          "data-set-name",
+          "실기 심사"
+        ],
+        [
+          "data-set-name",
+          "협주곡 오디션"
+        ],
+        [
+          "data-set-text",
+          "교수의 레슨을 여러 사람이 지켜봅니다."
+        ],
+        [
+          "data-set-text",
+          "교수의 레슨을 여러 사람이 지켜봅니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "대극장에서 열리는 한 해의 큰 무대입니다."
+        ],
+        [
+          "data-set-text",
+          "모든 악기가 함께 겨루며, 봄 그랑 갈라의 협연자를 뽑습니다."
+        ],
+        [
+          "data-set-text",
+          "재학생 전원이 심사를 받습니다. 끝나면 방학입니다."
+        ],
+        [
+          "data-set-text",
+          "재학생 전원이 심사를 받습니다. 끝나면 해가 바뀝니다."
+        ],
+        [
+          "data-set-week",
+          "10주차"
+        ],
+        [
+          "data-set-week",
+          "10주차"
+        ],
+        [
+          "data-set-week",
+          "11주차"
+        ],
+        [
+          "data-set-week",
+          "11주차"
+        ],
+        [
+          "data-set-week",
+          "12주차"
+        ],
+        [
+          "data-set-week",
+          "12주차"
+        ],
+        [
+          "data-set-week",
+          "13주차"
+        ],
+        [
+          "data-set-week",
+          "13주차"
+        ],
+        [
+          "data-set-week",
+          "14주차"
+        ],
+        [
+          "data-set-week",
+          "14주차"
+        ],
+        [
+          "data-set-week",
+          "15주차"
+        ],
+        [
+          "data-set-week",
+          "15주차"
+        ],
+        [
+          "data-set-week",
+          "1주차"
+        ],
+        [
+          "data-set-week",
+          "1주차"
+        ],
+        [
+          "data-set-week",
+          "2주차"
+        ],
+        [
+          "data-set-week",
+          "2주차"
+        ],
+        [
+          "data-set-week",
+          "3주차"
+        ],
+        [
+          "data-set-week",
+          "3주차"
+        ],
+        [
+          "data-set-week",
+          "4주차"
+        ],
+        [
+          "data-set-week",
+          "4주차"
+        ],
+        [
+          "data-set-week",
+          "5주차"
+        ],
+        [
+          "data-set-week",
+          "5주차"
+        ],
+        [
+          "data-set-week",
+          "6주차"
+        ],
+        [
+          "data-set-week",
+          "6주차"
+        ],
+        [
+          "data-set-week",
+          "7주차"
+        ],
+        [
+          "data-set-week",
+          "7주차"
+        ],
+        [
+          "data-set-week",
+          "8주차"
+        ],
+        [
+          "data-set-week",
+          "8주차"
+        ],
+        [
+          "data-set-week",
+          "9주차"
+        ],
+        [
+          "data-set-week",
+          "9주차"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "academy.html",
+          "2학사"
+        ],
+        [
+          "academy.html",
+          "학사"
+        ],
+        [
+          "char/a.html",
+          "피아노·1년차루이제브란트"
+        ],
+        [
+          "char/a.html",
+          "피아노·1년차루이제브란트"
+        ],
+        [
+          "char/b.html",
+          "바이올린·2년차니콜페이건"
+        ],
+        [
+          "char/b.html",
+          "바이올린·2년차니콜페이건"
+        ],
+        [
+          "char/c.html",
+          "첼로·3년차호세피나에레디아"
+        ],
+        [
+          "char/d.html",
+          "소프라노·1년차테아모저"
+        ],
+        [
+          "char/d.html",
+          "소프라노·1년차테아모저"
+        ],
+        [
+          "char/e.html",
+          "피아노·2년차에밀리아볼스카"
+        ],
+        [
+          "char/f.html",
+          "반주·2년차서송이"
+        ],
+        [
+          "char/g.html",
+          "지휘·3년차마테이칼리나"
+        ],
+        [
+          "char/h.html",
+          "작곡·2년차바질소렐"
+        ],
+        [
+          "char/i.html",
+          "실내악교수·피아노쿠라모토사야카"
+        ],
+        [
+          "char/i.html",
+          "실내악교수·피아노쿠라모토사야카"
+        ],
+        [
+          "char/j.html",
+          "오르간교수·심사위원장얀판베이크"
+        ],
+        [
+          "char/k.html",
+          "바이올린·3년차안토넬라사르티"
+        ],
+        [
+          "char/k.html",
+          "바이올린·3년차안토넬라사르티"
+        ],
+        [
+          "char/l.html",
+          "음악평론가로완셔먼"
+        ],
+        [
+          "char/l.html",
+          "음악평론가로완셔먼"
+        ],
+        [
+          "characters.html",
+          "3인물"
+        ],
+        [
+          "characters.html",
+          "열두사람모두보기"
+        ],
+        [
+          "characters.html",
+          "인물"
+        ],
+        [
+          "home.html",
+          "CANTOREUM"
+        ],
+        [
+          "start.html",
+          "4시작"
+        ],
+        [
+          "start.html",
+          "시작"
+        ],
+        [
+          "start.html",
+          "시작안내"
+        ],
+        [
+          "start.html#mode-0",
+          "♭추첨입학THELOTTERY올해의추첨입학생으로시작합니다."
+        ],
+        [
+          "start.html#mode-1",
+          "♯수석입학FIRSTPLACE그해입학실기1위로시작합니다."
+        ],
+        [
+          "start.html#mode-2",
+          "♮자유FREE정해둔것이전부그대로확정됩니다."
+        ],
+        [
+          "world.html",
+          "1세계"
+        ],
+        [
+          "world.html",
+          "세계"
+        ]
+      ]
+    },
+    "world.html": {
+      "text_sha256": "71dbf46ddf0330f3f69f749d0935cf14927e384a1de04486acf4645c734d3145",
+      "characters": 875,
+      "copy_attributes": [
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 구시가 광장"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 성당"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 셋방"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 시립 오페라극장"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 역"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 저택"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 주점"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 카페"
+        ],
+        [
+          "data-set-cap",
+          "루첼라 · 호숫가"
+        ],
+        [
+          "data-set-cap",
+          "무대 · 객석"
+        ],
+        [
+          "data-set-cap",
+          "무대 · 대극장 리허설"
+        ],
+        [
+          "data-set-cap",
+          "무대 · 대극장 본공연"
+        ],
+        [
+          "data-set-cap",
+          "무대 · 리사이틀홀 리허설"
+        ],
+        [
+          "data-set-cap",
+          "무대 · 리사이틀홀 본공연"
+        ],
+        [
+          "data-set-cap",
+          "무대 · 무대 뒤"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 공항"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 길"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 녹음실"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 밤거리"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 열차"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 타국의 홀"
+        ],
+        [
+          "data-set-cap",
+          "바깥 · 호텔"
+        ],
+        [
+          "data-set-cap",
+          "살롱 · 누오바"
+        ],
+        [
+          "data-set-cap",
+          "살롱 · 브라부라"
+        ],
+        [
+          "data-set-cap",
+          "살롱 · 아리오소"
+        ],
+        [
+          "data-set-cap",
+          "살롱 · 우르텍스트"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 강의실"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 기숙사"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 레슨실"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 복도"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 식당"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 악기 공방"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 악보고"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 연습실"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 오케스트라 연습실"
+        ],
+        [
+          "data-set-cap",
+          "칸토레움 · 정문과 중정"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "academy.html",
+          "2학사"
+        ],
+        [
+          "academy.html",
+          "학사"
+        ],
+        [
+          "characters.html",
+          "3인물"
+        ],
+        [
+          "characters.html",
+          "인물"
+        ],
+        [
+          "home.html",
+          "CANTOREUM"
+        ],
+        [
+          "start.html",
+          "4시작"
+        ],
+        [
+          "start.html",
+          "시작"
+        ],
+        [
+          "world.html",
+          "1세계"
+        ],
+        [
+          "world.html",
+          "세계"
+        ]
+      ]
+    },
+    "academy.html": {
+      "text_sha256": "140dd82b8ca47bdd6bf134404eb19800f2092dcc7d47a0c6fe23132a57411335",
+      "characters": 2022,
+      "copy_attributes": [
+        [
+          "aria-label",
+          "가을 학기 주차"
+        ],
+        [
+          "aria-label",
+          "봄 학기 주차"
+        ],
+        [
+          "aria-label",
+          "연주"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "학기"
+        ],
+        [
+          "data-names",
+          "{\"1\": \"반김\", \"0\": \"그대로\", \"-1\": \"식음\"}"
+        ],
+        [
+          "data-note",
+          "누오바가 반깁니다. 우르텍스트에게는 악보에 없는 음입니다."
+        ],
+        [
+          "data-note",
+          "누오바는 아직 아무도 듣지 못한 소리를 찾습니다."
+        ],
+        [
+          "data-note",
+          "브라부라가 반깁니다. 아리오소의 수장은 쇼를 위한 연주를 경멸합니다."
+        ],
+        [
+          "data-note",
+          "아리오소는 악기가 노래하는지를 듣습니다."
+        ],
+        [
+          "data-note",
+          "우르텍스트는 악보에 적힌 것을 기준으로 듣습니다."
+        ],
+        [
+          "data-set-eye",
+          "30년을 바친 사람에게 운은 음악에 대한 모욕입니다. 가장 어려운 파트를 맡기고 봐주지 않습니다."
+        ],
+        [
+          "data-set-eye",
+          "같은 눈초리를 한 해 먼저 받았습니다. 편이 되어 주지만 대신 싸워 주지는 못합니다."
+        ],
+        [
+          "data-set-eye",
+          "누가 어떻게 들어왔는지 관심이 없습니다. 제 곡을 쳐 줄 손인지만 봅니다."
+        ],
+        [
+          "data-set-eye",
+          "모든 것을 걸고 고향을 떠나온 사람이라 추첨 입학생이 곱게 보이지 않습니다. 인사만 받고 자리를 옮깁니다."
+        ],
+        [
+          "data-set-eye",
+          "사람이 아니라 기준의 문제로 봅니다. 검증되지 않은 사람은 리허설 명단에서 뺍니다."
+        ],
+        [
+          "data-set-eye",
+          "수석과 추첨의 차이가 눈에 들어오지 않습니다. 올해의 변수로 재미있어하며 먼저 내기를 겁니다."
+        ],
+        [
+          "data-set-eye",
+          "어떻게 들어왔든 쓸 손이면 됩니다. 추첨 입학생에게 먼저 말을 거는 드문 선배이며, 합이 안 맞으면 웃으면서 뺍니다."
+        ],
+        [
+          "data-set-eye",
+          "운으로 얻은 자리를 싫어해 면전에서 말합니다. 뒤에서 수군대는 무리도 똑같이 경멸합니다."
+        ],
+        [
+          "data-set-eye",
+          "웃는 얼굴로 좌석과 파트 연습에서 뺍니다."
+        ],
+        [
+          "data-set-eye",
+          "제비뽑기가 왜 문제인지 몰라 신기해하며 따라다닙니다. 제비라는 호칭에 악의가 없습니다."
+        ],
+        [
+          "data-set-eye",
+          "추첨제를 음악원의 복권이라 부르는 글을 해마다 씁니다. 추첨 입학생의 무대에 가장 먼저 와서 가장 박하게 적습니다."
+        ],
+        [
+          "data-set-eye",
+          "추첨제에 찬반을 말하지 않습니다. 판단은 심사 날 귀로 합니다."
+        ],
+        [
+          "data-set-name",
+          "공개 마스터클래스"
+        ],
+        [
+          "data-set-name",
+          "공개 마스터클래스"
+        ],
+        [
+          "data-set-name",
+          "그랑 갈라"
+        ],
+        [
+          "data-set-name",
+          "니콜 페이건"
+        ],
+        [
+          "data-set-name",
+          "로완 셔먼"
+        ],
+        [
+          "data-set-name",
+          "루이제 브란트"
+        ],
+        [
+          "data-set-name",
+          "마테이 칼리나"
+        ],
+        [
+          "data-set-name",
+          "바질 소렐"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "살롱의 밤"
+        ],
+        [
+          "data-set-name",
+          "서송이"
+        ],
+        [
+          "data-set-name",
+          "실기 심사"
+        ],
+        [
+          "data-set-name",
+          "실기 심사"
+        ],
+        [
+          "data-set-name",
+          "안토넬라 사르티"
+        ],
+        [
+          "data-set-name",
+          "얀 판 베이크"
+        ],
+        [
+          "data-set-name",
+          "에밀리아 볼스카"
+        ],
+        [
+          "data-set-name",
+          "쿠라모토 사야카"
+        ],
+        [
+          "data-set-name",
+          "테아 모저"
+        ],
+        [
+          "data-set-name",
+          "협주곡 오디션"
+        ],
+        [
+          "data-set-name",
+          "호세피나 에레디아"
+        ],
+        [
+          "data-set-text",
+          "교수의 레슨을 여러 사람이 지켜봅니다."
+        ],
+        [
+          "data-set-text",
+          "교수의 레슨을 여러 사람이 지켜봅니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "금요일마다 네 살롱에서 무대가 열립니다."
+        ],
+        [
+          "data-set-text",
+          "대극장에서 열리는 한 해의 큰 무대입니다."
+        ],
+        [
+          "data-set-text",
+          "모든 악기가 함께 겨루며, 봄 그랑 갈라의 협연자를 뽑습니다."
+        ],
+        [
+          "data-set-text",
+          "재학생 전원이 심사를 받습니다. 끝나면 방학입니다."
+        ],
+        [
+          "data-set-text",
+          "재학생 전원이 심사를 받습니다. 끝나면 해가 바뀝니다."
+        ],
+        [
+          "data-set-turn",
+          "덜 가르치지도 않습니다. 인정은 말이 아니라 더 어려운 곡으로 합니다."
+        ],
+        [
+          "data-set-turn",
+          "들은 것을 속여 쓰지 못합니다. 조용한 쪽 필명의 글이 먼저 바뀝니다."
+        ],
+        [
+          "data-set-turn",
+          "문은 누구에게나 같은 조건으로 열려 있습니다. 말없이 명단에 이름을 올립니다."
+        ],
+        [
+          "data-set-turn",
+          "재능을 보면 눈초리가 풀리는 대신 질투로 깊어집니다."
+        ],
+        [
+          "data-set-turn",
+          "제 귀로 들은 연주는 부정하지 않습니다. 이름으로 부르고 맞대결을 청합니다."
+        ],
+        [
+          "data-set-turn",
+          "한번 귀를 열면 가장 세밀하게 들어 줍니다. 옆자리를 비워 둡니다."
+        ],
+        [
+          "data-set-week",
+          "10주차"
+        ],
+        [
+          "data-set-week",
+          "10주차"
+        ],
+        [
+          "data-set-week",
+          "11주차"
+        ],
+        [
+          "data-set-week",
+          "11주차"
+        ],
+        [
+          "data-set-week",
+          "12주차"
+        ],
+        [
+          "data-set-week",
+          "12주차"
+        ],
+        [
+          "data-set-week",
+          "13주차"
+        ],
+        [
+          "data-set-week",
+          "13주차"
+        ],
+        [
+          "data-set-week",
+          "14주차"
+        ],
+        [
+          "data-set-week",
+          "14주차"
+        ],
+        [
+          "data-set-week",
+          "15주차"
+        ],
+        [
+          "data-set-week",
+          "15주차"
+        ],
+        [
+          "data-set-week",
+          "1주차"
+        ],
+        [
+          "data-set-week",
+          "1주차"
+        ],
+        [
+          "data-set-week",
+          "2주차"
+        ],
+        [
+          "data-set-week",
+          "2주차"
+        ],
+        [
+          "data-set-week",
+          "3주차"
+        ],
+        [
+          "data-set-week",
+          "3주차"
+        ],
+        [
+          "data-set-week",
+          "4주차"
+        ],
+        [
+          "data-set-week",
+          "4주차"
+        ],
+        [
+          "data-set-week",
+          "5주차"
+        ],
+        [
+          "data-set-week",
+          "5주차"
+        ],
+        [
+          "data-set-week",
+          "6주차"
+        ],
+        [
+          "data-set-week",
+          "6주차"
+        ],
+        [
+          "data-set-week",
+          "7주차"
+        ],
+        [
+          "data-set-week",
+          "7주차"
+        ],
+        [
+          "data-set-week",
+          "8주차"
+        ],
+        [
+          "data-set-week",
+          "8주차"
+        ],
+        [
+          "data-set-week",
+          "9주차"
+        ],
+        [
+          "data-set-week",
+          "9주차"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "academy.html",
+          "2학사"
+        ],
+        [
+          "academy.html",
+          "학사"
+        ],
+        [
+          "char/a.html",
+          "루이제브란트"
+        ],
+        [
+          "char/a.html",
+          "프로필보기"
+        ],
+        [
+          "char/b.html",
+          "니콜페이건"
+        ],
+        [
+          "char/c.html",
+          "호세피나에레디아"
+        ],
+        [
+          "char/d.html",
+          "테아모저"
+        ],
+        [
+          "char/e.html",
+          "에밀리아볼스카"
+        ],
+        [
+          "char/f.html",
+          "서송이"
+        ],
+        [
+          "char/g.html",
+          "마테이칼리나"
+        ],
+        [
+          "char/h.html",
+          "바질소렐"
+        ],
+        [
+          "char/i.html",
+          "쿠라모토사야카"
+        ],
+        [
+          "char/j.html",
+          "얀판베이크"
+        ],
+        [
+          "char/k.html",
+          "안토넬라사르티"
+        ],
+        [
+          "characters.html",
+          "3인물"
+        ],
+        [
+          "characters.html",
+          "인물"
+        ],
+        [
+          "home.html",
+          "CANTOREUM"
+        ],
+        [
+          "start.html",
+          "4시작"
+        ],
+        [
+          "start.html",
+          "시작"
+        ],
+        [
+          "world.html",
+          "1세계"
+        ],
+        [
+          "world.html",
+          "세계"
+        ]
+      ]
+    },
+    "characters.html": {
+      "text_sha256": "35afb60541f7576c9df91b8d22424e56be6d523e26d29d1553244bafcc039fbf",
+      "characters": 2064,
+      "copy_attributes": [
+        [
+          "alt",
+          "니콜 페이건"
+        ],
+        [
+          "alt",
+          "로완 셔먼"
+        ],
+        [
+          "alt",
+          "루이제 브란트"
+        ],
+        [
+          "alt",
+          "마테이 칼리나"
+        ],
+        [
+          "alt",
+          "바질 소렐"
+        ],
+        [
+          "alt",
+          "서송이"
+        ],
+        [
+          "alt",
+          "안토넬라 사르티"
+        ],
+        [
+          "alt",
+          "얀 판 베이크"
+        ],
+        [
+          "alt",
+          "에밀리아 볼스카"
+        ],
+        [
+          "alt",
+          "쿠라모토 사야카"
+        ],
+        [
+          "alt",
+          "테아 모저"
+        ],
+        [
+          "alt",
+          "호세피나 에레디아"
+        ],
+        [
+          "aria-label",
+          "묶음"
+        ],
+        [
+          "aria-label",
+          "인물"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "academy.html",
+          "2학사"
+        ],
+        [
+          "academy.html",
+          "학사"
+        ],
+        [
+          "char/a.html",
+          "프로필보기"
+        ],
+        [
+          "char/b.html",
+          "프로필보기"
+        ],
+        [
+          "char/c.html",
+          "프로필보기"
+        ],
+        [
+          "char/d.html",
+          "프로필보기"
+        ],
+        [
+          "char/e.html",
+          "프로필보기"
+        ],
+        [
+          "char/f.html",
+          "프로필보기"
+        ],
+        [
+          "char/g.html",
+          "프로필보기"
+        ],
+        [
+          "char/h.html",
+          "프로필보기"
+        ],
+        [
+          "char/i.html",
+          "프로필보기"
+        ],
+        [
+          "char/j.html",
+          "프로필보기"
+        ],
+        [
+          "char/k.html",
+          "프로필보기"
+        ],
+        [
+          "char/l.html",
+          "프로필보기"
+        ],
+        [
+          "characters.html",
+          "3인물"
+        ],
+        [
+          "characters.html",
+          "인물"
+        ],
+        [
+          "home.html",
+          "CANTOREUM"
+        ],
+        [
+          "start.html",
+          "4시작"
+        ],
+        [
+          "start.html",
+          "시작"
+        ],
+        [
+          "world.html",
+          "1세계"
+        ],
+        [
+          "world.html",
+          "세계"
+        ]
+      ]
+    },
+    "start.html": {
+      "text_sha256": "ac0aab0c66915a3100d358e541632eae36de461e6661d91c6e4c0781cc572cd9",
+      "characters": 877,
+      "copy_attributes": [
+        [
+          "aria-label",
+          "시작 모드"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "data-done",
+          "복사했습니다"
+        ],
+        [
+          "data-label",
+          "국적"
+        ],
+        [
+          "data-label",
+          "시작 모드"
+        ],
+        [
+          "data-label",
+          "실력과 경력"
+        ],
+        [
+          "data-label",
+          "이름"
+        ],
+        [
+          "data-label",
+          "전공"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "academy.html",
+          "2학사"
+        ],
+        [
+          "academy.html",
+          "학사"
+        ],
+        [
+          "characters.html",
+          "3인물"
+        ],
+        [
+          "characters.html",
+          "인물"
+        ],
+        [
+          "home.html",
+          "CANTOREUM"
+        ],
+        [
+          "start.html",
+          "4시작"
+        ],
+        [
+          "start.html",
+          "시작"
+        ],
+        [
+          "world.html",
+          "1세계"
+        ],
+        [
+          "world.html",
+          "세계"
+        ]
+      ]
+    },
+    "char/a.html": {
+      "text_sha256": "e851e4ff5386e2f078e820bc35b471b9e8e5cbbdb175b21f9c524e9920fefac8",
+      "characters": 319,
+      "copy_attributes": [
+        [
+          "alt",
+          "루이제 브란트"
+        ],
+        [
+          "alt",
+          "루이제 브란트"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#a",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "b.html",
+          "니콜페이건E"
+        ],
+        [
+          "l.html",
+          "Q로완셔먼"
+        ]
+      ]
+    },
+    "char/b.html": {
+      "text_sha256": "92a3c737ae86bb80787b0106fd8cf5479e55dbc2b389eba3fa252ff7d48f7a1a",
+      "characters": 313,
+      "copy_attributes": [
+        [
+          "alt",
+          "니콜 페이건"
+        ],
+        [
+          "alt",
+          "니콜 페이건"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#b",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "a.html",
+          "Q루이제브란트"
+        ],
+        [
+          "c.html",
+          "호세피나에레디아E"
+        ]
+      ]
+    },
+    "char/c.html": {
+      "text_sha256": "ab3cf086289c72ff4377733078a7a4a2597f595433f476d107e8adc2469f04e1",
+      "characters": 294,
+      "copy_attributes": [
+        [
+          "alt",
+          "호세피나 에레디아"
+        ],
+        [
+          "alt",
+          "호세피나 에레디아"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#c",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "b.html",
+          "Q니콜페이건"
+        ],
+        [
+          "d.html",
+          "테아모저E"
+        ]
+      ]
+    },
+    "char/d.html": {
+      "text_sha256": "80fce39984dfd8cde71691b2a979fdd9ea4638eed2b7ccec610b8a777ba00c99",
+      "characters": 295,
+      "copy_attributes": [
+        [
+          "alt",
+          "테아 모저"
+        ],
+        [
+          "alt",
+          "테아 모저"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#d",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "c.html",
+          "Q호세피나에레디아"
+        ],
+        [
+          "e.html",
+          "에밀리아볼스카E"
+        ]
+      ]
+    },
+    "char/e.html": {
+      "text_sha256": "ccb4bfebd4625234de8f8180b372a0e435817b486e59271079f661891117a4bd",
+      "characters": 315,
+      "copy_attributes": [
+        [
+          "alt",
+          "에밀리아 볼스카"
+        ],
+        [
+          "alt",
+          "에밀리아 볼스카"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#e",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "d.html",
+          "Q테아모저"
+        ],
+        [
+          "f.html",
+          "서송이E"
+        ]
+      ]
+    },
+    "char/f.html": {
+      "text_sha256": "3ead25780d1c8708e19e5520394eaa462f3463a278ec863ccde858415b4b325f",
+      "characters": 282,
+      "copy_attributes": [
+        [
+          "alt",
+          "서송이"
+        ],
+        [
+          "alt",
+          "서송이"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#f",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "e.html",
+          "Q에밀리아볼스카"
+        ],
+        [
+          "g.html",
+          "마테이칼리나E"
+        ]
+      ]
+    },
+    "char/g.html": {
+      "text_sha256": "9ea37e74906e004c0aa887291217d63c60a8d64abc3ddd78e78eeaf385337d74",
+      "characters": 330,
+      "copy_attributes": [
+        [
+          "alt",
+          "마테이 칼리나"
+        ],
+        [
+          "alt",
+          "마테이 칼리나"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#g",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "f.html",
+          "Q서송이"
+        ],
+        [
+          "h.html",
+          "바질소렐E"
+        ]
+      ]
+    },
+    "char/h.html": {
+      "text_sha256": "ec4e9f7fabfad2932569bbc7b241cc6ac20b89ad8fbd686a8922ec5278cea554",
+      "characters": 277,
+      "copy_attributes": [
+        [
+          "alt",
+          "바질 소렐"
+        ],
+        [
+          "alt",
+          "바질 소렐"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#h",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "g.html",
+          "Q마테이칼리나"
+        ],
+        [
+          "k.html",
+          "안토넬라사르티E"
+        ]
+      ]
+    },
+    "char/i.html": {
+      "text_sha256": "2fbccdcdceece14e48008d6adde6e71e2d747887b4afb8d6e5015b1206f2e178",
+      "characters": 328,
+      "copy_attributes": [
+        [
+          "alt",
+          "쿠라모토 사야카"
+        ],
+        [
+          "alt",
+          "쿠라모토 사야카"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#i",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "j.html",
+          "얀판베이크E"
+        ],
+        [
+          "k.html",
+          "Q안토넬라사르티"
+        ]
+      ]
+    },
+    "char/j.html": {
+      "text_sha256": "ada1cf5642277f0d4623eb2f9919a0d2356c254688d437e295dffb76eef0487b",
+      "characters": 271,
+      "copy_attributes": [
+        [
+          "alt",
+          "얀 판 베이크"
+        ],
+        [
+          "alt",
+          "얀 판 베이크"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#j",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "i.html",
+          "Q쿠라모토사야카"
+        ],
+        [
+          "l.html",
+          "로완셔먼E"
+        ]
+      ]
+    },
+    "char/k.html": {
+      "text_sha256": "e4d1043e8c42525f78ec3dd53d926ec2387e15c5ccd47fc3783ecbf6e3965fec",
+      "characters": 318,
+      "copy_attributes": [
+        [
+          "alt",
+          "안토넬라 사르티"
+        ],
+        [
+          "alt",
+          "안토넬라 사르티"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#k",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "h.html",
+          "Q바질소렐"
+        ],
+        [
+          "i.html",
+          "쿠라모토사야카E"
+        ]
+      ]
+    },
+    "char/l.html": {
+      "text_sha256": "0a335ce3764c8bdecb5b387dc38c3f9949e21a93ce73439e74e2751e63302198",
+      "characters": 307,
+      "copy_attributes": [
+        [
+          "alt",
+          "로완 셔먼"
+        ],
+        [
+          "alt",
+          "로완 셔먼"
+        ],
+        [
+          "aria-label",
+          "인물 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "쪽 이동"
+        ],
+        [
+          "aria-label",
+          "표정"
+        ],
+        [
+          "data-set-cap",
+          "기쁨"
+        ],
+        [
+          "data-set-cap",
+          "놀람"
+        ],
+        [
+          "data-set-cap",
+          "눈물"
+        ],
+        [
+          "data-set-cap",
+          "당황"
+        ],
+        [
+          "data-set-cap",
+          "무대"
+        ],
+        [
+          "data-set-cap",
+          "부끄러움"
+        ],
+        [
+          "data-set-cap",
+          "분노"
+        ],
+        [
+          "data-set-cap",
+          "슬픔"
+        ],
+        [
+          "data-set-cap",
+          "연주"
+        ],
+        [
+          "data-set-cap",
+          "평소"
+        ]
+      ],
+      "links": [
+        [
+          "#main",
+          "본문으로"
+        ],
+        [
+          "../academy.html",
+          "2학사"
+        ],
+        [
+          "../academy.html",
+          "학사"
+        ],
+        [
+          "../characters.html",
+          "3인물"
+        ],
+        [
+          "../characters.html",
+          "인물"
+        ],
+        [
+          "../characters.html#l",
+          "명단"
+        ],
+        [
+          "../home.html",
+          "CANTOREUM"
+        ],
+        [
+          "../start.html",
+          "4시작"
+        ],
+        [
+          "../start.html",
+          "시작"
+        ],
+        [
+          "../world.html",
+          "1세계"
+        ],
+        [
+          "../world.html",
+          "세계"
+        ],
+        [
+          "a.html",
+          "루이제브란트E"
+        ],
+        [
+          "j.html",
+          "Q얀판베이크"
+        ]
+      ]
+    }
+  },
+  "data_sha256": "37b6fb319c001978137b8a896501aca3d73785b462bbe792e3b9bfe09126b862"
+}

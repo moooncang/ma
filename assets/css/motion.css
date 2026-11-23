@@ -1,0 +1,51 @@
+/* Motion is progressive enhancement; the unenhanced document is always visible. */
+.site-motion [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0);
+  transition: opacity .8s var(--ease, ease) var(--reveal-delay, 0ms), transform 1.05s var(--ease, ease) var(--reveal-delay, 0ms);
+}
+.site-motion [data-reveal].is-revealed { opacity: 1; transform: none; }
+.site-motion [data-reveal] .hd > i { transform: scaleX(.12); transform-origin: left; transition: transform 1.25s var(--ease, ease) .15s; }
+.site-motion [data-reveal].is-revealed .hd > i { transform: scaleX(1); }
+.motion-card { position: relative; isolation: isolate; }
+.motion-card > img {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1);
+  transition: transform .7s var(--ease, ease);
+}
+.motion-card.is-pointer-active > img {
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.025);
+  transition-duration: .22s;
+}
+.motion-spotlight {
+  position: absolute; inset: 0; z-index: 3; margin: 0 !important;
+  border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse 220px 200px at var(--spot-x, 50%) var(--spot-y, 40%), #c3edff30, transparent 75%);
+  transition: opacity .5s var(--ease, ease);
+  mix-blend-mode: screen;
+}
+.motion-card.is-pointer-active > .motion-spotlight,
+.motion-card.is-focused > .motion-spotlight { opacity: 1; }
+.motion-image-copy { position: absolute !important; z-index: 2; max-width: none !important; margin: 0 !important; pointer-events: none; }
+.slides { cursor: grab; }
+.slides:focus-visible { outline: 2px solid var(--gold, #b79860); outline-offset: 8px; }
+.slides.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.slides.is-dragging * { cursor: grabbing; user-select: none; }
+.slides img { -webkit-user-drag: none; }
+::view-transition-old(root) { animation: site-leave .25s ease both; }
+::view-transition-new(root) { animation: site-arrive .6s var(--ease, ease) both; }
+@keyframes site-leave { to { opacity: 0; } }
+@keyframes site-arrive { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.motion-reduced [data-reveal], .motion-reduced [data-reveal] .hd > i { opacity: 1; transform: none; transition: none; }
+.motion-reduced .motion-card > img { transform: none; transition: none; }
+.motion-reduced .motion-spotlight { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .site-motion [data-reveal], .site-motion [data-reveal] .hd > i { opacity: 1; transform: none; transition: none; }
+  .motion-card > img { transform: none !important; transition: none; }
+  .motion-spotlight { display: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+@media (hover: none), (pointer: coarse) {
+  .motion-card > img { transform: none; }
+  .motion-spotlight { display: none; }
+  .slides { cursor: auto; }
+}

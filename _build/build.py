@@ -50,11 +50,11 @@ def page(file, title, body, cls=""):
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{E(full)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+KR:wght@400;600;900&display=swap">
-<link rel="stylesheet" href="{root}assets/css/style.css">
-<script src="{root}assets/js/main.js" defer></script>
+<link rel="stylesheet" href="{root}assets/css/fonts.css?v=site-1">
+<link rel="stylesheet" href="{root}assets/css/style.css?v=site-1">
+<link rel="stylesheet" href="{root}assets/css/pages.css?v=site-1">
+<link rel="stylesheet" href="{root}assets/css/motion.css?v=site-1">
+<script src="{root}assets/js/main.js?v=site-1" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">본문으로</a>
@@ -148,11 +148,11 @@ def home():
   <div class="figs">{figs}</div>
 </section>
 <section class="say">{ps(D.소개)}</section>
-<section>{hd("무대", "THE STAGES")}{stages()}</section>
-<section>{hd("살롱 넷", "FOUR SALONS")}<p>{E(D.살롱_머리)}</p>{salon_demo()}</section>
-<section>{hd("사람들", "THE CAST")}<div class="slides">{cast}</div><p class="note"><a href="characters.html">열두 사람 모두 보기</a></p></section>
-<section>{hd("학사력", "THE CALENDAR")}{calendar()}</section>
-<section>{hd("세 가지 시작", "BEGINNINGS")}<p>{E(D.모드_머리)}</p>{mode_cards()}</section>
+<section class="section-stages">{hd("무대", "THE STAGES")}{stages()}</section>
+<section class="section-salons">{hd("살롱 넷", "FOUR SALONS")}<p>{E(D.살롱_머리)}</p>{salon_demo()}</section>
+<section class="section-cast">{hd("사람들", "THE CAST")}<div class="slides">{cast}</div><p class="note"><a href="characters.html">열두 사람 모두 보기</a></p></section>
+<section class="section-calendar">{hd("학사력", "THE CALENDAR")}{calendar()}</section>
+<section class="section-beginnings">{hd("세 가지 시작", "BEGINNINGS")}<p>{E(D.모드_머리)}</p>{mode_cards()}</section>
 <section class="end">{go}</section>"""
     return page("home.html", "", body, "home")
 
@@ -341,7 +341,7 @@ def check(files):
         for r in set(refs):
             if r.startswith(("http", "mailto:")):
                 continue
-            if not (base / r).exists():
+            if not (base / r.split("?", 1)[0]).exists():
                 errors.append(f"없는 파일: {f} → {r}")
     # 3) 인물 열두 사람, 여섯 대 여섯
     codes = {p["코드"] for p in D.인물}

@@ -48,11 +48,11 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
     assert.equal(await page.locator('h1').textContent(), '명문 음악 아카데미의 추첨 입학생');
     assert.equal(await page.locator('#site').getAttribute('inert'), null);
     assert.equal(await page.evaluate(() => getComputedStyle(document.body).overflow), 'visible');
-    await page.waitForFunction(() => [...document.scripts].some(s => s.src.endsWith('/assets/js/main.js')));
+    await page.waitForFunction(() => [...document.scripts].some(s => s.src && new URL(s.src).pathname.endsWith('/assets/js/main.js')));
     await page.locator('.stages [data-tab="2"]').click();
     assert.equal(await page.locator('.stages [data-panel="2"]').isVisible(), true, 'Home controls initialized');
     await page.locator('.stages [data-panel="2"] [data-pick]').last().click();
-    assert.match(await page.locator('.stages [data-panel="2"] img').getAttribute('src'), /T2.webp$/);
+    assert.match(await page.locator('.stages [data-panel="2"] img[data-out="img"]').getAttribute('src'), /T2.webp$/);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, 'No horizontal overflow');
   }
   try {

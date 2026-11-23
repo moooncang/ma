@@ -1,0 +1,57 @@
+{
+  "inputs": [
+    "academy.html",
+    "char/a.html",
+    "char/b.html",
+    "char/c.html",
+    "char/d.html",
+    "char/e.html",
+    "char/f.html",
+    "char/g.html",
+    "char/h.html",
+    "char/i.html",
+    "char/j.html",
+    "char/k.html",
+    "char/l.html",
+    "characters.html",
+    "home.html",
+    "index.html",
+    "start.html",
+    "world.html",
+    "_build/data.py"
+  ],
+  "requested_codepoints": 852,
+  "fonts": [
+    {
+      "file": "noto-serif-kr-regular.woff2",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/9b0f1436e455d902de067a2501422e5dc71ad16b/Serif/OTC/NotoSerifCJK-Regular.ttc",
+      "source_sha256": "5d9c31a059600193c9d7968a998bde886ccdc77e934006ad243b41794c496a7d",
+      "sha256": "ec40d02a61b2b74dea0e85d09c6e518edf505b79d61fdef4186081b66563de79",
+      "bytes": 141820,
+      "weight": 400,
+      "codepoints": 740
+    },
+    {
+      "file": "noto-serif-kr-bold.woff2",
+      "source": "https://raw.githubusercontent.com/notofonts/noto-cjk/9b0f1436e455d902de067a2501422e5dc71ad16b/Serif/OTC/NotoSerifCJK-Bold.ttc",
+      "source_sha256": "1505ee3b9c0890fae6302ee0e9c6fd74d690f4a55a6ace1d9944f3f6352d622d",
+      "sha256": "1c590049bf44d041fcc1fa2681dcbd6d9077d1d9230f70bbb7206bfd6cda0789",
+      "bytes": 144600,
+      "weight": 700,
+      "codepoints": 740
+    },
+    {
+      "file": "cormorant-garamond.woff2",
+      "source": "https://raw.githubusercontent.com/google/fonts/06bfe0d62a98375cb09c942fa18e68bd32cff057/ofl/cormorantgaramond/CormorantGaramond%5Bwght%5D.ttf",
+      "source_sha256": "b20b7d9626dd956b2c5e558692ad328b1f19e3275e2782db4fa07670d83f35e0",
+      "sha256": "dd05b23835ad2424a334c6fda86c4562b5f81fa59bc47f24ff1941dab68183f0",
+      "bytes": 29528,
+      "weight": [
+        300,
+        700
+      ],
+      "codepoints": 236
+    }
+  ],
+  "total_bytes": 315948
+}
