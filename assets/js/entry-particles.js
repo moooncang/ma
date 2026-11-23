@@ -34,7 +34,7 @@ export async function createParticles(host,signal) {
     c.globalAlpha=.52;c.drawImage(blooms[tone],0,0,64,64);
     c.globalAlpha=1;c.fillStyle=color;c.beginPath();c.arc(32,32,6.4,0,Math.PI*2);c.fill();return sprite;
   });
-  let width, height, frame, stopped = false, gust = false, hovered = false, last = 0;
+  let width, height, frame, stopped = false, gust = false, hovered = false, last = -Infinity;
   let focus = {x:.5,y:.48}, idle = true, dissolveAt = null;
   let left=0,top=0,paintWidth=0,paintHeight=0;
   const notes = [], sparks = [];
@@ -64,7 +64,7 @@ export async function createParticles(host,signal) {
   }
   function pulse(x,y,strength=1,kind='eighth') {
     focus={x,y}; burst(x,y,strength);
-    notes.push({x,y,kind,born:performance.now()/1000,duration:1.45,scale:.68});
+    notes.push({x,y,kind,born:performance.now()/1000,duration:1.6,scale:.68});
   }
   function glint(x,y,r,alpha,tone=0) {
     ctx.globalAlpha=alpha;ctx.fillStyle=colors[tone];
@@ -145,11 +145,12 @@ export async function createParticles(host,signal) {
     }
     ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   }
-  frame=requestAnimationFrame(draw);
+  // Paint before the SVG fallback is hidden, avoiding a blank first frame.
+  draw(performance.now());
   return {
     pulse,
     begin(){idle=false;resize();dissolveAt=performance.now()/1000;burst(.5,.48,1.5);},
-    reveal(){notes.length=0;focus={x:.5,y:.48};burst(.5,.48,2);},
+    reveal(instruments){notes.length=0;instruments.forEach(i=>pulse(i.x/100,i.y/100,1,i.symbol));focus={x:.5,y:.48};burst(.5,.48,2);},
     wind(){gust=true;},
     dispose(){stopped=true;cancelAnimationFrame(frame);removeEventListener('resize',resize);start.removeEventListener('pointerenter',hover);start.removeEventListener('pointerleave',leave);start.removeEventListener('focus',hover);start.removeEventListener('blur',leave);canvas.remove();}
   };

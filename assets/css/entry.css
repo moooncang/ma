@@ -5,7 +5,7 @@ body.entry-active { overflow: hidden; background: #070707; }
 #paper-scene, #paper-fallback, #entry-shade, #entry-atmosphere, #entry-notes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #paper-scene { opacity: 0; transition: opacity .35s; }
 #entry.has-webgl #paper-scene { opacity: 1; }
-#entry.has-webgl #paper-fallback { visibility: hidden; }
+#entry.has-webgl.webgl-settled #paper-fallback { visibility: hidden; }
 #paper-fallback { perspective: 1100px; }
 .entry-paper { position: absolute; width: var(--w); height: var(--h); left: var(--x); top: var(--y); background: #f5efdf var(--score) center / 100% 100%; transform: translate(-50%, -50%) rotate(var(--r)); box-shadow: 2px 5px 15px #0006; }
 #entry-shade { background: #020304; mix-blend-mode: multiply; transition: opacity .48s cubic-bezier(.2,.65,.25,1); }
@@ -14,7 +14,7 @@ body.entry-active { overflow: hidden; background: #070707; }
 #entry-shade #entry-cursor { will-change:transform,opacity; left:0; top:0; transform:translate3d(-1000px,-1000px,0); --size: 54vmin; opacity: 0; transition: opacity .5s; }
 #entry-cursor.live { opacity: .4; }
 #entry-shade .voice-light { --size: 110vmin; opacity: 0; }
-#entry-shade .voice-light.on { animation: entry-light 1.45s ease-out both; }
+#entry-shade .voice-light.on { animation: entry-light 1.6s ease-out both; }
 #entry-atmosphere { background: radial-gradient(ellipse at 50% 48%, #badcff08, transparent 45%); transition: opacity .4s; }
 #entry-start { position: absolute; left: 50%; top: 48%; width: 210px; height: 260px; transform: translate(-50%,-50%); border: 0; border-radius: 50%; padding: 0; background: transparent; color: #d9f2ff; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .3s, filter .3s; }
 #entry-start::before { content: ''; position: absolute; inset: -15%; border-radius: 50%; background: radial-gradient(ellipse, #a8dcff18, transparent 65%); transition: transform .7s, opacity .5s; opacity: .6; }
@@ -28,12 +28,12 @@ body.entry-active { overflow: hidden; background: #070707; }
 #entry-start:disabled { cursor:default; }
 .voice-note { position: absolute; width: clamp(86px,13vmin,128px); height: clamp(112px,17vmin,170px); left: var(--x); top: var(--y); transform: translate(-50%,-50%); opacity: 0; filter: drop-shadow(0 2px 2px #0008) drop-shadow(0 0 19px #b8e8ff88); }
 .voice-note::after { content:''; position:absolute; inset:-35%; border:1px solid #e6c38a30; border-radius:50%; transform:scale(.7); opacity:0; }
-.voice-note.on { animation: entry-note 1.45s ease-out both; }
-.voice-note.on::after { animation: entry-ring 1.45s ease-out both; }
-#entry[data-phase="playing"] #entry-start, #entry[data-phase="playing"] #entry-glow, #entry[data-phase="playing"] #entry-cursor { opacity: 0; animation: none; pointer-events: none; }
+.voice-note.on { animation: entry-note 1.6s ease-out both; }
+.voice-note.on::after { animation: entry-ring 1.6s ease-out both; }
+#entry[data-phase="intro"] #entry-start, #entry[data-phase="intro"] #entry-glow, #entry[data-phase="intro"] #entry-cursor, #entry[data-phase="playing"] #entry-start, #entry[data-phase="playing"] #entry-glow, #entry[data-phase="playing"] #entry-cursor { opacity: 0; animation: none; pointer-events: none; }
 #entry[data-phase="tutti"] #entry-shade, #entry[data-phase="flight"] #entry-shade { opacity: 0; }
 #entry[data-phase="tutti"] #entry-start, #entry[data-phase="flight"] #entry-start { opacity:0; pointer-events:none; }
-#entry[data-phase="tutti"] .voice-note { opacity:0; animation:none; }
+#entry[data-phase="tutti"] .voice-note { animation:entry-tutti .8s ease-out both; }
 #entry[data-phase="flight"] .voice-note { opacity: 0; animation: none; }
 #entry[data-phase="flight"] #entry-atmosphere { opacity: 0; }
 #entry[data-phase="flight"] { background:transparent; }

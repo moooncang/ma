@@ -32,7 +32,7 @@ export function createEntranceSound(sampleData) {
 
 // Accepting an AudioContext also lets the actual mix be checked offline.
 export function createSampler(ctx, sampleData) {
-  let closed = false;
+  let closed = false, closeTimer = 0;
   const buffers = new Map(), playing = new Set(), played = new Set();
   const master = ctx.createGain(); master.gain.value = .72;
   const limiter = ctx.createDynamicsCompressor();
@@ -40,34 +40,45 @@ export function createSampler(ctx, sampleData) {
   limiter.attack.value = .008; limiter.release.value = .22;
   master.connect(limiter).connect(ctx.destination);
   const reverb = ctx.createConvolver(), predelay = ctx.createDelay(.2);
-  predelay.delayTime.value = .025;
-  const damp = ctx.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 5800;
-  const wet = ctx.createGain(); wet.gain.value = .18;
+  predelay.delayTime.value = .035;
+  const damp = ctx.createBiquadFilter(); damp.type = 'lowpass'; damp.frequency.value = 7200;
+  const wet = ctx.createGain(); wet.gain.value = .27;
   // A diffuse stereo hall, with a clear dry onset and no metallic feedback.
-  const impulse = ctx.createBuffer(2, Math.floor(ctx.sampleRate * 1.2), ctx.sampleRate);
+  const impulse = ctx.createBuffer(2, Math.floor(ctx.sampleRate * 2.6), ctx.sampleRate);
   let seed = 29;
   for (let c = 0; c < 2; c++) {
     const data = impulse.getChannelData(c); let smooth = 0;
     for (let i = 0; i < data.length; i++) {
       seed = seed * 16807 % 2147483647;
       smooth = smooth * .63 + (seed / 2147483647 * 2 - 1) * .37;
-      data[i] = smooth * Math.exp(-i / ctx.sampleRate * 6) * Math.min(1, i / (ctx.sampleRate * .025));
+      data[i] = smooth * Math.exp(-i / ctx.sampleRate * 2.35) * Math.min(1, i / (ctx.sampleRate * .025));
     }
   }
   reverb.buffer = impulse;
   predelay.connect(damp).connect(reverb).connect(wet).connect(master);
-  const ready = Promise.resolve(sampleData).then(async samples => {
-    await Promise.all(names.map(async name => {
+  // Two quiet stereo echoes of the same attack, never extra played notes.
+  const echoInput = ctx.createGain();
+  for (const [delay, level, pan] of [[.26,.13,-.35],[.52,.055,.35]]) {
+    const tap = ctx.createDelay(1), gain = ctx.createGain(), position = ctx.createStereoPanner();
+    const low = ctx.createBiquadFilter(), high = ctx.createBiquadFilter();
+    tap.delayTime.value = delay; gain.gain.value = level; position.pan.value = pan;
+    low.type = 'lowpass'; low.frequency.value = 7400;
+    high.type = 'highpass'; high.frequency.value = 180;
+    echoInput.connect(tap).connect(high).connect(low).connect(gain).connect(position);
+    position.connect(master); position.connect(predelay);
+  }
+  const decoding = Promise.resolve(sampleData).then(samples => Object.fromEntries(names.map(name => [name, (async () => {
       const data = await samples[name];
       if (!data || closed) return;
       try {
         const buffer = await ctx.decodeAudioData(data.slice(0));
         if (!closed) buffers.set(name, buffer);
       } catch { /* One unavailable recording does not block the other voices. */ }
-    }));
-  }).catch(() => {});
+  })()])));
+  const ready = decoding.then(tasks => Promise.all(Object.values(tasks))).catch(() => {});
+  const readyFor = type => decoding.then(tasks => tasks[type === 'piano' ? 'piano-d' : type]).catch(() => {});
 
-  function voice(name, at, duration, gain, pan, attack = .06) {
+  function voice(name, at, duration, gain, pan, attack = .06, release = 1.2) {
     if (closed || ctx.state === 'closed' || !buffers.has(name)) return;
     const source = ctx.createBufferSource(); source.buffer = buffers.get(name);
     const envelope = ctx.createGain(), stereo = ctx.createStereoPanner();
@@ -75,36 +86,48 @@ export function createSampler(ctx, sampleData) {
     const end = at + Math.min(duration, source.buffer.duration);
     envelope.gain.setValueAtTime(0, at);
     envelope.gain.linearRampToValueAtTime(gain, at + attack);
-    envelope.gain.setValueAtTime(gain, Math.max(at + attack, end - .32));
-    envelope.gain.linearRampToValueAtTime(0, end);
+    const releaseStart = Math.max(at + attack, end - release);
+    const fade = Float32Array.from({length:96}, (_, i) => gain * (1 - i / 95) ** 2.2);
+    envelope.gain.setValueAtTime(gain, releaseStart);
+    envelope.gain.setValueCurveAtTime(fade, releaseStart, end - releaseStart);
     source.connect(envelope).connect(stereo);
-    stereo.connect(master); stereo.connect(predelay);
+    stereo.connect(master); stereo.connect(predelay); stereo.connect(echoInput);
     playing.add(source);
     source.onended = () => { playing.delete(source); source.disconnect(); envelope.disconnect(); stereo.disconnect(); };
     source.start(at); source.stop(end + .01);
   }
-  function play(type, when = ctx.currentTime + .015) {
-    // One attack per instrument in this entrance; no arpeggio or final replay.
-    if (closed || played.has(type)) return;
-    played.add(type);
-    if (type === 'violin') voice('violin', when, .9, .56, -.4, .025);
-    if (type === 'cello') voice('cello', when, .9, .6, -.16, .025);
-    if (type === 'flute') voice('flute', when, .85, .3, .4, .025);
-    if (type === 'piano') voice('piano-d', when, 1, .58, .2, .006);
+  function play(type, {when = ctx.currentTime + .015, cue = 'solo:' + type, ensemble = false} = {}) {
+    // Distinct cues allow the opening key and final chord without duplicate attacks.
+    if (closed || played.has(cue) || !buffers.has(type === 'piano' ? 'piano-d' : type)) return;
+    played.add(cue);
+    const level = ensemble ? .52 : 1;
+    const duration = ensemble ? 2.5 : type === 'piano' ? 2.2 : 1.8;
+    const release = ensemble ? 1.65 : type === 'piano' ? 1.45 : 1.25;
+    if (type === 'violin') voice('violin', when, duration, .56 * level, -.4, .035, release);
+    if (type === 'cello') voice('cello', when, duration, .6 * level, -.16, .04, release);
+    if (type === 'flute') voice('flute', when, duration, .3 * level, .4, .035, release);
+    if (type === 'piano') voice('piano-d', when, duration, .58 * level, cue === 'intro' ? 0 : .2, .006, release);
+  }
+  function close() {
+    if (closed) return;
+    closed = true; clearTimeout(closeTimer);
+    playing.forEach(source => { try { source.stop(); } catch {} });
+    playing.clear(); buffers.clear();
+    if (ctx.close && ctx.state !== 'closed') ctx.close().catch(() => {});
+  }
+  function fadeOut(duration = 1.6, when = ctx.currentTime) {
+    if (closed) return;
+    master.gain.setValueCurveAtTime(Float32Array.from({length:96}, (_, i) => .72 * (1 - i / 95) ** 2), when, duration);
   }
   return {
-    ready, play,
-    fadeOut(duration = .4, when = ctx.currentTime) {
-      if (closed) return;
-      master.gain.setValueAtTime(.72, when);
-      master.gain.linearRampToValueAtTime(0, when + duration);
+    ready, readyFor, play, fadeOut, close,
+    ensemble(when = ctx.currentTime + .015) {
+      ['violin','piano','cello','flute'].forEach(type => play(type,{when,cue:'final:' + type,ensemble:true}));
     },
-    close() {
-      if (closed) return;
-      closed = true;
-      playing.forEach(source => { try { source.stop(); } catch {} });
-      playing.clear(); buffers.clear();
-      if (ctx.close && ctx.state !== 'closed') ctx.close().catch(() => {});
+    retire() {
+      if (closed || closeTimer) return;
+      fadeOut(1.6);
+      closeTimer = setTimeout(close, 1650);
     }
   };
 }

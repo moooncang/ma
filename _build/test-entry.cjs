@@ -24,7 +24,7 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
           createBufferSource() {
             const source = super.createBufferSource(), start = source.start.bind(source);
             source.start = (...args) => {
-              window.sampleStarts.push({duration:source.buffer?.duration, fingerprint:source.buffer?.getChannelData(0)[1000], phase:document.querySelector('#entry')?.dataset.phase, appearances:document.querySelectorAll('.voice-note.on').length});
+              window.sampleStarts.push({at:args[0],duration:source.buffer?.duration, fingerprint:source.buffer?.getChannelData(0)[1000], phase:document.querySelector('#entry')?.dataset.phase, appearances:document.querySelectorAll('.voice-note.on').length});
               return start(...args);
             };
             return source;
@@ -58,27 +58,46 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
   try {
     {
       const {context,page} = await open({viewport:{width:1440,height:900}});
-      await page.locator('#entry.has-webgl').waitFor();
+      await page.evaluate(() => {
+        window.paperHandoff = [];
+        const watch = () => {
+          const entry=document.querySelector('#entry');
+          if(entry?.classList.contains('has-webgl')) paperHandoff.push({opacity:+getComputedStyle(document.getElementById('paper-scene')).opacity,fallback:getComputedStyle(document.getElementById('paper-fallback')).visibility});
+          if(entry && !entry.classList.contains('webgl-settled'))requestAnimationFrame(watch);
+        };
+        watch();
+      });
+      await page.locator('#entry.webgl-settled').waitFor();
+      const handoff=await page.evaluate(() => paperHandoff);
+      assert.ok(handoff.length>0,'Observed the initial paper handoff');
+      assert.ok(handoff.every(s=>s.opacity>=.99||s.fallback==='visible'),'No blank frame while 3D papers fade in');
       assert.equal(await page.locator('#site .hero img').count(), 0, 'Home image decoding waits for entry intent');
       assert.equal(await page.locator('#paper-scene').getAttribute('data-renderer'), 'worker', 'Paper renderer runs off the UI thread');
       await page.locator('#entry.has-particle-notes').waitFor();
       assert.equal(await page.locator('#entry-start img').count(), 0, 'Light particles replace the metal PNG');
       await page.evaluate(() => {
         window.entrancePhases = [];
-        new MutationObserver(() => entrancePhases.push(document.querySelector('#entry').dataset.phase))
-          .observe(document.querySelector('#entry'), {attributes:true,attributeFilter:['data-phase']});
+        const entry = document.querySelector('#entry');
+        new MutationObserver(() => entrancePhases.push(entry.dataset.phase))
+          .observe(entry, {attributes:true,attributeFilter:['data-phase']});
       });
       await page.locator('#entry-start').click();
       await page.waitForFunction(() => document.querySelector('#entry')?.dataset.phase === 'flight');
       assert.equal(await page.locator('#site .hero img').evaluateAll(images => images.every(i => i.complete && i.naturalWidth > 0)), true, 'Hero images ready before paper reveal');
       assert.equal(await page.locator('#site').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(246, 241, 227)', 'Actual home background under flying sheets');
       await checkHome(page);
-      assert.deepEqual(await page.evaluate(() => entrancePhases), ['loading','playing','tutti','flight','done']);
+      assert.deepEqual(await page.evaluate(() => entrancePhases), ['loading','intro','playing','tutti','flight','done']);
       const audio = await page.evaluate(() => ({starts:sampleStarts,oscillators:oscillatorStarts}));
       assert.equal(audio.oscillators, 0, 'Recorded instruments, no oscillator imitations');
-      assert.equal(audio.starts.length, 4, 'Exactly one attack for each of four appearances');
-      assert.deepEqual(audio.starts.map(s => s.appearances), [1,2,3,4], 'One sound starts with each new visual appearance');
-      assert.ok(audio.starts.every(s => s.phase === 'playing'), 'No extra sound on the final reveal');
+      assert.equal(audio.starts.length, 9, 'Opening piano + four solo attacks + four simultaneous final notes');
+      assert.deepEqual(audio.starts.map(s=>s.phase),['intro','playing','playing','playing','playing','tutti','tutti','tutti','tutti']);
+      assert.deepEqual(audio.starts.slice(1,5).map(s => s.appearances), [1,2,3,4], 'One sound starts with each new solo appearance');
+      const gaps = audio.starts.slice(1,6).map((s,i) => s.at-audio.starts[i].at);
+      assert.ok(gaps.every((gap,i) => Math.abs(gap-[1.5,1.2,.9,.6,.45][i])<.12),'The phrase follows its accelerating rhythm');
+      assert.ok(gaps.slice(1).every((gap,i) => gap<gaps[i]),'Every interval narrows toward the final chord');
+      console.log('Measured cue gaps (s):', gaps.map(gap=>gap.toFixed(3)).join(', '));
+      assert.ok(audio.starts.slice(5).every(s=>s.at===audio.starts[5].at),'The final four voices start at exactly the same audio time');
+      assert.equal(audio.starts[0].fingerprint,audio.starts[2].fingerprint,'The opening key uses the actual piano recording');
       assert.equal(new Set(audio.starts.map(s => s.fingerprint)).size, 4, 'Four distinct recorded instruments');
       assert.ok(audio.starts.every(s => s.duration > 3.8), 'Full recordings decoded successfully');
       assert.equal(await page.evaluate(() => performance.getEntriesByType('navigation').length), 1, 'No second document navigation');
@@ -150,8 +169,8 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       await page.locator('#entry.has-webgl').waitFor();
       assert.equal(await page.locator('#paper-scene').getAttribute('data-renderer'), 'main');
       await page.locator('#entry-start').click(); await checkHome(page);
-      assert.equal(await page.evaluate(() => sampleStarts.length), 4);
-      await context.close(); console.log('PASS no worker support: same-quality WebGL renderer and four single attacks');
+      assert.equal(await page.evaluate(() => sampleStarts.length), 9);
+      await context.close(); console.log('PASS no worker support: same-quality WebGL renderer and complete audio sequence');
     }
     assert.deepEqual(problems, [], 'No page exceptions or missing local assets');
   } finally { await browser.close(); }
