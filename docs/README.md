@@ -1,6 +1,6 @@
 # 음악원 「명문 음악 아카데미의 추첨 입학생」 제작 자료
 
-크랙(Crack) 스토리챗 작품의 컨셉·설정 문서 사본이다. 2026-11-23 기준이며, 최신본은 작가의 로컬 작업 폴더에 있다.
+크랙(Crack) 스토리챗 작품의 컨셉·설정 문서 사본이다. 사이트의 틀과 맡은 범위는 저장소 맨 위 README.md에 있다. 2026-11-23 기준이며, 최신본은 작가의 로컬 작업 폴더에 있다.
 
 아래 주소는 마크다운 원문을 그대로 돌려준다. 위에서부터 읽는다.
 
@@ -34,36 +34,36 @@
 
 인물 이름과 별명이 들어간 공연 포스터형 카드 12장이다.
 
-- [A 루이제 브란트](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/A_1.webp)
-- [B 니콜 페이건](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/B_1.webp)
-- [C 호세피나 에레디아](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/C_1.webp)
-- [D 테아 모저](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/D_1.webp)
-- [E 에밀리아 볼스카](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/E_1.webp)
-- [F 서송이](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/F_1.webp)
-- [G 마테이 칼리나](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/G_1.webp)
-- [H 바질 소렐](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/H_1.webp)
-- [I 쿠라모토 사야카](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/I_1.webp)
-- [J 얀 판 베이크](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/J_1.webp)
-- [K 안토넬라 사르티](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/K_1.webp)
-- [L 로완 셔먼](https://raw.githubusercontent.com/moooncang/ma/main/docs/%EC%B2%AB%EB%93%B1%EC%9E%A5%20%EC%B9%B4%EB%93%9C/L_1.webp)
+- [A 루이제 브란트](https://raw.githubusercontent.com/moooncang/ma/main/images/card/A_1.webp)
+- [B 니콜 페이건](https://raw.githubusercontent.com/moooncang/ma/main/images/card/B_1.webp)
+- [C 호세피나 에레디아](https://raw.githubusercontent.com/moooncang/ma/main/images/card/C_1.webp)
+- [D 테아 모저](https://raw.githubusercontent.com/moooncang/ma/main/images/card/D_1.webp)
+- [E 에밀리아 볼스카](https://raw.githubusercontent.com/moooncang/ma/main/images/card/E_1.webp)
+- [F 서송이](https://raw.githubusercontent.com/moooncang/ma/main/images/card/F_1.webp)
+- [G 마테이 칼리나](https://raw.githubusercontent.com/moooncang/ma/main/images/card/G_1.webp)
+- [H 바질 소렐](https://raw.githubusercontent.com/moooncang/ma/main/images/card/H_1.webp)
+- [I 쿠라모토 사야카](https://raw.githubusercontent.com/moooncang/ma/main/images/card/I_1.webp)
+- [J 얀 판 베이크](https://raw.githubusercontent.com/moooncang/ma/main/images/card/J_1.webp)
+- [K 안토넬라 사르티](https://raw.githubusercontent.com/moooncang/ma/main/images/card/K_1.webp)
+- [L 로완 셔먼](https://raw.githubusercontent.com/moooncang/ma/main/images/card/L_1.webp)
 
 ## 인물 그림 (CS)
 
-인물 12인 × 20컷, 240장이다. 주소는 `https://raw.githubusercontent.com/moooncang/ma/main/docs/CS/{인물코드}_{번호}.webp` 꼴이다. 예: https://raw.githubusercontent.com/moooncang/ma/main/docs/CS/A_1.webp
+인물 12인 × 20컷, 240장이다. 주소는 `https://raw.githubusercontent.com/moooncang/ma/main/images/CS/{인물코드}_{번호}.webp` 꼴이다. 예: https://raw.githubusercontent.com/moooncang/ma/main/images/CS/A_1.webp
 
 - 인물코드: A 루이제 브란트 / B 니콜 페이건 / C 호세피나 에레디아 / D 테아 모저 / E 에밀리아 볼스카 / F 서송이 / G 마테이 칼리나 / H 바질 소렐 / I 쿠라모토 사야카 / J 얀 판 베이크 / K 안토넬라 사르티 / L 로완 셔먼
 - 번호: 1 첫등장 / 2·3 평소 / 4·5 연주 / 6·7 기쁨 / 8·9 슬픔 / 10·11 눈물 / 12·13 당황 / 14·15 놀람 / 16·17 부끄러움 / 18·19 분노 / 20 무대 연주
-- 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/docs/CS
+- 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/images/CS
 
 ## 배경 배너 (B)
 
-장소 36곳의 3200×640 도트 배경 배너다. 주소는 `https://raw.githubusercontent.com/moooncang/ma/main/docs/B/{배경코드}.webp` 꼴이다. 예: https://raw.githubusercontent.com/moooncang/ma/main/docs/B/C1.webp
+장소 36곳의 3200×640 도트 배경 배너다. 주소는 `https://raw.githubusercontent.com/moooncang/ma/main/images/B/{배경코드}.webp` 꼴이다. 예: https://raw.githubusercontent.com/moooncang/ma/main/images/B/C1.webp
 
 - 학내: C1 정문·중정 / C2 복도 / C3 연습실 / C4 레슨실 / C5 강의실 / C6 악보고 / C7 악기 공방 / C8 식당·카페 / C9 기숙사
 - 살롱: S1 우르텍스트 / S2 브라부라 / S3 아리오소 / S4 누오바
 - 무대: T1 리사이틀홀 리허설 / T2 리사이틀홀 본공연 / T3 대극장 리허설 / T4 대극장 본공연 / T5 무대 뒤·대기실 / T6 객석 / T7 오케스트라 연습실
 - 도시: L1 호숫가 / L2 광장 / L3 오페라극장 / L4 카페 / L5 주점 / L6 성당 / L7 역 / L8 셋방 / L9 저택
 - 범용: U1 길 / U2 밤거리 / U3 공항 / U4 열차 / U5 호텔 / U6 타국 홀 / U7 녹음실
-- 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/docs/B
+- 폴더 전체 목록: https://github.com/moooncang/ma/tree/main/images/B
 
-올리지 않은 것: H씬 태그 문서 2종, 이미지 라벨 대응표, H씬 그림. 문서에서 `CS\`로 적힌 폴더는 이 저장소의 `docs/CS/`다.
+올리지 않은 것: H씬 태그 문서 2종, 이미지 라벨 대응표, H씬 그림. 문서에서 `CS\`로 적힌 폴더는 이 저장소의 `images/CS/`다.

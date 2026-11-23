@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시작 · 명문 음악 아카데미의 추첨 입학생</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+KR:wght@400;600;900&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">본문으로</a>
+<header class="top">
+  <a class="brand" href="home.html">CANTOREUM</a>
+  <nav aria-label="쪽 이동"><a href="world.html" data-key="1"><b>1</b>세계</a><a href="academy.html" data-key="2"><b>2</b>학사</a><a href="characters.html" data-key="3"><b>3</b>인물</a><a href="start.html" data-key="4" aria-current="page"><b>4</b>시작</a></nav>
+</header>
+<main id="main" class="start">
+<section class="head"><h2 class="hd"><span>시작</span><i></i><em>THE BEGINNING</em></h2><p>세 가지 시작과 플레이 안내.</p></section>
+<section><h2 class="hd"><span>세 가지 시작</span><i></i><em>BEGINNINGS</em></h2><p>모드는 유저의 처지만 가릅니다. 실력은 어느 모드에서든 유저가 밝힌 그대로입니다.</p>
+  <div class="slots" data-tabs data-hash><div class="slotbtns" role="group" aria-label="시작 모드"><button type="button" data-tab="0" id="mode-0" aria-pressed="true"><span class="mark">♭</span><b>추첨 입학</b><span class="en">THE LOTTERY</span></button><button type="button" data-tab="1" id="mode-1" aria-pressed="false"><span class="mark">♯</span><b>수석 입학</b><span class="en">FIRST PLACE</span></button><button type="button" data-tab="2" id="mode-2" aria-pressed="false"><span class="mark">♮</span><b>자유</b><span class="en">FREE</span></button></div><div data-panel="0"><h3>♭ 추첨 입학</h3><p>올해의 추첨 입학생으로 시작합니다.</p><p>학비만 면제됩니다. 기숙사비와 생활비는 직접 벌어야 합니다.</p><p>지도교수가 배정되지 않습니다. 받아 줄 교수를 직접 구해야 레슨이 시작됩니다. 고정 연습실과 살롱 초대도 없습니다.</p><dl class="rows"><dt>난이도</dt><dd>하드입니다. 애매한 시도는 대가가 딸린 부분 성공으로 판정됩니다. 첫 학기 15주차 실기 심사가 잔류 심사입니다.</dd></dl></div><div data-panel="1" hidden><h3>♯ 수석 입학</h3><p>그해 입학 실기 1위로 시작합니다.</p><p>전액 장학금과 기숙사, 생활비가 주어집니다.</p><p>지도교수를 고르고 고정 연습실을 받습니다. 네 살롱 모두가 초대장을 보냅니다. 루이제 브란트가 유저에게 수석을 내준 차석이 됩니다.</p><dl class="rows"><dt>난이도</dt><dd>이지입니다. 애매한 시도는 성공으로 판정됩니다. 첫 학기 실기 심사에서 탈락하지 않습니다.</dd></dl></div><div data-panel="2" hidden><h3>♮ 자유</h3><p>정해 둔 것이 전부 그대로 확정됩니다.</p><p>신분과 전공, 처지를 직접 정합니다. 학생이 아니어도 됩니다.</p><dl class="rows"><dt>난이도</dt><dd>적은 일은 시도로 판정되지 않고 쓴 대로 이루어집니다. 전개도 유저에게 호의적으로 흐릅니다.</dd></dl></div></div>
+</section>
+<section><h2 class="hd"><span>시작 전에</span><i></i><em>BEFORE YOU BEGIN</em></h2><p>이름과 전공, 국적, 실력과 경력은 직접 정합니다. 상한은 없습니다. 유저노트나 첫 대화에 적어 두면 그대로 반영됩니다.</p>
+  <form class="notepad" data-notepad onsubmit="return false">
+    <label>시작 모드<select name="모드" data-label="시작 모드"><option>추첨 입학</option><option>수석 입학</option><option>자유</option></select></label>
+    <label>이름<input name="이름" data-label="이름"></label><label>전공<input name="전공" data-label="전공"></label><label>국적<input name="국적" data-label="국적"></label><label>실력과 경력<textarea rows="3" name="경력" data-label="실력과 경력"></textarea></label>
+    <pre class="win" data-note-out aria-live="polite"></pre>
+    <button type="button" data-copy data-done="복사했습니다">유저노트 초안 복사</button>
+  </form>
+</section>
+<section><h2 class="hd"><span>플레이</span><i></i><em>HOW IT PLAYS</em></h2><dl class="rows"><dt>연주</dt><dd>유저의 연주는 유저가 쓴 만큼만 받아들입니다. 나머지는 듣는 사람의 표정과 호흡, 홀의 소리로 전해집니다.</dd><dt>판정</dt><dd>추첨 입학과 수석 입학에서는 연주와 오디션, 교섭이 시도로 판정됩니다. 확정된 우승도 확정된 탈락도 없습니다.</dd><dt>인물</dt><dd>인물에게도 각자의 무대와 마감이 있습니다. 유저가 없어도 연습하고, 오디션에 붙거나 떨어집니다.</dd><dt>시간</dt><dd>시간을 건너뛰면 그 사이의 변화가 세 줄 안으로 요약되고 장면이 다시 열립니다.</dd><dt>결말</dt><dd>정해진 엔딩은 없습니다.</dd></dl></section>
+<section><h2 class="hd"><span>안내</span><i></i><em>NOTICE</em></h2><p>성인 이용자를 위한 작품입니다. 등장인물은 모두 성인입니다.</p></section>
+</main>
+<footer class="foot">
+  <span>CANTOREUM</span>
+  <nav aria-label="쪽 이동"><a href="world.html">세계</a><a href="academy.html">학사</a><a href="characters.html">인물</a><a href="start.html">시작</a></nav>
+</footer>
+</body>
+</html>

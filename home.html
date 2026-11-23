@@ -4,140 +4,36 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>명문 음악 아카데미의 추첨 입학생</title>
-<!--
-  [초안] 본문 페이지.
-  문구(아래 `내용` 객체)만 정리해 둔 초안이다. 문구를 제외한 레이아웃·색·글꼴·그림 배치·코드 구조는
-  전부 임시이며, GPT가 작업할 때 뜯어고친다. 그림은 docs/ 의 자료를 그대로 불러 쓴다.
--->
-<style>
-  body { margin: 0; background: #f6f1e3; color: #2e2618; font-family: "Noto Serif KR", "Nanum Myeongjo", serif; line-height: 1.75; }
-  main { max-width: 1040px; margin: 0 auto; padding: 0 24px 96px; }
-  img { display: block; width: 100%; height: auto; }
-  h1, h2, h3, p { margin: 0; }
-
-  .hero { padding: 72px 0 40px; }
-  .hero h1 { font: 400 clamp(40px, 8vw, 84px)/1 "Cormorant Garamond", Georgia, serif; letter-spacing: .12em; }
-  .hero .title { margin-top: 14px; font-size: 17px; }
-  .hero .lead { margin-top: 20px; max-width: 40em; }
-  .play { display: inline-block; margin-top: 24px; padding: 10px 28px; border: 1px solid currentColor; color: inherit; text-decoration: none; letter-spacing: .2em; font: 14px Georgia, serif; }
-
-  section { padding-top: 64px; }
-  h2 { font: 400 14px Georgia, serif; letter-spacing: .3em; padding-bottom: 10px; border-bottom: 1px solid rgba(46, 38, 24, .3); margin-bottom: 24px; }
-  h3 { font-size: 17px; }
-  .sub { font-size: 13px; opacity: .7; }
-  .stack > * + * { margin-top: 12px; }
-  .grid { display: grid; gap: 28px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-  .grid.narrow { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
-  .group { font: 400 12px Georgia, serif; letter-spacing: .25em; opacity: .7; margin: 32px 0 14px; }
-  .mark { font-size: 28px; line-height: 1; }
-  footer { margin-top: 80px; font-size: 13px; opacity: .7; }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+KR:wght@400;600;900&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/main.js" defer></script>
 </head>
 <body>
-<main id="app"></main>
-
-<script>
-// ── 내용: 화면에 나오는 문구와 그림 경로는 전부 여기서 고친다 ──────
-const 내용 = {
-  크랙주소: '', // 작품 주소가 생기면 넣는다. 비어 있으면 PLAY 버튼이 나오지 않는다
-  머리: {
-    영문: 'CANTOREUM',
-    제목: '명문 음악 아카데미의 추첨 입학생',
-    소개: '세계 최고로 꼽히는 음악 아카데미 칸토레움에 심사 없이 제비뽑기로 들어온 추첨 입학생이 되어, 열두 명의 음악가와 얽히는 스토리챗입니다.',
-    그림: 'docs/B/C1.webp',
-  },
-  개요: [
-    '현대의 클래식 음악 아카데미가 무대입니다. 인물 사이의 관계와 사건이 이야기의 중심이고, 상태창이나 수치 관리는 없습니다.',
-    '전공, 국적, 실력, 경력은 유저가 정한 그대로 받아들입니다. 어려움은 듣는 사람의 귀와 한정된 무대, 그리고 사람 사이에서 생깁니다.',
-    '등장인물에게도 각자의 무대와 마감이 있습니다. 유저가 없는 자리에서도 연습하고, 오디션에 붙고 떨어집니다.',
-  ],
-  세계: [
-    { 이름: '루첼라', 글: '알프스 남쪽 호숫가의 작은 자치시입니다. 음악제와 음악원으로 살아가는 도시입니다.' },
-    { 이름: '칸토레움', 글: '각국의 음대와 콩쿠르를 거친 사람이 모이는 3년 과정의 음악 아카데미입니다. 한 해에 40명을 받으며, 39명은 실기로 1명은 추첨으로 뽑습니다.' },
-    { 이름: '추첨석', 글: '설립자의 유언에 따라 정관에 남은 자리입니다. 만 20세 이상이면 누구나 지원할 수 있고 심사가 없습니다. 학내에서는 추첨 입학생을 「제비」라고 부릅니다.' },
-    { 이름: '무대', 글: '연습실에서 살롱, 리사이틀홀, 대극장을 거쳐 학교 바깥으로 이어집니다. 설 수 있는 자리는 한정되어 있고 오디션, 추천, 초청으로 얻습니다.' },
-  ],
-  살롱머리: '칸토레움의 오랜 음악 동인입니다. 전공과 상관없이 초대를 받아 들어가며, 어디에도 속하지 않을 수 있습니다.',
-  살롱: [
-    { 이름: '우르텍스트', 영문: 'URTEXT', 글: '악보에 적힌 대로 연주합니다. 양식과 절제, 정확함을 봅니다.', 그림: 'docs/B/S1.webp' },
-    { 이름: '브라부라', 영문: 'BRAVURA', 글: '객석이 숨을 멈춰야 연주라고 여깁니다. 기교와 장악, 흥행을 봅니다.', 그림: 'docs/B/S2.webp' },
-    { 이름: '아리오소', 영문: 'ARIOSO', 글: '모든 악기는 노래한다고 믿습니다. 선율과 호흡, 실내악을 봅니다.', 그림: 'docs/B/S3.webp' },
-    { 이름: '누오바', 영문: 'NUOVA', 글: '아직 아무도 듣지 못한 소리를 찾습니다. 근현대 음악과 신작, 즉흥을 봅니다.', 그림: 'docs/B/S4.webp' },
-  ],
-  학사력머리: '가을 학기와 봄 학기가 각각 15주입니다.',
-  학사력: [
-    { 때: '매주 금요일', 일: '살롱의 밤' },
-    { 때: '8주차', 일: '공개 마스터클래스' },
-    { 때: '가을 10주차', 일: '협주곡 오디션' },
-    { 때: '15주차', 일: '실기 심사' },
-    { 때: '봄 14주차', 일: '그랑 갈라' },
-    { 때: '여름', 일: '루첼라 국제 콩쿠르와 음악제' },
-  ],
-  // 그림은 docs/첫등장 카드/{코드}_1.webp
-  인물: [
-    { 묶음: 'STUDENTS', 목록: [
-      { 코드: 'A', 이름: '루이제 브란트', 줄: '피아노 · 1년차 · 독일 · 23세', 글: '직설적이고 타협이 없습니다. 네 살롱의 초대를 모두 거절했습니다.' },
-      { 코드: 'B', 이름: '니콜 페이건', 줄: '바이올린 · 2년차 · 미국 · 22세 · 브라부라', 글: '칸토레움이 생긴 이래 최고의 재능으로 꼽힙니다. 사람을 지루한 쪽과 재미있는 쪽으로 나눕니다.' },
-      { 코드: 'C', 이름: '호세피나 에레디아', 줄: '첼로 · 3년차 · 아르헨티나 · 27세 · 아리오소', 글: '학내 실내악 편성을 짜는 맏이입니다. 추첨 입학생에게 먼저 말을 거는 드문 선배이기도 합니다.' },
-      { 코드: 'D', 이름: '테아 모저', 줄: '소프라노 · 1년차 · 오스트리아 · 20세', 글: '한 번 들은 곡을 통째로 받아 적습니다. 네 살롱에 모두 놀러 다니지만 어디에도 들지 않았습니다.' },
-      { 코드: 'E', 이름: '에밀리아 볼스카', 줄: '피아노 · 2년차 · 폴란드 · 24세 · 아리오소', 글: '대극장을 꺼리고 살롱 무대에만 섭니다. 사람과 거리를 두며, 장갑은 건반 앞에서만 벗습니다.' },
-      { 코드: 'F', 이름: '서송이', 줄: '반주 · 2년차 · 한국 · 25세', 글: '작년 추첨 입학생입니다. 어느 연습실이 비는지, 어디서 말이 도는지 아는 학내 소식통입니다.' },
-      { 코드: 'G', 이름: '마테이 칼리나', 줄: '지휘 · 3년차 · 체코 · 27세', 글: '학생 오케스트라의 부지휘자입니다. 리허설에 늦은 사람에게는 문을 잠급니다.' },
-      { 코드: 'H', 이름: '바질 소렐', 줄: '작곡 · 2년차 · 프랑스 · 26세 · 누오바', 글: '맑은 날에도 검은 우산을 들고 다닙니다. 자기 곡을 초연할 연주자를 찾고 있습니다.' },
-      { 코드: 'K', 이름: '안토넬라 사르티', 줄: '바이올린 · 3년차 · 이탈리아 · 26세 · 우르텍스트', 글: '학생 오케스트라의 악장이며 교수들이 아끼는 모범생입니다. 귀가 정확해서 남의 재능을 가장 먼저 알아봅니다.' },
-    ] },
-    { 묶음: 'FACULTY', 목록: [
-      { 코드: 'I', 이름: '쿠라모토 사야카', 줄: '실내악 교수(피아노) · 일본 · 38세 · 아리오소 수장', 글: '칭찬에 인색하고 암보를 원칙으로 삼습니다. 인정은 더 어려운 곡을 맡기는 것으로 합니다.' },
-      { 코드: 'J', 이름: '얀 판 베이크', 줄: '오르간 교수 · 네덜란드 · 71세 · 우르텍스트 수장 · 심사위원장', 글: '새벽에 가장 먼저 나와 오르간을 칩니다. 추첨제에 찬반을 말하지 않고, 심사 날 듣고 판단합니다.' },
-    ] },
-    { 묶음: 'CRITIC', 목록: [
-      { 코드: 'L', 이름: '로완 셔먼', 줄: '음악 평론가 · 영국 · 44세', 글: '칸토레움 바깥에서 무대를 듣고 글을 씁니다. 필명을 두 개 씁니다.' },
-    ] },
-  ],
-  모드머리: '모드는 유저의 처지만 가릅니다. 실력은 어느 모드에서든 유저가 밝힌 그대로입니다.',
-  모드: [
-    { 기호: '♭', 이름: '추첨 입학', 글: '올해의 추첨 입학생으로 시작합니다. 학비만 면제되며, 지도교수와 연습실은 직접 구해야 합니다. 첫 학기 15주차 실기 심사가 잔류 심사입니다.' },
-    { 기호: '♯', 이름: '수석 입학', 글: '그해 입학 실기 1위로 시작합니다. 전액 장학금과 기숙사가 주어지고, 지도교수를 고를 수 있으며 네 살롱 모두에서 초대장이 옵니다.' },
-    { 기호: '♮', 이름: '자유', 글: '신분과 전공, 처지를 유저가 직접 정합니다. 쓴 대로 이루어집니다.' },
-  ],
-  꼬리: '등장인물은 모두 만 20세 이상의 성인입니다.',
-};
-
-// ── 그리기(임시): 구조와 모양은 전부 바꿔도 된다 ───────────────────
-const 항목 = v => `<div class="stack"><h3>${v.이름}</h3><p>${v.글}</p></div>`;
-document.getElementById('app').innerHTML = `
-  <header class="hero">
-    <h1>${내용.머리.영문}</h1>
-    <p class="title">${내용.머리.제목}</p>
-    <p class="lead">${내용.머리.소개}</p>
-    ${내용.크랙주소 ? `<a class="play" href="${내용.크랙주소}">PLAY</a>` : ''}
-  </header>
-  <img src="${내용.머리.그림}" alt="">
-
-  <section class="stack"><h2>BRIEFING</h2>${내용.개요.map(t => `<p>${t}</p>`).join('')}</section>
-
-  <section><h2>WORLD</h2><div class="grid">${내용.세계.map(항목).join('')}</div></section>
-
-  <section><h2>SALONS</h2><p>${내용.살롱머리}</p>
-    <div class="grid" style="margin-top:24px">${내용.살롱.map(v => `<div class="stack">
-      <img src="${v.그림}" alt="" loading="lazy"><p class="sub">${v.영문}</p><h3>${v.이름}</h3><p>${v.글}</p></div>`).join('')}</div>
-  </section>
-
-  <section><h2>CALENDAR</h2><p>${내용.학사력머리}</p>
-    <div class="grid narrow" style="margin-top:24px">${내용.학사력.map(v => `<div><p class="sub">${v.때}</p><h3>${v.일}</h3></div>`).join('')}</div>
-  </section>
-
-  <section><h2>CAST</h2>${내용.인물.map(g => `<p class="group">${g.묶음}</p>
-    <div class="grid">${g.목록.map(v => `<article class="stack">
-      <img src="docs/첫등장 카드/${v.코드}_1.webp" alt="${v.이름}" loading="lazy" width="1856" height="1280">
-      <h3>${v.이름}</h3><p class="sub">${v.줄}</p><p>${v.글}</p></article>`).join('')}</div>`).join('')}
-  </section>
-
-  <section><h2>START</h2><p>${내용.모드머리}</p>
-    <div class="grid" style="margin-top:24px">${내용.모드.map(v => `<div class="stack"><p class="mark">${v.기호}</p><h3>${v.이름}</h3><p>${v.글}</p></div>`).join('')}</div>
-  </section>
-
-  <footer>${내용.꼬리}</footer>`;
-</script>
+<a class="skip" href="#main">본문으로</a>
+<header class="top">
+  <a class="brand" href="home.html">CANTOREUM</a>
+  <nav aria-label="쪽 이동"><a href="world.html" data-key="1"><b>1</b>세계</a><a href="academy.html" data-key="2"><b>2</b>학사</a><a href="characters.html" data-key="3"><b>3</b>인물</a><a href="start.html" data-key="4"><b>4</b>시작</a></nav>
+</header>
+<main id="main" class="home">
+<section class="hero">
+  <p class="en">CANTOREUM</p>
+  <h1>명문 음악 아카데미의 추첨 입학생</h1>
+  <p class="genre">현대 · 클래식 음악 · 아카데미 · 군상극 19+</p>
+  <div class="figs"><a class="fig" href="char/a.html"><img src="images/card/A_1.webp" alt="" width="1856" height="1280"><span>피아노 · 1년차</span><b>루이제 브란트</b></a><a class="fig" href="char/b.html"><img src="images/card/B_1.webp" alt="" width="1856" height="1280"><span>바이올린 · 2년차</span><b>니콜 페이건</b></a><a class="fig" href="char/d.html"><img src="images/card/D_1.webp" alt="" width="1856" height="1280"><span>소프라노 · 1년차</span><b>테아 모저</b></a><a class="fig" href="char/k.html"><img src="images/card/K_1.webp" alt="" width="1856" height="1280"><span>바이올린 · 3년차</span><b>안토넬라 사르티</b></a><a class="fig" href="char/i.html"><img src="images/card/I_1.webp" alt="" width="1856" height="1280"><span>실내악 교수 · 피아노</span><b>쿠라모토 사야카</b></a><a class="fig" href="char/l.html"><img src="images/card/L_1.webp" alt="" width="1856" height="1280"><span>음악 평론가</span><b>로완 셔먼</b></a></div>
+</section>
+<section class="say"><p>세계 최고로 꼽히는 음악 아카데미 칸토레움은 해마다 한 사람을 심사 없이 제비로 뽑습니다.</p><p>그 추첨 입학생으로 학교에 들어가는 작품입니다. 인물 사이의 관계와 사건이 본축이며, 로맨스는 그 곁에서 자랍니다.</p><p>학생과 교수, 평론가 열두 사람은 유저가 없는 동안에도 각자의 무대와 마감을 따라 움직입니다.</p></section>
+<section><h2 class="hd"><span>무대</span><i></i><em>THE STAGES</em></h2><div class="stages" data-tabs><div class="steps" role="group" aria-label="무대"><button type="button" data-tab="0" aria-pressed="true">연습실</button><button type="button" data-tab="1" aria-pressed="false">살롱</button><button type="button" data-tab="2" aria-pressed="false">리사이틀홀</button><button type="button" data-tab="3" aria-pressed="false">대극장</button><button type="button" data-tab="4" aria-pressed="false">바깥</button></div><div data-panel="0"><figure><img src="images/B/C3.webp" alt="연습실" loading="lazy" width="3200" height="640"></figure><p class="en">PRACTICE ROOM</p><h3>연습실</h3><p>예약제이며 심야에도 쓸 수 있습니다.</p></div><div data-panel="1" hidden><figure><img src="images/B/S3.webp" alt="살롱" loading="lazy" width="3200" height="640"></figure><p class="en">SALON</p><h3>살롱</h3><p>매주 금요일에 살롱의 밤이 열립니다. 그 살롱 소속이거나 초대를 받으면 섭니다.</p></div><div data-panel="2" hidden><figure data-picker><img data-out="img" src="images/B/T1.webp" alt="리사이틀홀" loading="lazy" width="3200" height="640"><figcaption class="seg"><button type="button" data-pick data-set-img="images/B/T1.webp" aria-pressed="true">리허설</button><button type="button" data-pick data-set-img="images/B/T2.webp" aria-pressed="false">본공연</button></figcaption></figure><p class="en">RECITAL HALL</p><h3>리사이틀홀</h3><p>교수의 추천을 받거나 오디션을 거쳐 섭니다.</p></div><div data-panel="3" hidden><figure data-picker><img data-out="img" src="images/B/T3.webp" alt="대극장" loading="lazy" width="3200" height="640"><figcaption class="seg"><button type="button" data-pick data-set-img="images/B/T3.webp" aria-pressed="true">리허설</button><button type="button" data-pick data-set-img="images/B/T4.webp" aria-pressed="false">본공연</button></figcaption></figure><p class="en">GRAND HALL</p><h3>대극장</h3><p>협주곡 오디션이나 갈라 선발을 거쳐 섭니다.</p></div><div data-panel="4" hidden><figure><img src="images/B/U6.webp" alt="바깥" loading="lazy" width="3200" height="640"></figure><p class="en">BEYOND</p><h3>바깥</h3><p>초청이나 콩쿠르로 나갑니다. 학내 무대를 넘어서면 평단과 기획사, 음반사, 후원 재단이 움직입니다.</p></div></div><p class="note">설 자리는 한정되어 있습니다. 곡은 하룻밤에 완성되지 않으며, 무대에서 나오는 것은 연습과 레슨이 쌓인 만큼입니다.</p></section>
+<section><h2 class="hd"><span>살롱 넷</span><i></i><em>FOUR SALONS</em></h2><p>칸토레움의 오랜 음악 동인입니다. 전공과 상관없이 초대를 받아 들어가며, 어디에도 속하지 않을 수 있습니다.</p><div class="react" data-react data-names="{&quot;1&quot;: &quot;반김&quot;, &quot;0&quot;: &quot;그대로&quot;, &quot;-1&quot;: &quot;식음&quot;}"><ul class="salonrows"><li><b>우르텍스트</b><span class="en">URTEXT</span><em data-state="0">그대로</em></li><li><b>브라부라</b><span class="en">BRAVURA</span><em data-state="0">그대로</em></li><li><b>아리오소</b><span class="en">ARIOSO</span><em data-state="0">그대로</em></li><li><b>누오바</b><span class="en">NUOVA</span><em data-state="0">그대로</em></li></ul><div class="choices" role="group" aria-label="연주"><button type="button" data-r="1,0,0,0" data-note="우르텍스트는 악보에 적힌 것을 기준으로 듣습니다." aria-pressed="false">악보에 적힌 대로 연주한다</button><button type="button" data-r="0,1,-1,0" data-note="브라부라가 반깁니다. 아리오소의 수장은 쇼를 위한 연주를 경멸합니다." aria-pressed="false">기교로 객석을 장악한다</button><button type="button" data-r="0,0,1,0" data-note="아리오소는 악기가 노래하는지를 듣습니다." aria-pressed="false">선율과 호흡에 공을 들인다</button><button type="button" data-r="-1,0,0,1" data-note="누오바가 반깁니다. 우르텍스트에게는 악보에 없는 음입니다." aria-pressed="false">즉흥으로 풀어 간다</button><button type="button" data-r="0,0,0,1" data-note="누오바는 아직 아무도 듣지 못한 소리를 찾습니다." aria-pressed="false">초연되지 않은 신작을 올린다</button></div><p class="note" data-react-note aria-live="polite">연주를 눌러 보십시오.</p></div><p class="note">한 살롱이 반긴다고 다른 살롱이 식는 것은 아닙니다. 각자 제 미학에 맞는지만 따집니다.</p></section>
+<section><h2 class="hd"><span>사람들</span><i></i><em>THE CAST</em></h2><div class="slides"><a class="slide" href="char/a.html"><img src="images/card/A_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>피아노 · 1년차</span><b>루이제 브란트</b></a><a class="slide" href="char/b.html"><img src="images/card/B_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>바이올린 · 2년차</span><b>니콜 페이건</b></a><a class="slide" href="char/c.html"><img src="images/card/C_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>첼로 · 3년차</span><b>호세피나 에레디아</b></a><a class="slide" href="char/d.html"><img src="images/card/D_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>소프라노 · 1년차</span><b>테아 모저</b></a><a class="slide" href="char/e.html"><img src="images/card/E_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>피아노 · 2년차</span><b>에밀리아 볼스카</b></a><a class="slide" href="char/f.html"><img src="images/card/F_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>반주 · 2년차</span><b>서송이</b></a><a class="slide" href="char/g.html"><img src="images/card/G_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>지휘 · 3년차</span><b>마테이 칼리나</b></a><a class="slide" href="char/h.html"><img src="images/card/H_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>작곡 · 2년차</span><b>바질 소렐</b></a><a class="slide" href="char/k.html"><img src="images/card/K_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>바이올린 · 3년차</span><b>안토넬라 사르티</b></a><a class="slide" href="char/i.html"><img src="images/card/I_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>실내악 교수 · 피아노</span><b>쿠라모토 사야카</b></a><a class="slide" href="char/j.html"><img src="images/card/J_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>오르간 교수 · 심사위원장</span><b>얀 판 베이크</b></a><a class="slide" href="char/l.html"><img src="images/card/L_1.webp" alt="" loading="lazy" width="1856" height="1280"><span>음악 평론가</span><b>로완 셔먼</b></a></div><p class="note"><a href="characters.html">열두 사람 모두 보기</a></p></section>
+<section><h2 class="hd"><span>학사력</span><i></i><em>THE CALENDAR</em></h2><p>학기는 가을과 봄, 각 15주입니다. 일정은 세계의 사실이고, 설지 말지는 유저가 정합니다.</p><div class="cal" data-tabs><div class="seg" role="group" aria-label="학기"><button type="button" data-tab="0" aria-pressed="true">가을 학기</button><button type="button" data-tab="1" aria-pressed="false">봄 학기</button></div><div data-panel="0" data-picker><div class="weeks" role="group" aria-label="가을 학기 주차"><button type="button" data-pick class="" aria-pressed="true" data-set-week="1주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">1</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="2주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">2</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="3주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">3</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="4주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">4</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="5주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">5</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="6주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">6</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="7주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">7</button><button type="button" data-pick class="ev" aria-pressed="false" data-set-week="8주차" data-set-name="공개 마스터클래스" data-set-text="교수의 레슨을 여러 사람이 지켜봅니다.">8</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="9주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">9</button><button type="button" data-pick class="ev" aria-pressed="false" data-set-week="10주차" data-set-name="협주곡 오디션" data-set-text="모든 악기가 함께 겨루며, 봄 그랑 갈라의 협연자를 뽑습니다.">10</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="11주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">11</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="12주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">12</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="13주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">13</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="14주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">14</button><button type="button" data-pick class="ev" aria-pressed="false" data-set-week="15주차" data-set-name="실기 심사" data-set-text="재학생 전원이 심사를 받습니다. 끝나면 방학입니다.">15</button></div><div class="weekout"><p class="en" data-out="week">1주차</p><h3 data-out="name">살롱의 밤</h3><p data-out="text">금요일마다 네 살롱에서 무대가 열립니다.</p></div></div><div data-panel="1" data-picker hidden><div class="weeks" role="group" aria-label="봄 학기 주차"><button type="button" data-pick class="" aria-pressed="true" data-set-week="1주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">1</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="2주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">2</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="3주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">3</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="4주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">4</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="5주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">5</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="6주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">6</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="7주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">7</button><button type="button" data-pick class="ev" aria-pressed="false" data-set-week="8주차" data-set-name="공개 마스터클래스" data-set-text="교수의 레슨을 여러 사람이 지켜봅니다.">8</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="9주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">9</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="10주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">10</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="11주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">11</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="12주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">12</button><button type="button" data-pick class="" aria-pressed="false" data-set-week="13주차" data-set-name="살롱의 밤" data-set-text="금요일마다 네 살롱에서 무대가 열립니다.">13</button><button type="button" data-pick class="ev" aria-pressed="false" data-set-week="14주차" data-set-name="그랑 갈라" data-set-text="대극장에서 열리는 한 해의 큰 무대입니다.">14</button><button type="button" data-pick class="ev" aria-pressed="false" data-set-week="15주차" data-set-name="실기 심사" data-set-text="재학생 전원이 심사를 받습니다. 끝나면 해가 바뀝니다.">15</button></div><div class="weekout"><p class="en" data-out="week">1주차</p><h3 data-out="name">살롱의 밤</h3><p data-out="text">금요일마다 네 살롱에서 무대가 열립니다.</p></div></div></div><p class="note">여름에는 루첼라 국제 콩쿠르와 음악제가 열립니다.</p></section>
+<section><h2 class="hd"><span>세 가지 시작</span><i></i><em>BEGINNINGS</em></h2><p>모드는 유저의 처지만 가릅니다. 실력은 어느 모드에서든 유저가 밝힌 그대로입니다.</p><div class="modes"><a class="mode" href="start.html#mode-0"><span class="mark">♭</span><h3>추첨 입학</h3><p class="en">THE LOTTERY</p><p>올해의 추첨 입학생으로 시작합니다.</p></a><a class="mode" href="start.html#mode-1"><span class="mark">♯</span><h3>수석 입학</h3><p class="en">FIRST PLACE</p><p>그해 입학 실기 1위로 시작합니다.</p></a><a class="mode" href="start.html#mode-2"><span class="mark">♮</span><h3>자유</h3><p class="en">FREE</p><p>정해 둔 것이 전부 그대로 확정됩니다.</p></a></div></section>
+<section class="end"><a class="more" href="start.html">시작 안내</a></section>
+</main>
+<footer class="foot">
+  <span>CANTOREUM</span>
+  <nav aria-label="쪽 이동"><a href="world.html">세계</a><a href="academy.html">학사</a><a href="characters.html">인물</a><a href="start.html">시작</a></nav>
+</footer>
 </body>
 </html>
