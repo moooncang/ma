@@ -34,6 +34,16 @@ export async function createParticles(host,signal) {
     c.globalAlpha=.52;c.drawImage(blooms[tone],0,0,64,64);
     c.globalAlpha=1;c.fillStyle=color;c.beginPath();c.arc(32,32,6.4,0,Math.PI*2);c.fill();return sprite;
   });
+  // Only the final burst has a blue aura; the approved white note clouds stay intact.
+  const blueAura=document.createElement('canvas');blueAura.width=blueAura.height=128;
+  const auraContext=blueAura.getContext('2d');
+  const aura=auraContext.createRadialGradient(64,64,0,64,64,64);
+  aura.addColorStop(0,'#f2ffff');aura.addColorStop(.07,'#defaff');
+  aura.addColorStop(.2,'#91dfffbd');aura.addColorStop(.4,'#3f9dd378');
+  aura.addColorStop(.7,'#3289c52b');aura.addColorStop(1,'#2874ae00');
+  auraContext.fillStyle=aura;auraContext.fillRect(0,0,128,128);
+  let burstAt=null;
+  const motes=[];
   let width, height, frame, stopped = false, gust = false, hovered = false, last = -Infinity;
   let focus = {x:.5,y:.48}, idle = true, dissolveAt = null, gatheringAt = null;
   let left=0,top=0,paintWidth=0,paintHeight=0;
@@ -98,6 +108,42 @@ export async function createParticles(host,signal) {
       if(i%9===0)glint(x,y,.75,opacity,i%5);
     }
   }
+  function scatterInDepth() {
+    burstAt=performance.now()/1000;motes.length=0;
+    const span=Math.min(width,height);
+    for(let i=0;i<120;i++) {
+      const angle=random()*Math.PI*2,z=random()*1.8-.9,radial=Math.sqrt(1-z*z);
+      const speed=span*(.5+random()*1.05);
+      motes.push({vx:Math.cos(angle)*radial*speed,vy:Math.sin(angle)*radial*speed,vz:z*speed*.8,
+        size:.65+random()*1.5,life:1.1+random()*1.05,phase:random()*Math.PI*2,swirl:10+random()*22});
+    }
+    motes.sort((a,b)=>a.vz-b.vz);
+  }
+  function drawDepthBurst(t) {
+    if(burstAt===null)return;
+    const age=t-burstAt;if(age>2.2){burstAt=null;motes.length=0;return;}
+    const focal=Math.max(320,Math.min(width,height)*.9);
+    const project=(p,at)=>{
+      const travel=(1-Math.exp(-at*1.9))/1.9;
+      const z=p.vz*travel,depth=Math.min(2.8,focal/(focal-z));
+      const curl=(Math.sin(p.phase+at*2.2)-Math.sin(p.phase))*p.swirl*at;
+      return {x:width*.5+(p.vx*travel+curl)*depth,y:height*.48+(p.vy*travel-at*at*24)*depth,depth};
+    };
+    ctx.globalCompositeOperation='source-over';
+    if(age<.32) {
+      const glow=30+age*180;ctx.globalAlpha=.5*(1-age/.32);
+      ctx.drawImage(blueAura,width*.5-glow,height*.48-glow,glow*2,glow*2);
+    }
+    for(const p of motes) {
+      if(age>=p.life)continue;
+      const point=project(p,age),tail=project(p,Math.max(0,age-.035));
+      const alpha=Math.min(1,age/.025)*Math.pow(1-age/p.life,1.2)*Math.min(1,.65+point.depth*.2);
+      ctx.globalAlpha=alpha*.18;ctx.strokeStyle='#75c8f0';ctx.lineWidth=Math.max(.4,p.size*point.depth*.35);
+      ctx.beginPath();ctx.moveTo(tail.x,tail.y);ctx.lineTo(point.x,point.y);ctx.stroke();
+      const glow=p.size*point.depth*13;
+      ctx.globalAlpha=alpha;ctx.drawImage(blueAura,point.x-glow/2,point.y-glow/2,glow,glow);
+    }
+  }
   function draw(now) {
     if(stopped)return;
     frame=requestAnimationFrame(draw);if(now-last<30)return;
@@ -148,6 +194,7 @@ export async function createParticles(host,signal) {
       }
       glint(p.x,p.y,p.size,alpha,p.tone);
     }
+    drawDepthBurst(t);
     ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';
   }
   // Paint before the SVG fallback is hidden, avoiding a blank first frame.
@@ -163,8 +210,7 @@ export async function createParticles(host,signal) {
     reveal(instruments){
       gatheringAt=null;notes.length=0;
       instruments.forEach(i=>pulse(i.x/100,i.y/100,.8,i.symbol,{duration:2.2,scale:1,attack:.045}));
-      // The same number of sparks, with faster radial trails for the impact.
-      focus={x:.5,y:.48};burst(.5,.48,2.4,5);
+      focus={x:.5,y:.48};scatterInDepth();
     },
     wind(){gust=true;},
     dispose(){stopped=true;cancelAnimationFrame(frame);removeEventListener('resize',resize);start.removeEventListener('pointerenter',hover);start.removeEventListener('pointerleave',leave);start.removeEventListener('focus',hover);start.removeEventListener('blur',leave);canvas.remove();}

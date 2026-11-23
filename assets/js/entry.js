@@ -41,7 +41,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
     document.getElementById('paper-fallback').append(el);
   }
   if (!reduced.matches) {
-    import('./entry-scene.js?v=perf-3').then(module => module.createPaperScene(document.getElementById('paper-scene'), layout, lifetime.signal)).then(renderer => {
+    import('./entry-scene.js?v=ripple-7').then(module => module.createPaperScene(document.getElementById('paper-scene'), layout, lifetime.signal)).then(renderer => {
       if (finished || reduced.matches || phase === 'flight') return renderer.dispose();
       scene = renderer;
       entry.classList.add('has-webgl');
@@ -63,7 +63,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
   }, {signal:lifetime.signal});
 
   let particles = null;
-  if (!reduced.matches) import('./entry-particles.js?v=wave-6').then(async ({createParticles}) => {
+  if (!reduced.matches) import('./entry-particles.js?v=ripple-7').then(async ({createParticles}) => {
     if (!finished && !reduced.matches && phase !== 'flight') {
       particles = await createParticles(document.getElementById('entry-atmosphere'), lifetime.signal);
       if (finished || reduced.matches) { particles?.dispose(); particles=null; return; }
@@ -195,6 +195,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
       if (i === instruments.length - 1) {
         entry.classList.add('entry-gathering');
         particles?.gather();
+        scene?.prepareRipple();
       }
       await pause(cueGaps[i + 1]);
     }
@@ -206,6 +207,7 @@ import {preloadSamples, createEntranceSound} from './entry-audio.js?v=impact-5';
     entry.classList.remove('entry-gathering');
     entry.classList.add('entry-finale');
     particles?.reveal(instruments);
+    scene?.ripple();
     sound?.ensemble();
     await pause(850);
     if (finished) return;

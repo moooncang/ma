@@ -1,4 +1,4 @@
-import {createPaperRenderer} from './entry-paper-renderer.js?v=perf-3';
+import {createPaperRenderer} from './entry-paper-renderer.js?v=ripple-7';
 let renderer, pendingViewport;
 self.onmessage = async ({data}) => {
   try {
@@ -13,6 +13,8 @@ self.onmessage = async ({data}) => {
     if(data.type==='resize'){
       if(renderer)renderer.resize(data.viewport);else pendingViewport=data.viewport;
     }
+    if(data.type==='prepare-ripple')await renderer?.prepareRipple();
+    if(data.type==='ripple')renderer?.ripple();
     if(data.type==='fly')await renderer?.fly().then(()=>self.postMessage({type:'flown'}));
   } catch(error){self.postMessage({type:'error',message:error.message});}
 };

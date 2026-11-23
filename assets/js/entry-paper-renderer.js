@@ -1,4 +1,5 @@
 import * as THREE from '../vendor/three.module.min.js';
+import {createRipplePass} from './entry-ripple-pass.js?v=ripple-7';
 
 // Real tessellated sheets: both faces, curling edges, changing surface normals,
 // grazing light and shadows between the sheets. All resources are local.
@@ -78,6 +79,8 @@ export async function createPaperRenderer(canvas, layout, viewport) {
     return { mesh, sheet, original:geometry.attributes.position.array.slice(), curveY:new Float32Array(segments+1),curveZ:new Float32Array(segments+1) };
   });
   let width, height, stopped = false, frame = 0, flightStart = null, finishFlight;
+  let ripple = null, rippleReady = null, rippleStart = null, sceneDirty = true;
+  let lastRippleFrame=-Infinity;
   function resize() {
     width = viewport.width; height = viewport.height;
     renderer.setSize(width, height, false);
@@ -85,16 +88,25 @@ export async function createPaperRenderer(canvas, layout, viewport) {
     camera.position.z = height / (2 * Math.tan(THREE.MathUtils.degToRad(21)));
     camera.updateProjectionMatrix();
     ground.scale.set(width*4,height*4,1);
+    ripple?.resize(width,height);sceneDirty=true;
   }
   resize();
 
   const smooth = x => x * x * (3 - 2 * x);
   function render(now) {
     if (stopped) return;
+    frame=0;
     // Worker RAF timestamps can belong to a different animation timeline.
     now = performance.now();
-    // The resting papers need no GPU loop. CSS handles the light and note.
-    if (flightStart !== null) frame = requestAnimationFrame(render);
+    const rippleAge=rippleStart===null ? 0 : (now-rippleStart)/1000;
+    const refracting=rippleStart!==null && ripple!==null && rippleAge<.8 && flightStart===null;
+    // Reuse the resting image during the ripple instead of re-rendering 3D sheets.
+    if(flightStart===null && rippleStart!==null && ripple!==null && !sceneDirty) {
+      // Match the light canvas cadence and finish before the paper flight starts.
+      if(now-lastRippleFrame>=30 || !refracting){ripple.render(rippleAge);lastRippleFrame=now;}
+      if(refracting)frame=requestAnimationFrame(render);
+      return;
+    }
     for (const [i, { mesh, sheet, original,curveY,curveZ }] of papers.entries()) {
       const elapsed = flightStart === null ? 0 : Math.max(0, (now - flightStart) / 1000 - sheet.delay);
       const p = Math.min(1, elapsed / 2.65);
@@ -136,10 +148,15 @@ export async function createPaperRenderer(canvas, layout, viewport) {
       positions.needsUpdate = true;
       mesh.geometry.computeVertexNormals();
     }
-    renderer.render(scene, camera);
+    if(refracting) {ripple.capture(scene,camera);ripple.render(rippleAge);}
+    else renderer.render(scene, camera);
+    sceneDirty=false;
+    if(ripple!==null && flightStart!==null) {
+      rippleStart=null;ripple?.dispose();ripple=null;rippleReady=null;
+    }
     if (flightStart !== null && papers.every(({mesh}) => !mesh.visible)) {
       cancelAnimationFrame(frame); frame = 0; finishFlight?.(); finishFlight = null;
-    }
+    } else if(flightStart!==null || refracting)frame=requestAnimationFrame(render);
   }
   await renderer.compileAsync(scene, camera);
   render(performance.now());
@@ -158,17 +175,36 @@ export async function createPaperRenderer(canvas, layout, viewport) {
       check();
     });
   }
+  function prepareRipple() {
+    if(stopped)return Promise.resolve();
+    if(rippleReady)return rippleReady;
+    try {
+      const pass=createRipplePass(renderer,width,height);ripple=pass;
+      rippleReady=pass.ready.then(()=>{if(!stopped && ripple===pass)pass.capture(scene,camera);}).catch(()=>{
+        if(ripple===pass){pass.dispose();ripple=null;rippleStart=null;rippleReady=null;}
+      });
+    } catch {ripple?.dispose();ripple=null;rippleStart=null;return Promise.resolve();}
+    return rippleReady;
+  }
   return {
-    resize(next) { viewport = next; resize(); if (flightStart === null) render(performance.now()); },
+    prepareRipple,
+    ripple() {
+      if(stopped)return;
+      rippleStart=performance.now();
+      prepareRipple().then(()=>{if(!stopped && !frame)frame=requestAnimationFrame(render);});
+    },
+    resize(next) { viewport = next; resize(); if (flightStart === null && !frame) render(performance.now()); },
     fly() {
+      rippleStart=null;
       flightStart = performance.now();
-      return new Promise(resolve => { finishFlight = resolve; frame = requestAnimationFrame(render); });
+      return new Promise(resolve => { finishFlight = resolve; if(!frame)frame = requestAnimationFrame(render); });
     },
     dispose() {
       if (stopped) return;
       stopped = true;
       finishFlight?.(); finishFlight = null;
       cancelAnimationFrame(frame);
+      ripple?.dispose();ripple=null;
       papers.forEach(({mesh}) => { mesh.geometry.dispose(); mesh.material.dispose(); });
       textures.forEach(texture => texture.dispose());fibre.dispose();ground.geometry.dispose();ground.material.dispose();
       key.shadow.dispose(); renderer.dispose();

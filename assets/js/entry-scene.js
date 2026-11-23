@@ -6,7 +6,7 @@ export async function createPaperScene(original, layout, signal) {
   if (canvas.transferControlToOffscreen && typeof Worker !== 'undefined') {
     let worker;
     try {
-      worker = new Worker(new URL('./entry-paper-worker.js?v=perf-3',import.meta.url),{type:'module'});
+      worker = new Worker(new URL('./entry-paper-worker.js?v=ripple-7',import.meta.url),{type:'module'});
       const offscreen = canvas.transferControlToOffscreen();
       await new Promise((resolve,reject) => {
         const abort = () => {worker.terminate();reject(new DOMException('Aborted','AbortError'));};
@@ -36,7 +36,11 @@ export async function createPaperScene(original, layout, signal) {
       };
       worker.onerror = () => {dispose();canvas.dispatchEvent(new Event('webglcontextlost',{cancelable:true}));};
       canvas.dataset.renderer = 'worker';
-      return {fly(){return new Promise(resolve=>{if(stopped)return resolve();finishFlight=resolve;worker.postMessage({type:'fly'});});},dispose};
+      return {
+        prepareRipple(){if(!stopped)worker.postMessage({type:'prepare-ripple'});},
+        ripple(){if(!stopped)worker.postMessage({type:'ripple'});},
+        fly(){return new Promise(resolve=>{if(stopped)return resolve();finishFlight=resolve;worker.postMessage({type:'fly'});});},dispose
+      };
     } catch(error) {
       worker?.terminate();
       if(signal?.aborted)throw error;
@@ -47,10 +51,10 @@ export async function createPaperScene(original, layout, signal) {
       });
     }
   }
-  const {createPaperRenderer} = await import('./entry-paper-renderer.js?v=perf-3');
+  const {createPaperRenderer} = await import('./entry-paper-renderer.js?v=ripple-7');
   const renderer = await createPaperRenderer(canvas,layout,viewport());
   if(signal?.aborted){renderer.dispose();throw new DOMException('Aborted','AbortError');}
   const resize = () => renderer.resize(viewport());
   addEventListener('resize',resize);canvas.dataset.renderer='main';
-  return {fly:renderer.fly,dispose(){removeEventListener('resize',resize);renderer.dispose();}};
+  return {prepareRipple:renderer.prepareRipple,ripple:renderer.ripple,fly:renderer.fly,dispose(){removeEventListener('resize',resize);renderer.dispose();}};
 }
