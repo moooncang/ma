@@ -1,7 +1,7 @@
 /* Entrance only. The original home is mounted underneath, without a second navigation. */
 body.entry-active { overflow: hidden; background: #070707; }
 #site { min-height: 100svh; background: var(--paper, #f6f1e3); }
-#entry { position: fixed; inset: 0; z-index: 100; isolation: isolate; overflow: hidden; color: #ead2a0; touch-action: manipulation; background:#12100e; transition:background .4s; }
+#entry { position: fixed; inset: 0; z-index: 100; isolation: isolate; overflow: hidden; color: #d9f2ff; touch-action: manipulation; background:#12100e; transition:background .4s; }
 #paper-scene, #paper-fallback, #entry-shade, #entry-atmosphere, #entry-notes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 #paper-scene { opacity: 0; transition: opacity .35s; }
 #entry.has-webgl #paper-scene { opacity: 1; }
@@ -9,26 +9,27 @@ body.entry-active { overflow: hidden; background: #070707; }
 #paper-fallback { perspective: 1100px; }
 .entry-paper { position: absolute; width: var(--w); height: var(--h); left: var(--x); top: var(--y); background: #f5efdf var(--score) center / 100% 100%; transform: translate(-50%, -50%) rotate(var(--r)); box-shadow: 2px 5px 15px #0006; }
 #entry-shade { background: #020304; mix-blend-mode: multiply; transition: opacity .48s cubic-bezier(.2,.65,.25,1); }
-#entry-shade i { display: block; position: absolute; left: var(--x,50%); top: var(--y,48%); width: var(--size,75vmin); aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(ellipse, #e4cba0 0%, #b5a087 12%, #665d51 28%, #252523 46%, #070909 63%, transparent 74%); }
+#entry-shade i { display: block; position: absolute; left: var(--x,50%); top: var(--y,48%); width: var(--size,75vmin); aspect-ratio: 1; transform: translate(-50%,-50%); border-radius: 50%; background: radial-gradient(ellipse, #d3e5f0 0%, #a0afb9 12%, #515b65 28%, #22262c 46%, #070909 63%, transparent 74%); }
 #entry-glow { opacity: .66; animation: entry-breathe 5.5s ease-in-out infinite; }
 #entry-cursor { --size: 54vmin; --x: -100%; opacity: 0; transition: opacity .5s; }
 #entry-cursor.live { opacity: .4; }
 #entry-shade .voice-light { --size: 110vmin; opacity: 0; }
-#entry-shade .voice-light.on { animation: entry-light 1.12s ease-out both; }
-#entry-atmosphere { background: radial-gradient(ellipse at 50% 48%, #cf9c4d08, transparent 45%); transition: opacity .4s; }
-.entry-mote { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #eed4a0; opacity: 0; box-shadow: 0 0 6px #e9c47d; animation: entry-dust var(--duration) ease-in-out var(--delay) infinite; }
-#entry-start { position: absolute; left: 50%; top: 48%; width: 174px; height: 210px; transform: translate(-50%,-50%); border: 0; border-radius: 50%; padding: 20px 22px; background: transparent; color: #ead2a0; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .3s, filter .3s; }
-#entry-start::before { content: ''; position: absolute; inset: -15%; border-radius: 50%; background: radial-gradient(ellipse, #f0c67b18, transparent 65%); transition: transform .7s, opacity .5s; opacity: .6; }
+#entry-shade .voice-light.on { animation: entry-light 1.45s ease-out both; }
+#entry-atmosphere { background: radial-gradient(ellipse at 50% 48%, #badcff08, transparent 45%); transition: opacity .4s; }
+#entry-start { position: absolute; left: 50%; top: 48%; width: 210px; height: 260px; transform: translate(-50%,-50%); border: 0; border-radius: 50%; padding: 0; background: transparent; color: #d9f2ff; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .3s, filter .3s; }
+#entry-start::before { content: ''; position: absolute; inset: -15%; border-radius: 50%; background: radial-gradient(ellipse, #a8dcff18, transparent 65%); transition: transform .7s, opacity .5s; opacity: .6; }
 #entry-start:hover::before, #entry-start:focus-visible::before { transform: scale(1.45); opacity: 1; }
 #entry-start:focus-visible { outline: 1px solid #eed4a088; outline-offset: 6px; }
-#entry-start .note-art { position: relative; display: block; width: 100%; height: 100%; animation: entry-float 6s ease-in-out infinite; filter: drop-shadow(0 2px 1px #000) drop-shadow(0 0 17px #e5bc7160); transition: filter .4s; }
-#entry-start:hover .note-art { filter: drop-shadow(0 2px 1px #000) drop-shadow(0 0 23px #f0cb8b99); }
-.note-art img, .voice-note img { display: block; width: 100%; height: 100%; object-fit:contain; }
-.note-orbit { display:none; }
-.voice-note { position: absolute; width: clamp(86px,13vmin,128px); height: clamp(112px,17vmin,170px); left: var(--x); top: var(--y); transform: translate(-50%,-50%); opacity: 0; filter: drop-shadow(0 2px 2px #0008) drop-shadow(0 0 19px #e9c17a88); }
+#entry-start .note-art { position: relative; display: block; width: 100%; height: 100%; animation: entry-float 6s ease-in-out infinite; filter: drop-shadow(0 2px 1px #000) drop-shadow(0 0 17px #b4eaff60); transition: filter .4s; }
+#entry-start:hover .note-art { filter: drop-shadow(0 2px 1px #000) drop-shadow(0 0 23px #c0edff99); }
+.note-art svg, .voice-note svg { display: block; width: 100%; height: 100%; overflow:visible; }
+.has-particle-notes .note-art, .has-particle-notes .voice-note { visibility:hidden; }
+#entry[data-phase="loading"] #entry-start::before { opacity:1; transform:scale(1.5); }
+#entry-start:disabled { cursor:default; }
+.voice-note { position: absolute; width: clamp(86px,13vmin,128px); height: clamp(112px,17vmin,170px); left: var(--x); top: var(--y); transform: translate(-50%,-50%); opacity: 0; filter: drop-shadow(0 2px 2px #0008) drop-shadow(0 0 19px #b8e8ff88); }
 .voice-note::after { content:''; position:absolute; inset:-35%; border:1px solid #e6c38a30; border-radius:50%; transform:scale(.7); opacity:0; }
-.voice-note.on { animation: entry-note 1.12s ease-out both; }
-.voice-note.on::after { animation: entry-ring 1.12s ease-out both; }
+.voice-note.on { animation: entry-note 1.45s ease-out both; }
+.voice-note.on::after { animation: entry-ring 1.45s ease-out both; }
 #entry[data-phase="playing"] #entry-start, #entry[data-phase="playing"] #entry-glow, #entry[data-phase="playing"] #entry-cursor { opacity: 0; animation: none; pointer-events: none; }
 #entry[data-phase="tutti"] #entry-shade, #entry[data-phase="flight"] #entry-shade { opacity: 0; }
 #entry[data-phase="tutti"] #entry-start, #entry[data-phase="flight"] #entry-start { opacity:0; pointer-events:none; }
@@ -41,13 +42,12 @@ body.entry-active { overflow: hidden; background: #070707; }
 #entry-skip:focus-visible { opacity: 1; clip-path: none; width: auto; height: auto; pointer-events: auto; outline: 1px solid #f7e9cc; }
 @keyframes entry-breathe { 0%,100% { opacity:.5; transform:translate(-50%,-50%) scale(.94); } 50% { opacity:.78; transform:translate(-50%,-50%) scale(1.06); } }
 @keyframes entry-float { 0%,100% { transform:translateY(0) rotate(-6deg); } 50% { transform:translateY(-7px) rotate(3deg); } }
-@keyframes entry-dust { 0%,100% { opacity:0; transform:translate3d(0,14px,0); } 45% { opacity:.35; } 90% { opacity:0; transform:translate3d(12px,-26px,0); } }
 @keyframes entry-light { 0% { opacity:0; } 18% { opacity:.95; } 60% { opacity:.55; } 100% { opacity:0; } }
 @keyframes entry-note { 0% { opacity:0; transform:translate(-50%,-42%) rotate(-9deg) scale(.85); } 20% { opacity:1; } 70% { opacity:.8; } 100% { opacity:0; transform:translate(-50%,-58%) rotate(3deg) scale(1.02); } }
 @keyframes entry-ring { 5% { opacity:0; } 25% { opacity:.6; } 100% { opacity:0; transform:scale(1.45); } }
 @keyframes entry-tutti { 0% { opacity:1; transform:translate(-50%,-50%) scale(1); } 100% { opacity:0; transform:translate(-50%,-60%) scale(1.35); } }
 @keyframes entry-fallback-flight { 30% { transform:translate(-50%,-65%) rotate(var(--r)) rotateX(22deg) rotateY(-16deg); } to { transform:translate(calc(-50% + var(--direction) * 180vw),calc(-50% - 160vh)) rotateX(52deg) rotateY(70deg) rotateZ(var(--r)); } }
-@media (max-width:600px) { #entry-start { width:150px; height:182px; padding:18px 18px; } #entry-glow { --size:125vmin; } #entry-shade .voice-light { --size:160vmin; } }
+@media (max-width:600px) { #entry-start { width:180px; height:220px; padding:0; } #entry-glow { --size:125vmin; } #entry-shade .voice-light { --size:160vmin; } }
 @media (prefers-reduced-motion:reduce) {
   #entry *, #entry *::before, #entry *::after { animation:none !important; transition:none !important; }
   #entry[data-phase="flight"] { opacity:0; }

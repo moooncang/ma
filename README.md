@@ -41,7 +41,7 @@
 5. **악보** — 그 악보들이 파라라락 날아간다
 6. **입장** — 악보가 걷힌 자리에서 그대로 첫 화면으로 들어간다
 
-입장 페이지는 2026-11-23에 새로 구현했다. 실제 클래식 곡을 조판한 악보 SVG 12쪽과 입체 금속 음표 PNG 4종을 사용한다. 큰 악보들이 크기·각도·방향을 달리하며 흩뿌려져 겹쳐 있고, 빛 궤적과 별 모양 입자가 음표 주변에서 반응한다. 소리는 사용자 입력 뒤에만 나는 악기별 합성음이다.
+입장 페이지는 2026-11-23에 새로 구현했다. 실제 클래식 곡을 조판한 악보 SVG 12쪽과 실시간 빛 입자로 이루어진 음표 4종을 사용한다. 큰 악보들이 크기·각도·방향을 달리하며 흩뿌려져 겹쳐 있고, 빛 궤적과 별 모양 입자가 음표 주변에서 반응한다. 소리는 VSCO 2 CE의 CC0 실제 악기 녹음으로, 바이올린·피아노·첼로·플루트가 순서대로 들린 뒤 맑은 Dmaj(add9) 화음으로 겹친다. 사용자 입력 뒤에만 재생하고 선행 지연·홀 잔향·부드러운 끝맺음을 적용한다.
 
 종이는 WebGL 곡면으로 만들었다. 바람에 따른 굽힘·끝단의 비틀림·양면·종이결·그림자를 표현하며, 가만히 있을 때는 종이의 렌더 루프를 돌리지 않는다. `home.html`의 실제 내용을 미리 뒤에 불러오기 때문에 악보가 날아가는 사이로 첫 화면이 바로 드러난다. 전환 뒤 주소를 `home.html`로 바꾸고 공용 동작을 연결한다. 본문 HTML·문구·디자인은 그대로다.
 
@@ -124,12 +124,13 @@ python _build/build.py
 ### 입장 페이지 개발·검증
 
 - `index.html`, `assets/css/entry.css`, `assets/js/entry.js`가 입장 화면의 뼈대·모양·순서를 담당한다.
-- `assets/js/entry-scene.js`는 종이의 3D 움직임, `entry-particles.js`는 입자 효과다.
+- `assets/js/entry-scene.js`는 종이의 3D 움직임, `entry-particles.js`와 `entry-notes.js`는 빛 입자 음표, `entry-audio.js`는 녹음 샘플과 잔향을 담당한다.
 - 로컬 실행: 저장소에서 `python -m http.server 4173 --bind 0.0.0.0`.
 - 브라우저 검사 도구를 별도 경로에 설치한다: `npm install --prefix /tmp/ma-tools --cache /tmp/ma-npm-cache playwright@1.58.2`.
 - `NODE_PATH=/tmp/ma-tools/node_modules node _build/test-entry.cjs`로 PC·모바일·키보드·동작 줄이기·WebGL/오디오 불가·건너뛰기·전환 후 본문 동작을 검사한다. Chromium 기본 경로는 `/usr/bin/chromium`; `CHROMIUM_PATH`, `ENTRY_TEST_URL`로 바꿀 수 있다.
 - 악보 재생성: `python -m pip install --target /tmp/ma-score-tools verovio==6.4.1` 후 `PYTHONPATH=/tmp/ma-score-tools python _build/entry-scores.py`.
-- 음표 재생성: 로컬 서버를 켠 상태에서 `NODE_PATH=/tmp/ma-tools/node_modules node _build/entry-notes.cjs`.
+- 음원 재생성: Python 3와 ffmpeg가 있는 환경에서 `python _build/entry-audio.py`. 고정된 원본 커밋과 SHA-256을 검사하고 6개 녹음을 가공한다.
+- 오디오 검사: `NODE_PATH=/tmp/ma-tools/node_modules node _build/test-entry-audio.cjs`. 실제 Web Audio 믹스를 렌더해 각 악기의 출력·클리핑·스테레오·끝 페이드를 확인한다. `ENTRY_AUDIO_REVIEW=/tmp/entrance.wav`를 지정하면 청취용 파일도 저장한다.
 
 ## 그림
 
@@ -147,7 +148,7 @@ python _build/build.py
 |---|---|---|
 | 크랙 작품 주소 | 작품으로 가는 버튼이 나오지 않는다 | `data.py`의 `크랙_주소` 한 줄 |
 | 음악 | 음악 쪽과 메뉴 칸이 없다 | `data.py`의 `음악` 목록을 채우면 쪽이 생긴다 |
-| 효과음 · 입장 악기 소리 | 입장은 합성음, 본문은 무음 | 소리 파일을 넣고 붙인다 |
+| 본문 효과음 · 음악 | 입장은 실제 악기 녹음, 본문은 무음 | 필요한 본문 소리를 넣고 붙인다 |
 | 인물 대사 한 줄 | 소개 문장만 있다 | 작가님 확인 뒤 `data.py` 인물 항목에 추가 |
 | 프롤로그 견본 | 없다(프롤로그가 아직 없다) | 시작 쪽 모드마다 첫 장면 견본을 단다 |
 | 단축어 안내 · 공유 미리보기 그림 | 없다 | 시작 쪽과 머리말에 단다 |

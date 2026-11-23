@@ -6,16 +6,30 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
 (async () => {
   const browser = await chromium.launch({ executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium', headless:true, args:['--no-sandbox','--enable-unsafe-swiftshader'] });
   const problems = [];
-  async function open(options = {}, init) {
+  async function open(options = {}, init, setup) {
     const context = await browser.newContext(options);
+    if (setup) await setup(context);
     // Existing Google Fonts are unrelated to entry and may be blocked in CI.
     await context.route('https://fonts.**/*', route => route.abort());
     if (init) await context.addInitScript(init);
     await context.addInitScript(() => {
       window.audioStarts = 0;
+      window.sampleStarts = [];
+      window.oscillatorStarts = 0;
       if (window.AudioContext) {
         const Original = window.AudioContext;
-        window.AudioContext = class extends Original { constructor(...args) { super(...args); window.audioStarts++; } };
+        window.AudioContext = class extends Original {
+          constructor(...args) { super(...args); window.audioStarts++; }
+          createOscillator() { window.oscillatorStarts++; return super.createOscillator(); }
+          createBufferSource() {
+            const source = super.createBufferSource(), start = source.start.bind(source);
+            source.start = (...args) => {
+              window.sampleStarts.push({duration:source.buffer?.duration, fingerprint:source.buffer?.getChannelData(0)[1000]});
+              return start(...args);
+            };
+            return source;
+          }
+        };
       }
     });
     const page = await context.newPage();
@@ -45,6 +59,8 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
     {
       const {context,page} = await open({viewport:{width:1440,height:900}});
       await page.locator('#entry.has-webgl').waitFor();
+      await page.locator('#entry.has-particle-notes').waitFor();
+      assert.equal(await page.locator('#entry-start img').count(), 0, 'Light particles replace the metal PNG');
       await page.evaluate(() => {
         window.entrancePhases = [];
         new MutationObserver(() => entrancePhases.push(document.querySelector('#entry').dataset.phase))
@@ -55,7 +71,12 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       assert.equal(await page.locator('#site .hero img').evaluateAll(images => images.every(i => i.complete && i.naturalWidth > 0)), true, 'Hero images ready before paper reveal');
       assert.equal(await page.locator('#site').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(246, 241, 227)', 'Actual home background under flying sheets');
       await checkHome(page);
-      assert.deepEqual(await page.evaluate(() => entrancePhases), ['playing','tutti','flight','done']);
+      assert.deepEqual(await page.evaluate(() => entrancePhases), ['loading','playing','tutti','flight','done']);
+      const audio = await page.evaluate(() => ({starts:sampleStarts,oscillators:oscillatorStarts}));
+      assert.equal(audio.oscillators, 0, 'Recorded instruments, no oscillator imitations');
+      assert.equal(audio.starts.length, 12, 'Six solo/arpeggio samples and six ensemble samples played');
+      assert.equal(new Set(audio.starts.map(s => s.fingerprint)).size, 6, 'Six distinct decoded recordings');
+      assert.ok(audio.starts.every(s => s.duration > 3.8), 'Full recordings decoded successfully');
       assert.equal(await page.evaluate(() => performance.getEntriesByType('navigation').length), 1, 'No second document navigation');
       await page.locator('header a[href="world.html"]').click();
       await page.waitForURL('**/world.html'); await page.goBack();
@@ -104,6 +125,20 @@ const base = process.env.ENTRY_TEST_URL || 'http://127.0.0.1:4173/';
       const {context,page} = await open();
       await page.locator('#entry-start').click(); await page.keyboard.press('Escape');
       await checkHome(page); await context.close(); console.log('PASS Escape cancels active sequence');
+    }
+    {
+      const {context,page} = await open({}, null, context => context.route('**/entry/audio/*.mp3', route => route.abort()));
+      await page.locator('#entry-start').click(); await checkHome(page);
+      assert.equal(await page.evaluate(() => sampleStarts.length), 0);
+      await context.close(); console.log('PASS missing recordings: silent entry still completes');
+    }
+    {
+      const {context,page} = await open({}, null, context => context.route('**/entry/audio/*.mp3', () => {}));
+      await page.locator('#entry-start').click();
+      assert.equal(await page.locator('#entry').getAttribute('data-phase'), 'loading');
+      await page.keyboard.press('Escape'); await checkHome(page);
+      assert.equal(await page.evaluate(() => sampleStarts.length), 0);
+      await context.close(); console.log('PASS pending audio: Escape cancels loading immediately');
     }
     assert.deepEqual(problems, [], 'No page exceptions or missing local assets');
   } finally { await browser.close(); }

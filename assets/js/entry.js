@@ -1,3 +1,6 @@
+import {noteMarkup} from './entry-notes.js?v=light-2';
+import {preloadSamples, createEntranceSound} from './entry-audio.js?v=light-2';
+
 /* Entrance controller. No external services, autoplay or duplicated home markup. */
 (() => {
   const entry = document.getElementById('entry');
@@ -11,8 +14,8 @@
   const random = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
   const setPhase = value => { phase = value; entry.dataset.phase = value; };
   const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
-  const note = symbol => `<img src="assets/entry/note-${symbol}.png" alt="" width="480" height="640" draggable="false">`;
-  start.querySelector('.note-art').innerHTML = note('beamed');
+  let samples = reduced.matches ? null : preloadSamples(lifetime.signal);
+  start.querySelector('.note-art').innerHTML = noteMarkup('eighth');
 
   // The same page layout exists in both the GPU renderer and its CSS fallback.
   const mobile = innerWidth < 700;
@@ -49,20 +52,26 @@
   }, {signal:lifetime.signal});
 
   let particles = null;
-  if (!reduced.matches) import('./entry-particles.js').then(({createParticles}) => {
-    if (!finished && !reduced.matches) particles = createParticles(document.getElementById('entry-atmosphere'));
+  if (!reduced.matches) import('./entry-particles.js?v=light-2').then(({createParticles}) => {
+    if (!finished && !reduced.matches && phase !== 'flight') {
+      particles = createParticles(document.getElementById('entry-atmosphere'));
+      if (particles) {
+        entry.classList.add('has-particle-notes');
+        if (phase === 'playing' || phase === 'tutti') particles.begin();
+      }
+    }
   }).catch(() => {});
   const instruments = [
-    {x:24,y:29,symbol:'eighth',type:'violin',frequency:440},
-    {x:75,y:25,symbol:'beamed',type:'piano',frequency:293.665},
-    {x:29,y:73,symbol:'quarter',type:'cello',frequency:146.832},
-    {x:77,y:70,symbol:'sixteenth',type:'flute',frequency:739.989}
+    {x:24,y:29,symbol:'eighth',type:'violin'},
+    {x:75,y:25,symbol:'beamed',type:'piano'},
+    {x:29,y:73,symbol:'quarter',type:'cello'},
+    {x:77,y:70,symbol:'sixteenth',type:'flute'}
   ].map(instrument => {
     const light = document.createElement('i');
     light.className = 'voice-light';
     const glyph = document.createElement('div');
     glyph.className = 'voice-note';
-    glyph.innerHTML = note(instrument.symbol);
+    glyph.innerHTML = noteMarkup(instrument.symbol);
     for (const el of [light, glyph]) el.style.cssText = `--x:${instrument.x}%;--y:${instrument.y}%`;
     document.getElementById('entry-shade').append(light);
     document.getElementById('entry-notes').append(glyph);
@@ -93,45 +102,6 @@
     return true;
   }).catch(() => false).finally(() => clearTimeout(homeTimeout));
 
-  // Soft instrument-specific harmonics, with a small room tail. Created only
-  // inside the click handler; unavailable audio never blocks entry.
-  function createSound() {
-    const Audio = window.AudioContext || window.webkitAudioContext;
-    if (!Audio) return null;
-    const ctx = new Audio();
-    ctx.resume().catch(() => {});
-    const output = ctx.createGain(); output.gain.value = .35; output.connect(ctx.destination);
-    const convolver = ctx.createConvolver();
-    const impulse = ctx.createBuffer(2, ctx.sampleRate * 1.4, ctx.sampleRate);
-    for (let c = 0; c < 2; c++) {
-      const data = impulse.getChannelData(c);
-      for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1)*Math.pow(1-i/data.length,3)*.18;
-    }
-    convolver.buffer = impulse;
-    const wet = ctx.createGain(); wet.gain.value = .32;
-    convolver.connect(wet).connect(output);
-    return {
-      play(instrument, duration, volume = 1) {
-        if (ctx.state === 'closed') return;
-        const harmonics = { violin:[1,.43,.22,.12,.06], piano:[1,.35,.16,.09], cello:[1,.48,.25,.13,.07], flute:[1,.12,.035] }[instrument.type];
-        const real = new Float32Array(harmonics.length + 1);
-        const imag = new Float32Array([0,...harmonics]);
-        const oscillator = ctx.createOscillator();
-        oscillator.setPeriodicWave(ctx.createPeriodicWave(real, imag));
-        oscillator.frequency.value = instrument.frequency;
-        const gain = ctx.createGain(), t = ctx.currentTime;
-        const attack = instrument.type === 'piano' ? .012 : .16;
-        gain.gain.setValueAtTime(0,t);
-        gain.gain.linearRampToValueAtTime(.15 * volume,t+attack);
-        gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
-        oscillator.connect(gain); gain.connect(output); gain.connect(convolver);
-        oscillator.start(t); oscillator.stop(t+duration+.02);
-        oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
-      },
-      close() { if (ctx.state !== 'closed') ctx.close().catch(() => {}); }
-    };
-  }
-
   async function finish() {
     if (finished) return;
     finished = true;
@@ -156,30 +126,39 @@
   start.addEventListener('click', async () => {
     if (phase !== 'idle') return;
     start.disabled = true;
-    setPhase('playing');
+    setPhase('loading');
+    start.setAttribute('aria-busy', 'true');
     // Reduced motion gets the content immediately, without a flashing sequence.
     if (reduced.matches) { await finish(); return; }
-    try { sound = createSound(); } catch { /* Silent mode. */ }
+    try { sound = createEntranceSound(samples ??= preloadSamples(lifetime.signal)); } catch { /* Silent mode. */ }
+    if (sound) await Promise.race([sound.ready, pause(3000)]);
+    if (finished) return;
+    start.removeAttribute('aria-busy');
+    setPhase('playing');
+    particles?.begin();
     for (const instrument of instruments) {
       if (finished) return;
       instrument.light.classList.add('on'); instrument.glyph.classList.add('on');
-      particles?.pulse(instrument.x / 100, instrument.y / 100);
-      sound?.play(instrument, 1.1);
-      await pause(1150);
+      particles?.pulse(instrument.x / 100, instrument.y / 100, 1, instrument.symbol);
+      sound?.play(instrument.type);
+      await pause(1450);
     }
     if (finished) return;
     // A slow or failed document request must not expose an empty backdrop.
     if (!await homeReady) { await finish(); return; }
     if (finished) return;
     setPhase('tutti');
-    particles?.pulse(.5, .48, 2);
-    instruments.forEach(instrument => sound?.play(instrument, 2.7, .55));
-    await pause(430);
+    particles?.tutti(instruments);
+    instruments.forEach(instrument => sound?.play(instrument.type, true));
+    await pause(550);
     if (finished) return;
     setPhase('flight');
     particles?.wind();
     scene?.fly();
-    await pause(3350);
+    await pause(2950);
+    if (finished) return;
+    sound?.fadeOut(.4);
+    await pause(400);
     if (!finished) await finish();
   }, {signal:lifetime.signal});
   skip.addEventListener('click', event => { event.preventDefault(); finish(); }, {signal:lifetime.signal});
@@ -187,7 +166,7 @@
   reduced.addEventListener('change', event => {
     if (!event.matches) return;
     scene?.dispose(); scene = null; entry.classList.remove('has-webgl');
-    particles?.dispose(); particles = null;
+    particles?.dispose(); particles = null; entry.classList.remove('has-particle-notes');
     if (phase !== 'idle') finish();
   }, {signal:lifetime.signal});
   addEventListener('pagehide', () => { scene?.dispose(); sound?.close(); particles?.dispose(); }, {once:true});

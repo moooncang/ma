@@ -20,13 +20,17 @@
 - 음악 글리프: Steinberg의 **Bravura**, SIL Open Font License 1.1. `BRAVURA-LICENSE.txt` 동봉. SVG 안에 글리프가 들어 있어 외부 음악 폰트 요청은 없다.
 - `_build/entry-scores.py`로 재생성한다. 입력 파일을 바꾸지 않는 한 같은 곡의 같은 페이지를 얻는다. 기존 MusicXML의 일부 연결선에 대한 가져오기 경고가 있어 연주용 원전 대신 장식용 조판으로 사용한다.
 
-## 음표 4종
+## 빛 입자 음표
 
-`note-eighth.png`, `note-beamed.png`, `note-quarter.png`, `note-sixteenth.png`는 직접 만든 입체 도형을 금속 재질·스튜디오 조명으로 렌더한 투명 PNG다. 480×640px. 원본 생성기는 `_build/entry-notes.cjs`다. 별도 스톡 이미지 서비스에 의존하지 않는다.
+금속 PNG를 제거하고 `entry-notes.js`의 직접 그린 곡선에서 630개 빛점을 추출한다. `entry-particles.js`가 은백색·옅은 청색·보랏빛 입자, 작은 별빛, 떠오르는 잔광을 실시간으로 그린다. 클릭하면 가운데 음표가 흩어지고 악기 순서에 맞춰 네 위치에서 다른 음표가 모였다 사라진다. Canvas를 쓸 수 없거나 동작 줄이기 설정이면 같은 곡선의 점선 SVG를 표시한다.
+
+## 실제 악기 녹음
+
+[음원 출처·가공 내역](audio/README.md). VSCO 2 Community Edition의 CC0 녹음 6개를 로컬 MP3로 보관한다. 바이올린·첼로 섹션·플루트 각 1개, 피아노 3개다. 악기 모사 발진음은 사용하지 않는다. `entry-audio.js`에서 실제 녹음을 재생하고 건조한 원음에 짧은 선행 지연과 스테레오 홀 잔향을 더한다. 네 악기의 마지막 합주는 Dmaj(add9) 화음이다. 클릭 전에 AudioContext를 만들거나 소리를 재생하지 않는다.
 
 ## 런타임
 
 - Three.js 0.170.0은 `assets/vendor/`에 로컬로 보관한다. MIT 라이선스 동봉.
 - `entry-scene.js`: 종이 섬유, 양면 재질, 곡면, 페이지끼리의 그림자. 긴 방향의 굽힘을 적분해 길이를 보존하고, 끝단의 비틀림을 별도로 적용한다.
-- `entry-particles.js`: 음표 주변의 빛 궤적, 별 모양 반짝임, 발광 입자. 동작 줄이기 설정에서는 만들지 않는다.
+- `entry-particles.js`: 음표 자체를 이루는 빛점과 주변의 궤적·반짝임. 동작 줄이기 설정에서는 애니메이션 캔버스를 만들지 않는다.
 - 런타임에 music21·Verovio·이미지 서비스나 CDN 연결은 필요 없다.
