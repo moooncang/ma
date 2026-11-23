@@ -10,30 +10,40 @@
   GPT가 작업할 때 뜯어고친다. 화면에 글자를 넣지 않는다. 연출 콘셉트는 저장소의 README.md에 있다.
 -->
 <style>
-  :root {
-    /* 큰 오선지가 화면 가득 반복되는 배경(임시). 줄 색은 쓰는 쪽의 color를 따른다 */
-    --staff: repeating-linear-gradient(to bottom,
-      transparent 0 9vmin,
-      currentColor 9vmin 9.25vmin, transparent 9.25vmin 11.5vmin,
-      currentColor 11.5vmin 11.75vmin, transparent 11.75vmin 14vmin,
-      currentColor 14vmin 14.25vmin, transparent 14.25vmin 16.5vmin,
-      currentColor 16.5vmin 16.75vmin, transparent 16.75vmin 19vmin,
-      currentColor 19vmin 19.25vmin, transparent 19.25vmin 28vmin);
-  }
   html, body { height: 100%; margin: 0; }
-  body { background: #000; color: #e9dfc4; overflow: hidden; transition: background-color .25s; }
+  /* 바탕색은 그림자와 악보가 모두 걷힌 뒤에 드러난다(본문 페이지의 바탕과 같은 색) */
+  body { background: #f6f1e3; color: #ffd98a; overflow: hidden; }
 
-  /* 오선지는 처음부터 화면 전체에 깔려 있고 그림자에 덮여 있다.
-     .spot 은 그 그림자를 한 자리만 걷어 내는 빛이다(같은 오선지를 둥글게 오려 보여 준다) */
-  .staves { position: fixed; inset: 0; background: var(--staff); pointer-events: none; opacity: 0; }
-  .spot {
-    -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), #000 0, transparent var(--r));
-            mask-image: radial-gradient(circle at var(--x) var(--y), #000 0, transparent var(--r));
+  /* 배경에는 처음부터 악보가 가득 깔려 있다. 마지막에 날아가는 것이 바로 이 악보다 */
+  #sheets { position: fixed; inset: 0; overflow: hidden; }
+  .sheet {
+    --ink: rgba(60, 45, 20, .55);
+    position: absolute; left: var(--x); top: var(--y);
+    width: 1em; aspect-ratio: 3 / 4; font-size: max(17vw, 23vh);
+    /* 임시 악보 그림: 종이에 오선 묶음만 반복 */
+    background: #fffdf6 repeating-linear-gradient(to bottom,
+      transparent 0 .06em,
+      var(--ink) .06em .064em, transparent .064em .078em,
+      var(--ink) .078em .082em, transparent .082em .096em,
+      var(--ink) .096em .1em, transparent .1em .114em,
+      var(--ink) .114em .118em, transparent .118em .132em,
+      var(--ink) .132em .136em, transparent .136em .19em);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+    transform: translate(-50%, -50%) rotate(var(--r0));
   }
-  #glow   { --x: 50%; --y: 46%; --r: 20vmin; animation: breathe 3.4s ease-in-out infinite; transition: opacity .6s; }
-  #cursor { --x: -50vmin; --y: -50vmin; --r: 24vmin; transition: opacity .6s; }
-  #cursor.live { opacity: .4; }
-  .voice  { --r: 38vmin; }
+
+  /* 그 위에 검은 그림자가 드리워져 있다. .light 는 그림자를 한 자리만 걷어 내는 빛이다
+     (곱하기 혼합: 검정은 악보를 가리고, 흰 빛이 놓인 자리만 악보가 보인다) */
+  #shade { position: fixed; inset: 0; background: #000; mix-blend-mode: multiply; pointer-events: none; transition: opacity .25s; }
+  .light {
+    position: absolute; left: var(--x); top: var(--y); width: var(--size); aspect-ratio: 1;
+    translate: -50% -50%; border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle, #fff 0, transparent 70%);
+  }
+  #glow   { --x: 50%; --y: 46%; --size: 46vmin; animation: breathe 3.4s ease-in-out infinite; transition: opacity .6s; }
+  #cursor { --x: -100vmin; --y: -100vmin; --size: 50vmin; transition: opacity .6s; }
+  #cursor.live { opacity: .3; }
+  .voice  { --size: 80vmin; --peak: .6; }
   .voice.on { animation: flash var(--dur) ease-out; }
 
   /* 음표(임시 그림) */
@@ -45,7 +55,7 @@
   #start {
     left: 50%; top: 46%; box-sizing: content-box; padding: 18px;
     background: none; border: 0; color: inherit; cursor: pointer;
-    animation: sway 5s ease-in-out infinite, breathe 3.4s ease-in-out infinite;
+    animation: sway 5s ease-in-out infinite;
   }
   #start:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
   .voice-note { opacity: 0; }
@@ -54,35 +64,30 @@
   /* 누른 뒤: 가운데 빛과 마우스 빛이 꺼지고, 악기 자리만 하나씩 반짝였다 꺼진다 */
   body.playing #start, body.playing #glow, body.playing #cursor { opacity: 0; animation: none; }
 
-  /* 합주: 그림자가 전부 걷히고 화면이 확 밝아진다 */
-  body.tutti { background: #f6f1e3; }
-  body.tutti #all { opacity: .5; color: #3a2f1c; transition: opacity .25s; }
+  /* 합주: 그림자가 전부 걷혀 화면이 확 밝아지고, 깔려 있던 악보가 날아간다 */
+  body.tutti #shade { opacity: 0; }
   body.tutti .voice-note { opacity: 1; color: #3a2f1c; filter: none; animation: flare .9s ease-out; }
-
-  .sheet {
-    position: fixed; left: 0; top: 0; width: var(--w); aspect-ratio: 3 / 4;
-    background: #fffdf6 repeating-linear-gradient(to bottom, transparent 0 9px, rgba(40, 30, 10, .3) 9px 10px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, .25);
-    animation: fly var(--d) ease-in var(--delay) both;
-  }
+  body.tutti .sheet { animation: fly var(--d) ease-in var(--delay) both; }
 
   /* 화면에는 글자를 두지 않는다. 건너뛰기는 키보드로 초점이 갔을 때만 보인다 */
   #skip { position: fixed; left: 12px; bottom: 12px; color: inherit; font: 13px sans-serif; opacity: 0; pointer-events: none; }
   #skip:focus-visible { opacity: 1; }
 
   @keyframes sway    { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-5px) rotate(-4deg); } }
-  @keyframes breathe { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
-  @keyframes flash   { 0% { opacity: 0; } 22% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes breathe { 0%, 100% { opacity: .2; } 50% { opacity: .45; } }
+  @keyframes flash   { 0% { opacity: 0; } 22% { opacity: var(--peak, 1); } 100% { opacity: 0; } }
   @keyframes flare   { 0% { transform: scale(1); } 40% { transform: scale(1.6); } 100% { transform: scale(1); } }
-  @keyframes fly     { from { transform: translate(var(--x0), 110vh) rotate(var(--r0)); } to { transform: translate(var(--x1), -50vh) rotate(var(--r1)); } }
+  @keyframes fly     { to { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) rotate(var(--r1)); } }
 
-  @media (prefers-reduced-motion: reduce) { #start { animation: breathe 3.4s ease-in-out infinite; } }
+  @media (prefers-reduced-motion: reduce) {
+    #start { animation: none; }
+    body.tutti .sheet { animation: none; }
+  }
 </style>
 </head>
 <body>
-  <div class="staves spot" id="glow"></div>
-  <div class="staves spot" id="cursor"></div>
-  <div class="staves" id="all"></div>
+  <div id="sheets"></div>
+  <div id="shade"><i class="light" id="glow"></i><i class="light" id="cursor"></i></div>
   <button id="start" class="note" aria-label="입장"></button>
   <a id="skip" href="home.html">소리 없이 들어가기</a>
 
@@ -91,8 +96,8 @@
 const 설정 = {
   다음페이지: 'home.html',
   악기간격: 1300, // ms. 악기 하나가 반짝이고 꺼진 뒤 다음 악기가 울리기까지
-  합주길이: 1800, // ms. 네 악기가 함께 울리고 사이트로 넘어가기까지
-  악보장수: 48,
+  합주길이: 2000, // ms. 네 악기가 함께 울리고 사이트로 넘어가기까지
+  악보: { 가로: 7, 세로: 5 }, // 배경에 깔리는 악보 장수(가로 × 세로)
   // 위에서부터 순서대로 하나씩 울린다. x·y는 화면 위 자리(%).
   // 파일에 소리 파일 경로를 넣으면 합성음 대신 그 소리를 튼다
   악기: [
@@ -103,24 +108,40 @@ const 설정 = {
   ],
 };
 
+const r = (a, b) => a + Math.random() * (b - a);
 const 음표그림 = `<svg viewBox="0 0 24 40" aria-hidden="true"><ellipse cx="8" cy="33" rx="6" ry="4.4" transform="rotate(-20 8 33)"/><rect x="12.6" y="4" width="1.6" height="29"/><path d="M14.2 4q10 4 8 16q-1-8-8-10z"/></svg>`;
 
 const start = document.getElementById('start');
 start.innerHTML = 음표그림;
 document.body.style.setProperty('--dur', 설정.악기간격 + 'ms');
 
+// 배경 악보: 칸마다 한 장씩, 조금씩 어긋나고 기울어지게 깐다. 날아갈 방향도 미리 정해 둔다
+const sheets = document.getElementById('sheets');
+const { 가로, 세로 } = 설정.악보;
+for (let i = 0; i < 가로 * 세로; i++) {
+  const el = document.createElement('div');
+  el.className = 'sheet';
+  el.style.cssText =
+    `--x:${((i % 가로) + .5) / 가로 * 100 + r(-4, 4)}%;--y:${(Math.floor(i / 가로) + .5) / 세로 * 100 + r(-5, 5)}%;` +
+    `--r0:${r(-18, 18)}deg;--tx:${r(60, 150)}vw;--ty:${r(-150, -40)}vh;--r1:${r(-540, 540)}deg;` +
+    `--d:${r(.8, 1.2)}s;--delay:${r(.15, .7)}s`;
+  sheets.appendChild(el);
+}
+
 // 악기 자리마다 [그림자를 걷어 내는 빛, 음표] 한 쌍
+const shade = document.getElementById('shade');
 const 자리 = 설정.악기.map(v => {
-  const 빛 = document.createElement('div');
-  빛.className = 'staves spot voice';
+  const 빛 = document.createElement('i');
+  빛.className = 'light voice';
   빛.style.setProperty('--x', v.x + '%');
   빛.style.setProperty('--y', v.y + '%');
+  shade.appendChild(빛);
   const 음표 = document.createElement('div');
   음표.className = 'note voice-note';
   음표.style.left = v.x + '%';
   음표.style.top = v.y + '%';
   음표.innerHTML = 음표그림;
-  document.body.append(빛, 음표);
+  document.body.appendChild(음표);
   return [빛, 음표];
 });
 
@@ -148,20 +169,8 @@ function 소리(v, 초) {
   o.stop(t + 초);
 }
 
-function 악보날리기() {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const r = (a, b) => a + Math.random() * (b - a);
-  for (let i = 0; i < 설정.악보장수; i++) {
-    const el = document.createElement('div');
-    el.className = 'sheet';
-    el.style.cssText = `--w:${r(70, 150)}px;--x0:${r(-10, 60)}vw;--x1:${r(30, 110)}vw;` +
-      `--r0:${r(-60, 60)}deg;--r1:${r(-420, 420)}deg;--d:${r(.9, 1.5)}s;--delay:${r(0, .7)}s`;
-    document.body.appendChild(el);
-  }
-}
-
-// ── 순서: 누름 → 악기 넷이 하나씩 반짝이고 꺼짐 → 합주·밝아짐·악보 → 사이트 ──
-const 기다림 = ms => new Promise(r => setTimeout(r, ms));
+// ── 순서: 누름 → 악기 넷이 하나씩 반짝이고 꺼짐 → 합주·밝아짐·악보 날아감 → 사이트 ──
+const 기다림 = ms => new Promise(res => setTimeout(res, ms));
 start.addEventListener('click', async () => {
   start.disabled = true;
   document.body.classList.add('playing');
@@ -173,7 +182,6 @@ start.addEventListener('click', async () => {
   }
   document.body.classList.add('tutti');
   설정.악기.forEach(v => 소리(v, 설정.합주길이 / 1000));
-  악보날리기();
   await 기다림(설정.합주길이);
   location.href = 설정.다음페이지;
 }, { once: true });

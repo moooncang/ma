@@ -4,12 +4,140 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>명문 음악 아카데미의 추첨 입학생</title>
-<!-- [초안] 입장 연출이 도착하는 자리만 잡아 둔 빈 페이지. 본문은 아직 없다. -->
+<!--
+  [초안] 본문 페이지.
+  문구(아래 `내용` 객체)만 정리해 둔 초안이다. 문구를 제외한 레이아웃·색·글꼴·그림 배치·코드 구조는
+  전부 임시이며, GPT가 작업할 때 뜯어고친다. 그림은 docs/ 의 자료를 그대로 불러 쓴다.
+-->
 <style>
-  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f1e3; color: #3a2f1c; font-family: "Noto Serif KR", "Nanum Myeongjo", serif; }
+  body { margin: 0; background: #f6f1e3; color: #2e2618; font-family: "Noto Serif KR", "Nanum Myeongjo", serif; line-height: 1.75; }
+  main { max-width: 1040px; margin: 0 auto; padding: 0 24px 96px; }
+  img { display: block; width: 100%; height: auto; }
+  h1, h2, h3, p { margin: 0; }
+
+  .hero { padding: 72px 0 40px; }
+  .hero h1 { font: 400 clamp(40px, 8vw, 84px)/1 "Cormorant Garamond", Georgia, serif; letter-spacing: .12em; }
+  .hero .title { margin-top: 14px; font-size: 17px; }
+  .hero .lead { margin-top: 20px; max-width: 40em; }
+  .play { display: inline-block; margin-top: 24px; padding: 10px 28px; border: 1px solid currentColor; color: inherit; text-decoration: none; letter-spacing: .2em; font: 14px Georgia, serif; }
+
+  section { padding-top: 64px; }
+  h2 { font: 400 14px Georgia, serif; letter-spacing: .3em; padding-bottom: 10px; border-bottom: 1px solid rgba(46, 38, 24, .3); margin-bottom: 24px; }
+  h3 { font-size: 17px; }
+  .sub { font-size: 13px; opacity: .7; }
+  .stack > * + * { margin-top: 12px; }
+  .grid { display: grid; gap: 28px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .grid.narrow { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .group { font: 400 12px Georgia, serif; letter-spacing: .25em; opacity: .7; margin: 32px 0 14px; }
+  .mark { font-size: 28px; line-height: 1; }
+  footer { margin-top: 80px; font-size: 13px; opacity: .7; }
 </style>
 </head>
 <body>
-  <p>사이트 본문은 준비 중입니다.</p>
+<main id="app"></main>
+
+<script>
+// ── 내용: 화면에 나오는 문구와 그림 경로는 전부 여기서 고친다 ──────
+const 내용 = {
+  크랙주소: '', // 작품 주소가 생기면 넣는다. 비어 있으면 PLAY 버튼이 나오지 않는다
+  머리: {
+    영문: 'CANTOREUM',
+    제목: '명문 음악 아카데미의 추첨 입학생',
+    소개: '세계 최고로 꼽히는 음악 아카데미 칸토레움에 심사 없이 제비뽑기로 들어온 추첨 입학생이 되어, 열두 명의 음악가와 얽히는 스토리챗입니다.',
+    그림: 'docs/B/C1.webp',
+  },
+  개요: [
+    '현대의 클래식 음악 아카데미가 무대입니다. 인물 사이의 관계와 사건이 이야기의 중심이고, 상태창이나 수치 관리는 없습니다.',
+    '전공, 국적, 실력, 경력은 유저가 정한 그대로 받아들입니다. 어려움은 듣는 사람의 귀와 한정된 무대, 그리고 사람 사이에서 생깁니다.',
+    '등장인물에게도 각자의 무대와 마감이 있습니다. 유저가 없는 자리에서도 연습하고, 오디션에 붙고 떨어집니다.',
+  ],
+  세계: [
+    { 이름: '루첼라', 글: '알프스 남쪽 호숫가의 작은 자치시입니다. 음악제와 음악원으로 살아가는 도시입니다.' },
+    { 이름: '칸토레움', 글: '각국의 음대와 콩쿠르를 거친 사람이 모이는 3년 과정의 음악 아카데미입니다. 한 해에 40명을 받으며, 39명은 실기로 1명은 추첨으로 뽑습니다.' },
+    { 이름: '추첨석', 글: '설립자의 유언에 따라 정관에 남은 자리입니다. 만 20세 이상이면 누구나 지원할 수 있고 심사가 없습니다. 학내에서는 추첨 입학생을 「제비」라고 부릅니다.' },
+    { 이름: '무대', 글: '연습실에서 살롱, 리사이틀홀, 대극장을 거쳐 학교 바깥으로 이어집니다. 설 수 있는 자리는 한정되어 있고 오디션, 추천, 초청으로 얻습니다.' },
+  ],
+  살롱머리: '칸토레움의 오랜 음악 동인입니다. 전공과 상관없이 초대를 받아 들어가며, 어디에도 속하지 않을 수 있습니다.',
+  살롱: [
+    { 이름: '우르텍스트', 영문: 'URTEXT', 글: '악보에 적힌 대로 연주합니다. 양식과 절제, 정확함을 봅니다.', 그림: 'docs/B/S1.webp' },
+    { 이름: '브라부라', 영문: 'BRAVURA', 글: '객석이 숨을 멈춰야 연주라고 여깁니다. 기교와 장악, 흥행을 봅니다.', 그림: 'docs/B/S2.webp' },
+    { 이름: '아리오소', 영문: 'ARIOSO', 글: '모든 악기는 노래한다고 믿습니다. 선율과 호흡, 실내악을 봅니다.', 그림: 'docs/B/S3.webp' },
+    { 이름: '누오바', 영문: 'NUOVA', 글: '아직 아무도 듣지 못한 소리를 찾습니다. 근현대 음악과 신작, 즉흥을 봅니다.', 그림: 'docs/B/S4.webp' },
+  ],
+  학사력머리: '가을 학기와 봄 학기가 각각 15주입니다.',
+  학사력: [
+    { 때: '매주 금요일', 일: '살롱의 밤' },
+    { 때: '8주차', 일: '공개 마스터클래스' },
+    { 때: '가을 10주차', 일: '협주곡 오디션' },
+    { 때: '15주차', 일: '실기 심사' },
+    { 때: '봄 14주차', 일: '그랑 갈라' },
+    { 때: '여름', 일: '루첼라 국제 콩쿠르와 음악제' },
+  ],
+  // 그림은 docs/첫등장 카드/{코드}_1.webp
+  인물: [
+    { 묶음: 'STUDENTS', 목록: [
+      { 코드: 'A', 이름: '루이제 브란트', 줄: '피아노 · 1년차 · 독일 · 23세', 글: '직설적이고 타협이 없습니다. 네 살롱의 초대를 모두 거절했습니다.' },
+      { 코드: 'B', 이름: '니콜 페이건', 줄: '바이올린 · 2년차 · 미국 · 22세 · 브라부라', 글: '칸토레움이 생긴 이래 최고의 재능으로 꼽힙니다. 사람을 지루한 쪽과 재미있는 쪽으로 나눕니다.' },
+      { 코드: 'C', 이름: '호세피나 에레디아', 줄: '첼로 · 3년차 · 아르헨티나 · 27세 · 아리오소', 글: '학내 실내악 편성을 짜는 맏이입니다. 추첨 입학생에게 먼저 말을 거는 드문 선배이기도 합니다.' },
+      { 코드: 'D', 이름: '테아 모저', 줄: '소프라노 · 1년차 · 오스트리아 · 20세', 글: '한 번 들은 곡을 통째로 받아 적습니다. 네 살롱에 모두 놀러 다니지만 어디에도 들지 않았습니다.' },
+      { 코드: 'E', 이름: '에밀리아 볼스카', 줄: '피아노 · 2년차 · 폴란드 · 24세 · 아리오소', 글: '대극장을 꺼리고 살롱 무대에만 섭니다. 사람과 거리를 두며, 장갑은 건반 앞에서만 벗습니다.' },
+      { 코드: 'F', 이름: '서송이', 줄: '반주 · 2년차 · 한국 · 25세', 글: '작년 추첨 입학생입니다. 어느 연습실이 비는지, 어디서 말이 도는지 아는 학내 소식통입니다.' },
+      { 코드: 'G', 이름: '마테이 칼리나', 줄: '지휘 · 3년차 · 체코 · 27세', 글: '학생 오케스트라의 부지휘자입니다. 리허설에 늦은 사람에게는 문을 잠급니다.' },
+      { 코드: 'H', 이름: '바질 소렐', 줄: '작곡 · 2년차 · 프랑스 · 26세 · 누오바', 글: '맑은 날에도 검은 우산을 들고 다닙니다. 자기 곡을 초연할 연주자를 찾고 있습니다.' },
+      { 코드: 'K', 이름: '안토넬라 사르티', 줄: '바이올린 · 3년차 · 이탈리아 · 26세 · 우르텍스트', 글: '학생 오케스트라의 악장이며 교수들이 아끼는 모범생입니다. 귀가 정확해서 남의 재능을 가장 먼저 알아봅니다.' },
+    ] },
+    { 묶음: 'FACULTY', 목록: [
+      { 코드: 'I', 이름: '쿠라모토 사야카', 줄: '실내악 교수(피아노) · 일본 · 38세 · 아리오소 수장', 글: '칭찬에 인색하고 암보를 원칙으로 삼습니다. 인정은 더 어려운 곡을 맡기는 것으로 합니다.' },
+      { 코드: 'J', 이름: '얀 판 베이크', 줄: '오르간 교수 · 네덜란드 · 71세 · 우르텍스트 수장 · 심사위원장', 글: '새벽에 가장 먼저 나와 오르간을 칩니다. 추첨제에 찬반을 말하지 않고, 심사 날 듣고 판단합니다.' },
+    ] },
+    { 묶음: 'CRITIC', 목록: [
+      { 코드: 'L', 이름: '로완 셔먼', 줄: '음악 평론가 · 영국 · 44세', 글: '칸토레움 바깥에서 무대를 듣고 글을 씁니다. 필명을 두 개 씁니다.' },
+    ] },
+  ],
+  모드머리: '모드는 유저의 처지만 가릅니다. 실력은 어느 모드에서든 유저가 밝힌 그대로입니다.',
+  모드: [
+    { 기호: '♭', 이름: '추첨 입학', 글: '올해의 추첨 입학생으로 시작합니다. 학비만 면제되며, 지도교수와 연습실은 직접 구해야 합니다. 첫 학기 15주차 실기 심사가 잔류 심사입니다.' },
+    { 기호: '♯', 이름: '수석 입학', 글: '그해 입학 실기 1위로 시작합니다. 전액 장학금과 기숙사가 주어지고, 지도교수를 고를 수 있으며 네 살롱 모두에서 초대장이 옵니다.' },
+    { 기호: '♮', 이름: '자유', 글: '신분과 전공, 처지를 유저가 직접 정합니다. 쓴 대로 이루어집니다.' },
+  ],
+  꼬리: '등장인물은 모두 만 20세 이상의 성인입니다.',
+};
+
+// ── 그리기(임시): 구조와 모양은 전부 바꿔도 된다 ───────────────────
+const 항목 = v => `<div class="stack"><h3>${v.이름}</h3><p>${v.글}</p></div>`;
+document.getElementById('app').innerHTML = `
+  <header class="hero">
+    <h1>${내용.머리.영문}</h1>
+    <p class="title">${내용.머리.제목}</p>
+    <p class="lead">${내용.머리.소개}</p>
+    ${내용.크랙주소 ? `<a class="play" href="${내용.크랙주소}">PLAY</a>` : ''}
+  </header>
+  <img src="${내용.머리.그림}" alt="">
+
+  <section class="stack"><h2>BRIEFING</h2>${내용.개요.map(t => `<p>${t}</p>`).join('')}</section>
+
+  <section><h2>WORLD</h2><div class="grid">${내용.세계.map(항목).join('')}</div></section>
+
+  <section><h2>SALONS</h2><p>${내용.살롱머리}</p>
+    <div class="grid" style="margin-top:24px">${내용.살롱.map(v => `<div class="stack">
+      <img src="${v.그림}" alt="" loading="lazy"><p class="sub">${v.영문}</p><h3>${v.이름}</h3><p>${v.글}</p></div>`).join('')}</div>
+  </section>
+
+  <section><h2>CALENDAR</h2><p>${내용.학사력머리}</p>
+    <div class="grid narrow" style="margin-top:24px">${내용.학사력.map(v => `<div><p class="sub">${v.때}</p><h3>${v.일}</h3></div>`).join('')}</div>
+  </section>
+
+  <section><h2>CAST</h2>${내용.인물.map(g => `<p class="group">${g.묶음}</p>
+    <div class="grid">${g.목록.map(v => `<article class="stack">
+      <img src="docs/첫등장 카드/${v.코드}_1.webp" alt="${v.이름}" loading="lazy" width="1856" height="1280">
+      <h3>${v.이름}</h3><p class="sub">${v.줄}</p><p>${v.글}</p></article>`).join('')}</div>`).join('')}
+  </section>
+
+  <section><h2>START</h2><p>${내용.모드머리}</p>
+    <div class="grid" style="margin-top:24px">${내용.모드.map(v => `<div class="stack"><p class="mark">${v.기호}</p><h3>${v.이름}</h3><p>${v.글}</p></div>`).join('')}</div>
+  </section>
+
+  <footer>${내용.꼬리}</footer>`;
+</script>
 </body>
 </html>
